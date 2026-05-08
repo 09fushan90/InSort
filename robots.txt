@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+
 Sitemap: https://09fushan90.github.io/inst-asortiments/sitemap.xml
