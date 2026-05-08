@@ -83,7 +83,7 @@ html.no-scroll, body.no-scroll {
 }
 body {margin:0; font-family:Arial; background:#000; color:#90ee90; position:relative; min-height:100vh; overflow-x:hidden;}
 body::before {content:"Inst asortiments"; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:200px; color:rgba(144,238,144,0.05); font-weight:bold; white-space:nowrap; z-index:0; pointer-events:none;}
-header {background:#111; padding:95px 20px 20px; text-align:center; font-size:26px; position:relative; z-index:2;}
+header {background:#; padding:95px 20px 20px; text-align:center; font-size:26px; position:relative; z-index:2;}
 .container {padding:12px 20px 20px; max-width:1300px; margin:auto; position:relative; z-index:2;}
 .search-box {
 display:flex;
@@ -1682,6 +1682,151 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
   transition-duration:.35s;
 }
 
+
+.catalog-hidden{
+  display:none !important;
+}
+
+
+/* Оновлення: білий фон сайту та категорії в рядку під підписом каталогу */
+body{
+  background:#fff !important;
+}
+body::before{
+  display:none !important;
+}
+.catalog-subtitle-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:6px;
+}
+.catalog-inline-filters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.catalog-inline-filters select{
+  width:180px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid #d9e6d9;
+  background:#fff;
+  color:#111;
+  margin:0;
+}
+.search-wrapper input{
+  padding-right:18px !important;
+}
+#catalogReturnBtn{
+  background:#111 !important;
+  color:#6bff2a !important;
+  border:1px solid rgba(107,255,42,.35) !important;
+  font-weight:900;
+}
+@media(max-width:700px){
+  .catalog-subtitle-row{align-items:flex-start;}
+  .catalog-inline-filters{width:100%;}
+  .catalog-inline-filters select{width:100%;}
+}
+
+
+/* CATEGORY CHOOSE MODAL CSS START */
+.category-choose-open-btn{
+  background:#111 !important;
+  color:#6bff2a !important;
+  border:2px solid rgba(107,255,42,.35) !important;
+  font-weight:900 !important;
+  border-radius:18px !important;
+  padding:14px 22px !important;
+  margin:0 !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.18);
+}
+.category-choose-current{
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  padding:0 12px;
+  color:#111;
+  font-weight:800;
+  background:#f3f3f3;
+  border:1px solid #d9e6d9;
+  border-radius:14px;
+}
+#categoryChooseModal .modal-content{
+  max-width:560px;
+  border-radius:28px;
+  padding:22px;
+  background:linear-gradient(180deg,#101010,#151515);
+  border:1px solid rgba(107,255,42,.22);
+  box-shadow:0 20px 50px rgba(0,0,0,.55);
+  color:#fff;
+}
+.category-choose-title{
+  margin:0 0 8px;
+  font-size:28px;
+  font-weight:900;
+  color:#fff;
+}
+.category-choose-subtitle{
+  color:#b8efb8;
+  font-size:14px;
+  margin-bottom:14px;
+}
+.category-choose-section-title{
+  margin:14px 0 8px;
+  color:#6bff2a;
+  font-weight:900;
+  text-align:left;
+  font-size:15px;
+}
+.category-choose-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:60vh;
+  overflow-y:auto;
+  padding:4px;
+}
+.category-choose-item{
+  width:100%;
+  margin:0 !important;
+  padding:14px 16px !important;
+  border-radius:16px !important;
+  text-align:left;
+  background:#181818 !important;
+  color:#fff !important;
+  border:1px solid rgba(107,255,42,.18) !important;
+  font-size:16px !important;
+  font-weight:900 !important;
+}
+.category-choose-item:hover,
+.category-choose-item.active{
+  background:linear-gradient(135deg,#6bff2a,#49d71c) !important;
+  color:#071007 !important;
+}
+.category-choose-close{
+  width:100%;
+  margin-top:14px !important;
+  padding:13px 16px !important;
+  border-radius:16px !important;
+  font-weight:900 !important;
+}
+#catalogReturnBtn{
+  padding:14px 35px !important;
+  font-size:20px !important;
+  min-height:52px !important;
+  border-radius:18px !important;
+}
+@media(max-width:700px){
+  .category-choose-open-btn,
+  .category-choose-current{width:100%;justify-content:center;}
+  #catalogReturnBtn{font-size:18px !important;padding:13px 28px !important;}
+}
+/* CATEGORY CHOOSE MODAL CSS END */
+
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -1742,7 +1887,7 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
 <div id="loader">
 <div class="spinner"></div>
 </div>
-<header class="site-header">
+<header class="site-header" id="topHeaderSection">
 <div class="topbar" data-office-editable="block" data-office-key="header_section">
 <button class="office-section-edit-btn" data-office-section-edit-btn="" onclick="toggleOfficeSectionEdit('header_section')" type="button">✏️ Редагувати</button>
 <div class="brand-block">
@@ -1759,7 +1904,7 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
 </div>
 </div>
 </header>
-<section class="hero" data-office-editable="block" data-office-key="hero_section">
+<section id="heroSection" class="hero" data-office-editable="block" data-office-key="hero_section">
 <button class="office-section-edit-btn" data-office-section-edit-btn="" onclick="toggleOfficeSectionEdit('hero_section')" type="button">✏️ Редагувати</button>
 <div class="hero-card">
 <div class="hero-copy">
@@ -1767,7 +1912,7 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
 <h1 data-office-editable="text" data-office-key="hero_title">ІНСТРУМЕНТИ ДЛЯ ПРОФЕСІОНАЛІВ</h1>
 <p data-office-editable="text" data-office-key="hero_text">Якісний електроінструмент, ручний інструмент та оснащення для дому, майстерні та щоденної роботи.</p>
 <div class="hero-actions">
-<button class="hero-primary" data-office-editable="text" data-office-key="hero_button_primary" onclick="scrollToProducts()">Переглянути каталог</button>
+<button class="hero-primary" data-office-editable="text" data-office-key="hero_button_primary" id="catalogToggleBtn" onclick="toggleCatalogView()">Переглянути каталог</button>
 <button class="hero-secondary" data-office-editable="text" data-office-key="hero_button_secondary" onclick="toggleMenu()">Меню магазину</button>
 </div>
 <div class="hero-features">
@@ -1784,7 +1929,7 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
 </div>
 </div>
 </section>
-<section class="overview-grid" data-office-editable="block" data-office-key="overview_section">
+<section id="overviewSection" class="overview-grid" data-office-editable="block" data-office-key="overview_section">
 <button class="office-add-card-btn" id="addOverviewCardBtn" onclick="addOfficeOverviewCard()" type="button">➕ Додати вікно</button>
 <div class="overview-card" data-office-editable="block" data-office-key="overview_card_1">
 <button class="office-section-edit-btn" data-office-section-edit-btn="" onclick="openOfficeCardTextModal('overview_card_1')" type="button">✏️ Редагувати</button>
@@ -1822,15 +1967,28 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
   <div class="ads-dots" id="adsDots"></div>
 </section>
 
-<div class="top-main-categories" id="topMainCategories"></div>
+<div class="top-main-categories catalog-hidden" id="topMainCategories" style="display:none !important;"></div>
 <div class="container">
 <div class="catalog-shell" id="catalogSection">
 <div class="catalog-head">
 <div>
 <h2 class="catalog-title" data-office-editable="text" data-office-key="catalog_title">Каталог товарів</h2>
-<div class="catalog-subtitle" data-office-editable="text" data-office-key="catalog_subtitle">Знайди потрібний інструмент через пошук, основні категорії або фільтр.</div>
+<div class="catalog-subtitle-row">
+  <div class="catalog-subtitle" data-office-editable="text" data-office-key="catalog_subtitle">Знайди потрібний інструмент через пошук або категорії.</div>
+  <div class="catalog-inline-filters">
+    <button class="category-choose-open-btn" onclick="openCategoryChooseModal()" type="button">Обрати категорію</button>
+    <span class="category-choose-current" id="categoryChooseCurrent">Усі товари</span>
+    <select id="mainCategoryFilter" onchange="filterMainCategory()" style="display:none;">
+      <option value="">Основні категорії</option>
+    </select>
+    <select id="categoryFilter" onchange="filterCategory()" style="display:none;">
+      <option value="">Категорії</option>
+    </select>
+  </div>
+</div>
 </div>
 <div style="text-align:center;display:flex;gap:8px;flex-wrap:wrap;">
+<button id="catalogReturnBtn" onclick="toggleCatalogView()" style="display:none;">Повернутися</button>
 <button id="addProductBtn" onclick="openAddModal()" style="display:none;">Додати товар</button>
 <button id="manageCategoriesBtn" onclick="openCategoryModal()" style="display:none;">Категорії</button>
 <button id="manageMainCategoriesBtn" onclick="openMainCategoryModal()" style="display:none;">Осн. категорії</button>
@@ -1839,9 +1997,6 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
 <div class="search-box">
 <div class="search-wrapper">
 <input id="searchInput" onkeyup="handleSearch()" placeholder="Пошук товару..." type="text"/>
-<select id="categoryFilter" onchange="filterCategory()">
-<option value="">Категорії</option>
-</select>
 </div>
 <div id="subCategoryBackWrap" style="display:none;text-align:left;margin:8px 0 0 0;">
 <button id="subCategoryBackBtn" onclick="resetSubCategoryFilter()" style="display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:#1b1b1b;color:#90ee90;border:1px solid #2f5f2f;font-size:22px;cursor:pointer;" type="button">
@@ -1991,80 +2146,6 @@ input,textarea,select{border-radius:14px;background:#f5f5f5;color:#111;}
 <button class="checkout-btn-telegram" onclick="submitOrder('telegram')">Замовити через Telegram</button>
 <button class="checkout-btn-instagram" onclick="submitOrder('instagram')">Замовити через Instagram</button>
 <button class="checkout-btn-np" onclick="submitOrder('novaposhta')">Оформити для Нової пошти</button>
-</div>
-</div>
-</div>
-<div class="modal auth-required-modal" id="authRequiredModal">
-<div class="modal-content">
-<h3 style="margin-top:0;">Ви ще не зареєструвалися</h3>
-<p style="color:#fff;">Можна додавати товар і без реєстрації. Але гостьовий кошик збережеться тільки в цьому браузері.</p>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="openRegisterFromWarning()">Зареєструватися</button>
-<button onclick="closeAuthRequiredModal()" style="background:#444;color:#fff;">Закрити</button>
-</div>
-</div>
-</div>
-<div class="modal" id="registerModal" onclick="handleModalBackdrop(event, 'registerModal', closeRegisterModal)">
-<div class="modal-content">
-<h3 style="margin-top:0;">Реєстрація</h3>
-<input id="registerName" placeholder="Ім'я" type="text"/>
-<input id="registerEmail" placeholder="Електронна пошта" type="email"/>
-<input id="registerPassword" placeholder="Створіть надійний пароль" type="password"/>
-<div class="password-hint">Мінімум 8 символів, велика літера і цифра.</div>
-<div id="registerStatus"></div>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="registerUser()">Зареєструватися</button>
-<button class="google-auth-btn" onclick="signInWithGoogle()"><span aria-hidden="true" class="google-icon"><svg height="20" viewbox="0 0 48 48" width="20"><path d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.207 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"></path><path d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4c-7.682 0-14.347 4.337-17.694 10.691z" fill="#FF3D00"></path><path d="M24 44c5.166 0 9.86-1.977 13.409-5.197l-6.19-5.238C29.143 35.091 26.715 36 24 36c-5.186 0-9.625-3.329-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"></path><path d="M43.611 20.083H42V20H24v8h11.303a12.05 12.05 0 0 1-4.084 5.565l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"></path></svg></span> Продовжити через Google</button>
-<button onclick="closeRegisterModal()" style="background:#444;color:#fff;">Скасувати</button>
-</div>
-</div>
-</div>
-<div class="modal" id="loginModal" onclick="handleModalBackdrop(event, 'loginModal', closeLoginModal)">
-<div class="modal-content">
-<h3 style="margin-top:0;">Вхід</h3>
-<input id="loginEmail" placeholder="Електронна пошта" type="email"/>
-<input id="loginPassword" placeholder="Пароль" type="password"/>
-<div id="loginStatus" style="font-size:13px;color:#90ee90;min-height:18px;margin-top:8px;"></div>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="loginUser()">Увійти</button>
-<button class="google-auth-btn" onclick="signInWithGoogle()"><span aria-hidden="true" class="google-icon"><svg height="20" viewbox="0 0 48 48" width="20"><path d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.207 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"></path><path d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4c-7.682 0-14.347 4.337-17.694 10.691z" fill="#FF3D00"></path><path d="M24 44c5.166 0 9.86-1.977 13.409-5.197l-6.19-5.238C29.143 35.091 26.715 36 24 36c-5.186 0-9.625-3.329-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"></path><path d="M43.611 20.083H42V20H24v8h11.303a12.05 12.05 0 0 1-4.084 5.565l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"></path></svg></span> Увійти через Google</button>
-<button onclick="closeLoginModal()" style="background:#444;color:#fff;">Скасувати</button>
-</div>
-</div>
-</div>
-<div class="modal auth-required-modal" id="authRequiredModal">
-<div class="modal-content">
-<h3 style="margin-top:0;">Ви ще не зареєструвалися</h3>
-<p style="color:#fff;">Можна додавати товар і без реєстрації. Але гостьовий кошик збережеться тільки в цьому браузері.</p>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="openRegisterFromWarning()">Зареєструватися</button>
-<button onclick="closeAuthRequiredModal()" style="background:#444;color:#fff;">Закрити</button>
-</div>
-</div>
-</div>
-<div class="modal" id="registerModal" onclick="handleModalBackdrop(event, 'registerModal', closeRegisterModal)">
-<div class="modal-content">
-<h3 style="margin-top:0;">Реєстрація</h3>
-<input id="registerName" placeholder="Ім'я" type="text"/>
-<input id="registerEmail" placeholder="Електронна пошта" type="email"/>
-<input id="registerPassword" placeholder="Створіть надійний пароль" type="password"/>
-<div class="password-hint">Мінімум 8 символів, велика літера і цифра.</div>
-<div id="registerStatus"></div>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="registerUser()">Зареєструватися</button>
-<button onclick="closeRegisterModal()" style="background:#444;color:#fff;">Скасувати</button>
-</div>
-</div>
-</div>
-<div class="modal" id="loginModal" onclick="handleModalBackdrop(event, 'loginModal', closeLoginModal)">
-<div class="modal-content">
-<h3 style="margin-top:0;">Вхід</h3>
-<input id="loginEmail" placeholder="Електронна пошта" type="email"/>
-<input id="loginPassword" placeholder="Пароль" type="password"/>
-<div id="loginStatus"></div>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="loginUser()">Увійти</button>
-<button onclick="closeLoginModal()" style="background:#444;color:#fff;">Скасувати</button>
 </div>
 </div>
 </div>
@@ -2689,16 +2770,19 @@ function populateCategorySelects(){
   const editCat=document.getElementById("editCategory");
   const filterCat=document.getElementById("categoryFilter");
   const editMainCat=document.getElementById("editMainCategory");
+  const filterMainCat=document.getElementById("mainCategoryFilter");
   editCat.innerHTML="<option value=''>Без категорії</option>";
   filterCat.innerHTML="<option value=''>Категорії</option>";
+  if(filterMainCat) filterMainCat.innerHTML="<option value=''>Основні категорії</option>";
   if(editMainCat) editMainCat.innerHTML="<option value=''>Додати в осн. категорію</option>";
   categories.forEach(cat=>{
     editCat.innerHTML+=`<option value="${cat}">${cat}</option>`;
     filterCat.innerHTML+=`<option value="${cat}">${cat}</option>`;
   });
-  if(editMainCat){
+  if(editMainCat || filterMainCat){
     mainCategories.forEach(cat=>{
-      editMainCat.innerHTML+=`<option value="${cat}">${cat}</option>`;
+      if(editMainCat) editMainCat.innerHTML+=`<option value="${cat}">${cat}</option>`;
+      if(filterMainCat) filterMainCat.innerHTML+=`<option value="${cat}">${cat}</option>`;
     });
   }
   populateCategoryList();
@@ -2733,21 +2817,10 @@ function showAddedToCart(){
 }
 
 function renderMainCategories(){
-  const container = document.getElementById('topMainCategories');
-  if(!container) return;
-  const items = [...mainCategories];
-  container.innerHTML = items.map(cat => {
-    const value = cat;
-    const active = currentMainCategoryFilter === value ? 'active' : '';
-    return `<button class="top-main-category-btn ${active}" onclick='setMainCategoryFilter(${JSON.stringify("")})'></button>`;
-  }).join('');
-  const buttons = container.querySelectorAll('.top-main-category-btn');
-  buttons.forEach((btn, idx) => {
-    const label = items[idx];
-    const value = label === 'Усі' ? '' : label;
-    btn.textContent = label;
-    btn.onclick = () => setMainCategoryFilter(value);
-  });
+  const mainSelect = document.getElementById('mainCategoryFilter');
+  if(mainSelect && mainSelect.value !== currentMainCategoryFilter){
+    mainSelect.value = currentMainCategoryFilter;
+  }
 }
 
 function setMainCategoryFilter(category){
@@ -2778,8 +2851,12 @@ function goToHomeScreen(){
   currentMainCategoryFilter = "";
   const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
+  const mainCategoryFilter = document.getElementById("mainCategoryFilter");
   if(searchInput) searchInput.value = "";
   if(categoryFilter) categoryFilter.value = "";
+  if(mainCategoryFilter) mainCategoryFilter.value = "";
+  const categoryChooseCurrent = document.getElementById("categoryChooseCurrent");
+  if(categoryChooseCurrent) categoryChooseCurrent.textContent = "Усі товари";
   updateSubCategoryBackButton();
   renderMainCategories();
   applyAllFilters();
@@ -2888,6 +2965,12 @@ function handleSearch(){
   document.getElementById("addProductBtn").style.display="none";
   document.getElementById("manageCategoriesBtn").style.display="none";
   document.getElementById("manageMainCategoriesBtn").style.display="none";
+  applyAllFilters();
+}
+
+function filterMainCategory(){
+  const select = document.getElementById("mainCategoryFilter");
+  currentMainCategoryFilter = select ? select.value : "";
   applyAllFilters();
 }
 
@@ -4945,5 +5028,221 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 })();
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const catalog = document.querySelector('.container');
+  const categories = document.getElementById('topMainCategories');
+
+  const returnBtn = document.getElementById('catalogReturnBtn');
+  if(catalog) catalog.classList.add('catalog-hidden');
+  if(categories) categories.classList.add('catalog-hidden');
+  if(returnBtn) returnBtn.style.display = 'none';
+});
+
+function toggleCatalogView(){
+  const catalog = document.querySelector('.container');
+  const categories = document.getElementById('topMainCategories');
+  const header = document.getElementById('topHeaderSection');
+  const hero = document.getElementById('heroSection');
+  const overview = document.getElementById('overviewSection');
+  const ads = document.getElementById('adsSection');
+  const btn = document.getElementById('catalogToggleBtn');
+  const returnBtn = document.getElementById('catalogReturnBtn');
+
+  const isHidden = catalog.classList.contains('catalog-hidden');
+
+  if(isHidden){
+    catalog.classList.remove('catalog-hidden');
+    if(categories) categories.classList.remove('catalog-hidden');
+
+    if(header) header.style.display = 'none';
+    if(hero) hero.style.display = 'none';
+    if(overview) overview.style.display = 'none';
+    if(ads) ads.style.display = 'none';
+
+    if(btn) btn.textContent = 'Повернутися';
+    if(returnBtn) returnBtn.style.display = 'inline-flex';
+
+    setTimeout(() => {
+      catalog.scrollIntoView({behavior:'smooth'});
+    }, 100);
+  }else{
+    catalog.classList.add('catalog-hidden');
+    if(categories) categories.classList.add('catalog-hidden');
+
+    if(header) header.style.display = '';
+    if(hero) hero.style.display = '';
+    if(overview) overview.style.display = '';
+    if(ads) ads.style.display = '';
+
+    if(btn) btn.textContent = 'Переглянути каталог';
+    if(returnBtn) returnBtn.style.display = 'none';
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+}
+</script>
+
+<!-- CATEGORY CHOOSE MODAL START -->
+<div class="modal" id="categoryChooseModal" onclick="closeCategoryChooseModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h2 class="category-choose-title">Категорії</h2>
+    <div class="category-choose-subtitle">Оберіть основну або звичайну категорію</div>
+    <div class="category-choose-list" id="categoryChooseList"></div>
+    <button class="category-choose-close" onclick="closeCategoryChooseModal()" type="button">Закрити</button>
+  </div>
+</div>
+<script>
+function getSafeCategoryText(value){
+  return String(value || '').trim();
+}
+
+function uniqueCategoryItems(items){
+  const seen = new Set();
+  return items.filter(item => {
+    const key = String(item.type + ':' + item.value).toLowerCase();
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function buildCategoryChooseItems(){
+  const items = [{type:'all', value:'', label:'Усі товари', group:'all'}];
+
+  const mainSelect = document.getElementById('mainCategoryFilter');
+  if(mainSelect){
+    Array.from(mainSelect.options || []).forEach(opt => {
+      const value = getSafeCategoryText(opt.value);
+      const label = getSafeCategoryText(opt.textContent);
+      if(value){
+        items.push({type:'main', value, label: label || value, group:'main'});
+      }
+    });
+  }
+
+  if(typeof mainCategories !== 'undefined' && Array.isArray(mainCategories)){
+    mainCategories.forEach(cat => {
+      const name = getSafeCategoryText(cat);
+      if(name) items.push({type:'main', value:name, label:name, group:'main'});
+    });
+  }
+
+  const categorySelect = document.getElementById('categoryFilter');
+  if(categorySelect){
+    Array.from(categorySelect.options || []).forEach(opt => {
+      const value = getSafeCategoryText(opt.value);
+      const label = getSafeCategoryText(opt.textContent);
+      if(value){
+        items.push({type:'category', value, label: label || value, group:'category'});
+      }
+    });
+  }
+
+  if(typeof categories !== 'undefined' && Array.isArray(categories)){
+    categories.forEach(cat => {
+      const name = getSafeCategoryText(cat);
+      if(name) items.push({type:'category', value:name, label:name, group:'category'});
+    });
+  }
+
+  return uniqueCategoryItems(items);
+}
+
+function openCategoryChooseModal(){
+  const modal = document.getElementById('categoryChooseModal');
+  const list = document.getElementById('categoryChooseList');
+  if(!modal || !list) return;
+
+  const mainValue = getSafeCategoryText(document.getElementById('mainCategoryFilter')?.value);
+  const categoryValue = getSafeCategoryText(document.getElementById('categoryFilter')?.value);
+  const items = buildCategoryChooseItems();
+
+  list.innerHTML = '';
+  const groups = [
+    {key:'all', title:''},
+    {key:'main', title:'Основні категорії'},
+    {key:'category', title:'Категорії'}
+  ];
+
+  groups.forEach(group => {
+    const groupItems = items.filter(item => item.group === group.key);
+    if(!groupItems.length) return;
+
+    if(group.title){
+      const title = document.createElement('div');
+      title.className = 'category-choose-section-title';
+      title.textContent = group.title;
+      list.appendChild(title);
+    }
+
+    groupItems.forEach(item => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'category-choose-item';
+      const active = (item.type === 'all' && !mainValue && !categoryValue) ||
+        (item.type === 'main' && mainValue === item.value) ||
+        (item.type === 'category' && categoryValue === item.value);
+      if(active) btn.classList.add('active');
+      btn.textContent = item.label;
+      btn.onclick = () => chooseCategoryFromWindow(item.type, item.value, item.label);
+      list.appendChild(btn);
+    });
+  });
+
+  modal.style.display = 'flex';
+  document.documentElement.classList.add('no-scroll');
+  document.body.classList.add('no-scroll');
+}
+
+function closeCategoryChooseModal(event){
+  if(event && event.target && event.target.id !== 'categoryChooseModal') return;
+  const modal = document.getElementById('categoryChooseModal');
+  if(modal) modal.style.display = 'none';
+  document.documentElement.classList.remove('no-scroll');
+  document.body.classList.remove('no-scroll');
+}
+
+function chooseCategoryFromWindow(type, value, label){
+  const mainSelect = document.getElementById('mainCategoryFilter');
+  const categorySelect = document.getElementById('categoryFilter');
+  const currentLabel = document.getElementById('categoryChooseCurrent');
+
+  if(type === 'all'){
+    if(mainSelect) mainSelect.value = '';
+    if(categorySelect) categorySelect.value = '';
+    if(typeof currentMainCategoryFilter !== 'undefined') currentMainCategoryFilter = '';
+    if(currentLabel) currentLabel.textContent = 'Усі товари';
+  }
+
+  if(type === 'main'){
+    if(mainSelect) mainSelect.value = value;
+    if(categorySelect) categorySelect.value = '';
+    if(typeof currentMainCategoryFilter !== 'undefined') currentMainCategoryFilter = value;
+    if(currentLabel) currentLabel.textContent = label;
+  }
+
+  if(type === 'category'){
+    if(categorySelect) categorySelect.value = value;
+    if(mainSelect) mainSelect.value = '';
+    if(typeof currentMainCategoryFilter !== 'undefined') currentMainCategoryFilter = '';
+    if(currentLabel) currentLabel.textContent = label;
+  }
+
+  if(typeof updateSubCategoryBackButton === 'function') updateSubCategoryBackButton();
+  if(typeof renderMainCategories === 'function') renderMainCategories();
+  if(typeof applyAllFilters === 'function') applyAllFilters();
+  else if(typeof renderProducts === 'function') renderProducts();
+
+  closeCategoryChooseModal();
+}
+</script>
+<!-- CATEGORY CHOOSE MODAL END -->
+
 </body>
+
 </html>
