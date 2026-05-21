@@ -2172,6 +2172,70 @@ body::before{
 </div>
 </div>
 </div>
+<div class="modal" id="registerModal" onclick="handleModalBackdrop(event, 'registerModal', closeRegisterModal)">
+<div class="modal-content">
+<h3 style="margin-top:0;">Реєстрація</h3>
+<input id="registerName" placeholder="Ім'я" type="text"/>
+<input id="registerEmail" placeholder="Електронна пошта" type="email"/>
+<input id="registerPassword" placeholder="Створіть надійний пароль" type="password"/>
+<div class="password-hint">Мінімум 8 символів, велика літера і цифра.</div>
+<div id="registerStatus"></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+<button class="register-btn" onclick="registerUser()">Зареєструватися</button>
+<button class="google-auth-btn" onclick="signInWithGoogle()"><span aria-hidden="true" class="google-icon"><svg height="20" viewbox="0 0 48 48" width="20"><path d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.207 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"></path><path d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4c-7.682 0-14.347 4.337-17.694 10.691z" fill="#FF3D00"></path><path d="M24 44c5.166 0 9.86-1.977 13.409-5.197l-6.19-5.238C29.143 35.091 26.715 36 24 36c-5.186 0-9.625-3.329-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"></path><path d="M43.611 20.083H42V20H24v8h11.303a12.05 12.05 0 0 1-4.084 5.565l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"></path></svg></span> Продовжити через Google</button>
+<button onclick="closeRegisterModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
+</div>
+</div>
+<div class="modal" id="loginModal" onclick="handleModalBackdrop(event, 'loginModal', closeLoginModal)">
+<div class="modal-content">
+<h3 style="margin-top:0;">Вхід</h3>
+<input id="loginEmail" placeholder="Електронна пошта" type="email"/>
+<input id="loginPassword" placeholder="Пароль" type="password"/>
+<div id="loginStatus" style="font-size:13px;color:#90ee90;min-height:18px;margin-top:8px;"></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+<button class="register-btn" onclick="loginUser()">Увійти</button>
+<button class="google-auth-btn" onclick="signInWithGoogle()"><span aria-hidden="true" class="google-icon"><svg height="20" viewbox="0 0 48 48" width="20"><path d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.207 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"></path><path d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.27 4 24 4c-7.682 0-14.347 4.337-17.694 10.691z" fill="#FF3D00"></path><path d="M24 44c5.166 0 9.86-1.977 13.409-5.197l-6.19-5.238C29.143 35.091 26.715 36 24 36c-5.186 0-9.625-3.329-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"></path><path d="M43.611 20.083H42V20H24v8h11.303a12.05 12.05 0 0 1-4.084 5.565l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"></path></svg></span> Увійти через Google</button>
+<button onclick="closeLoginModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
+</div>
+</div>
+<div class="modal auth-required-modal" id="authRequiredModal">
+<div class="modal-content">
+<h3 style="margin-top:0;">Ви ще не зареєструвалися</h3>
+<p style="color:#fff;">Можна додавати товар і без реєстрації. Але гостьовий кошик збережеться тільки в цьому браузері.</p>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+<button class="register-btn" onclick="openRegisterFromWarning()">Зареєструватися</button>
+<button onclick="closeAuthRequiredModal()" style="background:#444;color:#fff;">Закрити</button>
+</div>
+</div>
+</div>
+<div class="modal" id="registerModal" onclick="handleModalBackdrop(event, 'registerModal', closeRegisterModal)">
+<div class="modal-content">
+<h3 style="margin-top:0;">Реєстрація</h3>
+<input id="registerName" placeholder="Ім'я" type="text"/>
+<input id="registerEmail" placeholder="Електронна пошта" type="email"/>
+<input id="registerPassword" placeholder="Створіть надійний пароль" type="password"/>
+<div class="password-hint">Мінімум 8 символів, велика літера і цифра.</div>
+<div id="registerStatus"></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+<button class="register-btn" onclick="registerUser()">Зареєструватися</button>
+<button onclick="closeRegisterModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
+</div>
+</div>
+<div class="modal" id="loginModal" onclick="handleModalBackdrop(event, 'loginModal', closeLoginModal)">
+<div class="modal-content">
+<h3 style="margin-top:0;">Вхід</h3>
+<input id="loginEmail" placeholder="Електронна пошта" type="email"/>
+<input id="loginPassword" placeholder="Пароль" type="password"/>
+<div id="loginStatus"></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+<button class="register-btn" onclick="loginUser()">Увійти</button>
+<button onclick="closeLoginModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
+</div>
+</div>
 <div class="modal" id="profileModal">
 <div class="modal-content">
 <h3 style="margin-top:0;">Профіль</h3>
