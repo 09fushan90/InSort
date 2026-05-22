@@ -1861,6 +1861,59 @@ body::before{
 }
 /* CATEGORY CHOOSE MODAL CSS END */
 
+
+
+/* PRODUCT SECTIONS CSS START */
+.product-section-block{
+  grid-column:1 / -1;
+  width:100%;
+  margin:12px 0 4px;
+}
+.product-section-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:14px 18px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#101010,#1b1b1b);
+  border:1px solid rgba(107,255,42,.24);
+  color:#6bff2a;
+  font-size:24px;
+  font-weight:900;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+.product-section-empty{
+  color:#111;
+  background:#f3f3f3;
+  border-color:#d9e6d9;
+}
+.product-section-list-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px 12px;
+  margin:8px 0;
+  border-radius:14px;
+  background:#181818;
+  border:1px solid rgba(107,255,42,.18);
+  color:#fff;
+}
+.product-section-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.product-section-actions button{
+  margin:0;
+  padding:7px 10px;
+  border-radius:10px;
+}
+@media(max-width:700px){
+  .product-section-title{font-size:19px;padding:12px 14px;}
+}
+/* PRODUCT SECTIONS CSS END */
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -2026,6 +2079,7 @@ body::before{
 <button id="addProductBtn" onclick="openAddModal()" style="display:none;">Додати товар</button>
 <button id="manageCategoriesBtn" onclick="openCategoryModal()" style="display:none;">Категорії</button>
 <button id="manageMainCategoriesBtn" onclick="openMainCategoryModal()" style="display:none;">Осн. категорії</button>
+<button id="manageProductSectionsBtn" onclick="openProductSectionModal()" style="display:none;">Секції товарів</button>
 </div>
 </div>
 <div class="search-box">
@@ -2080,6 +2134,7 @@ body::before{
 <button onclick="addImageFromUrl()">Додати фото по URL</button>
 <select id="editCategory"></select>
 <select id="editMainCategory"><option value="">Додати в осн. категорію</option></select>
+<select id="editProductSection"><option value="">Без секції</option></select>
 <button onclick="saveProduct()">Зберегти</button>
 <button onclick="closeEditModal()">Скасувати</button>
 <button id="deleteBtn" onclick="deleteProduct()" style="background:red;color:white;display:none;margin-top:5px;">Видалити</button>
@@ -2094,6 +2149,18 @@ body::before{
 <button onclick="closeMainCategoryModal()">Скасувати</button>
 </div>
 </div>
+
+<div class="modal" id="productSectionModal">
+<div class="modal-content">
+<h3>Секції товарів</h3>
+<p style="font-size:13px;color:#b8efb8;margin-top:0;">Товари будуть показуватись по секціях зверху вниз: 1 секція, потім 2 секція і так далі.</p>
+<div id="productSectionList"></div>
+<input id="newProductSection" placeholder="Назва секції, наприклад: 1 секція" type="text"/>
+<button onclick="addProductSection()">Додати секцію</button>
+<button onclick="closeProductSectionModal()">Скасувати</button>
+</div>
+</div>
+
 <div class="modal" id="categoryModal">
 <div class="modal-content">
 <h3>Категорії</h3>
@@ -2686,14 +2753,16 @@ const db = firebase.database();
 // Економний режим для Blaze: кеш каталогу в localStorage,
 // один вузол catalog замість трьох окремих читань і без analytics/storage.
 const CATALOG_CACHE_KEY = 'inst_asortiments_catalog_cache_v1';
-const CATALOG_CACHE_MAX_AGE = 1000 * 60 * 60 * 24; // 24 години
+const CATALOG_CACHE_MAX_AGE = 1000 * 60 * 5; // 5 хвилин, щоб телефон швидко бачив нові рекламні фото
 
 function getCatalogPayload(){
   const payload = {
     products: Array.isArray(products) ? products : [],
     categories: Array.isArray(categories) ? categories : [],
     mainCategories: Array.isArray(mainCategories) ? mainCategories : [],
-    ads: Array.isArray(ads) ? ads : []
+    productSections: Array.isArray(productSections) ? productSections : [],
+    ads: Array.isArray(ads) ? ads : [],
+    updatedAt: Date.now()
   };
   // Важливо: не стираємо редагування головного екрана, коли адмін зберігає товар/категорії.
   if(typeof officeContent !== "undefined" && officeContent && Object.keys(officeContent).length){
@@ -2710,7 +2779,9 @@ function saveCatalogToCache(payload){
         products: Array.isArray(payload.products) ? payload.products : [],
         categories: Array.isArray(payload.categories) ? payload.categories : [],
         mainCategories: Array.isArray(payload.mainCategories) ? payload.mainCategories : [],
-        ads: Array.isArray(payload.ads) ? payload.ads : []
+        productSections: Array.isArray(payload.productSections) ? payload.productSections : [],
+        ads: Array.isArray(payload.ads) ? payload.ads : [],
+        updatedAt: payload.updatedAt || Date.now()
       }
     }));
   }catch(error){
@@ -2735,11 +2806,13 @@ function applyCatalogData(payload){
   products = Array.isArray(payload?.products) ? payload.products : [];
   categories = Array.isArray(payload?.categories) ? payload.categories : [];
   mainCategories = Array.isArray(payload?.mainCategories) ? payload.mainCategories : [];
+  productSections = Array.isArray(payload?.productSections) ? payload.productSections : [];
   ads = Array.isArray(payload?.ads) ? payload.ads : [];
 }
 
 function renderCatalogUI(){
   populateCategorySelects();
+  populateProductSectionSelect();
   renderMainCategories();
   updateSubCategoryBackButton();
   syncCartWithProducts();
@@ -2757,7 +2830,9 @@ async function fetchCatalogFromDatabase(){
       products: Array.isArray(catalog.products) ? catalog.products : [],
       categories: Array.isArray(catalog.categories) ? catalog.categories : [],
       mainCategories: Array.isArray(catalog.mainCategories) ? catalog.mainCategories : [],
-      ads: Array.isArray(catalog.ads) ? catalog.ads : []
+      productSections: Array.isArray(catalog.productSections) ? catalog.productSections : [],
+      ads: Array.isArray(catalog.ads) ? catalog.ads : [],
+      updatedAt: catalog.updatedAt || Date.now()
     };
   }
 
@@ -2772,7 +2847,9 @@ async function fetchCatalogFromDatabase(){
     products: productsSnap.val() || [],
     categories: categoriesSnap.val() || [],
     mainCategories: mainCategoriesSnap.val() || [],
-    ads: []
+    productSections: [],
+    ads: [],
+    updatedAt: Date.now()
   };
 }
 
@@ -2836,6 +2913,7 @@ let currentProductId = null;
 let currentImages = [];
 let currentIndex = 0;
 let mainCategories = [];
+let productSections = [];
 let ads = [];
 let editingAdId = null;
 let tempAdImage = "";
@@ -2857,14 +2935,13 @@ function isAdminUser(){
   return false;
 }
 
-// Економне завантаження каталогу: спочатку кеш, потім база за потреби.
+// Економне завантаження каталогу: показуємо кеш одразу, але завжди перевіряємо базу.
 async function loadData(forceRefresh = false){
   const cachedCatalog = !forceRefresh ? getCatalogFromCache() : null;
 
   if(cachedCatalog){
     applyCatalogData(cachedCatalog);
     renderCatalogUI();
-    return;
   }
 
   try{
@@ -2874,6 +2951,10 @@ async function loadData(forceRefresh = false){
     renderCatalogUI();
   }catch(error){
     console.error('Помилка завантаження каталогу', error);
+
+    if(cachedCatalog){
+      return;
+    }
 
     const fallbackCatalog = getCatalogFromCache(Number.MAX_SAFE_INTEGER);
     if(fallbackCatalog){
@@ -2885,14 +2966,42 @@ async function loadData(forceRefresh = false){
     products = [];
     categories = [];
     mainCategories = [];
+    productSections = [];
+    ads = [];
     renderCatalogUI();
   }
 }
 
 function saveToDatabase(){
   const payload = getCatalogPayload();
+  payload.updatedAt = Date.now();
   saveCatalogToCache(payload);
   return db.ref('catalog').set(payload);
+}
+
+let catalogRealtimeStarted = false;
+function startCatalogRealtimeSync(){
+  if(catalogRealtimeStarted) return;
+  catalogRealtimeStarted = true;
+  try{
+    db.ref('catalog').on('value', (snapshot) => {
+      const catalog = snapshot.val();
+      if(!catalog) return;
+      const payload = {
+        products: Array.isArray(catalog.products) ? catalog.products : [],
+        categories: Array.isArray(catalog.categories) ? catalog.categories : [],
+        mainCategories: Array.isArray(catalog.mainCategories) ? catalog.mainCategories : [],
+        productSections: Array.isArray(catalog.productSections) ? catalog.productSections : [],
+        ads: Array.isArray(catalog.ads) ? catalog.ads : [],
+        updatedAt: catalog.updatedAt || Date.now()
+      };
+      applyCatalogData(payload);
+      saveCatalogToCache(payload);
+      renderCatalogUI();
+    });
+  }catch(error){
+    console.warn('Не вдалося увімкнути автооновлення каталогу', error);
+  }
 }
 function hideLoader(){
   document.getElementById("loader").classList.add("hide");
@@ -3043,6 +3152,7 @@ function addMainCategory(){
   document.getElementById("newMainCategory").value="";
   saveToDatabase();
   populateCategorySelects();
+  populateProductSectionSelect();
   renderMainCategories();
 }
 function removeMainCategory(cat){
@@ -3056,6 +3166,86 @@ function removeMainCategory(cat){
     applyAllFilters();
   }
 }
+
+function populateProductSectionSelect(){
+  const select = document.getElementById("editProductSection");
+  if(!select) return;
+  const current = select.value || "";
+  select.innerHTML = "<option value=''>Без секції</option>";
+  productSections.forEach(section => {
+    select.innerHTML += `<option value="${String(section).replace(/"/g, '&quot;')}">${section}</option>`;
+  });
+  select.value = productSections.includes(current) ? current : "";
+  populateProductSectionList();
+}
+
+function openProductSectionModal(){
+  if(!isAdminUser()) return;
+  populateProductSectionList();
+  document.getElementById("productSectionModal").style.display = "flex";
+}
+function closeProductSectionModal(){
+  document.getElementById("productSectionModal").style.display = "none";
+}
+function populateProductSectionList(){
+  const list = document.getElementById("productSectionList");
+  if(!list) return;
+  list.innerHTML = "";
+  if(!productSections.length){
+    list.innerHTML = `<div style="color:#b8efb8;margin:10px 0;">Секцій ще немає.</div>`;
+    return;
+  }
+  productSections.forEach((section, index) => {
+    const row = document.createElement("div");
+    row.className = "product-section-list-row";
+    row.innerHTML = `
+      <strong>${section}</strong>
+      <div class="product-section-actions">
+        <button type="button" ${index === 0 ? 'disabled' : ''}>↑</button>
+        <button type="button" ${index === productSections.length - 1 ? 'disabled' : ''}>↓</button>
+        <button type="button" style="background:#c62828;color:#fff;">Видалити</button>
+      </div>
+    `;
+    const [upBtn, downBtn, delBtn] = row.querySelectorAll("button");
+    upBtn.onclick = () => moveProductSection(index, -1);
+    downBtn.onclick = () => moveProductSection(index, 1);
+    delBtn.onclick = () => removeProductSection(section);
+    list.appendChild(row);
+  });
+}
+function addProductSection(){
+  if(!isAdminUser()) return;
+  const input = document.getElementById("newProductSection");
+  const section = (input?.value || "").trim();
+  if(!section) return;
+  if(!productSections.includes(section)) productSections.push(section);
+  if(input) input.value = "";
+  saveToDatabase();
+  populateProductSectionSelect();
+  applyAllFilters();
+}
+function moveProductSection(index, direction){
+  if(!isAdminUser()) return;
+  const nextIndex = index + direction;
+  if(nextIndex < 0 || nextIndex >= productSections.length) return;
+  const copy = [...productSections];
+  const [item] = copy.splice(index, 1);
+  copy.splice(nextIndex, 0, item);
+  productSections = copy;
+  saveToDatabase();
+  populateProductSectionSelect();
+  applyAllFilters();
+}
+function removeProductSection(section){
+  if(!isAdminUser()) return;
+  if(!confirm(`Видалити секцію "${section}"? Товари залишаться, але будуть без секції.`)) return;
+  productSections = productSections.filter(s => s !== section);
+  products.forEach(p => { if(p.section === section) p.section = ""; });
+  saveToDatabase();
+  populateProductSectionSelect();
+  applyAllFilters();
+}
+
 function openOffice(){
   if(!isAdminUser()) return;
 
@@ -3064,17 +3254,20 @@ function openOffice(){
   const addBtn = document.getElementById("addProductBtn");
   const catBtn = document.getElementById("manageCategoriesBtn");
   const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
+  const sectionBtn = document.getElementById("manageProductSectionsBtn");
 
   if(adminMode){
     if(addBtn) addBtn.style.display="inline-block";
     if(catBtn) catBtn.style.display="inline-block";
     if(mainCatBtn) mainCatBtn.style.display="inline-block";
+    if(sectionBtn) sectionBtn.style.display="inline-block";
     if(typeof setOfficeEditMode === "function") setOfficeEditMode(true);
     showSiteNotice("Офіс увімкнено. Тепер натискай на текст або фото, щоб редагувати їх.");
   } else {
     if(addBtn) addBtn.style.display="none";
     if(catBtn) catBtn.style.display="none";
     if(mainCatBtn) mainCatBtn.style.display="none";
+    if(sectionBtn) sectionBtn.style.display="none";
     if(typeof setOfficeEditMode === "function") setOfficeEditMode(false);
     goToHomeScreen();
   }
@@ -3085,23 +3278,30 @@ function openOffice(){
 }
 
 function handleSearch(){
-  let value=document.getElementById("searchInput").value.toLowerCase();
-  if(value==="0990" && isAdminUser()){
-    adminMode=true;
-    document.getElementById("addProductBtn").style.display="inline-block";
-    document.getElementById("manageCategoriesBtn").style.display="inline-block";
-    document.getElementById("manageMainCategoriesBtn").style.display="inline-block";
-    renderProducts();
+  const searchInput = document.getElementById("searchInput");
+  const value = (searchInput?.value || "").toLowerCase();
+
+  // Секретний вхід лишився, але звичайний пошук більше НЕ вимикає режим Офісу.
+  if(value === "0990"){
+    if(isAdminUser()){
+      adminMode = true;
+      const addBtn = document.getElementById("addProductBtn");
+      const catBtn = document.getElementById("manageCategoriesBtn");
+      const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
+      const sectionBtn = document.getElementById("manageProductSectionsBtn");
+      if(addBtn) addBtn.style.display = "inline-block";
+      if(catBtn) catBtn.style.display = "inline-block";
+      if(mainCatBtn) mainCatBtn.style.display = "inline-block";
+      if(sectionBtn) sectionBtn.style.display = "inline-block";
+      if(typeof setOfficeEditMode === "function") setOfficeEditMode(true);
+      renderProducts();
+      renderAds();
+    } else if(searchInput){
+      searchInput.value = "";
+    }
     return;
   }
-  if(value==="0990" && !isAdminUser()){
-    document.getElementById("searchInput").value="";
-  }
-  adminMode=false;
-  if(typeof setOfficeEditMode === "function") setOfficeEditMode(false);
-  document.getElementById("addProductBtn").style.display="none";
-  document.getElementById("manageCategoriesBtn").style.display="none";
-  document.getElementById("manageMainCategoriesBtn").style.display="none";
+
   applyAllFilters();
 }
 
@@ -3268,6 +3468,7 @@ function openAddModal(){
   document.getElementById("editDesc").value = "";
   document.getElementById("editCategory").value = "";
   if(document.getElementById("editMainCategory")) document.getElementById("editMainCategory").value = "";
+  if(document.getElementById("editProductSection")) document.getElementById("editProductSection").value = "";
   document.getElementById("editImageUrl").value = "";
   document.getElementById("editImageFile").value = "";
   tempImages = [];
@@ -3287,6 +3488,7 @@ function openEditModal(id){
   document.getElementById("editDesc").value = p.desc || "";
   document.getElementById("editCategory").value = p.category || "";
   if(document.getElementById("editMainCategory")) document.getElementById("editMainCategory").value = p.mainCategory || "";
+  if(document.getElementById("editProductSection")) document.getElementById("editProductSection").value = p.section || "";
   document.getElementById("editImageUrl").value = "";
   document.getElementById("editImageFile").value = "";
   tempImages = Array.isArray(p.image) ? [...p.image] : (p.image ? [p.image] : []);
@@ -3302,6 +3504,7 @@ function saveProduct(){
   let desc = document.getElementById("editDesc").value;
   let category = document.getElementById("editCategory").value;
   let mainCategory = document.getElementById("editMainCategory") ? document.getElementById("editMainCategory").value : "";
+  let section = document.getElementById("editProductSection") ? document.getElementById("editProductSection").value : "";
 
   let imageUrl = document.getElementById("editImageUrl").value
     .split("\n")
@@ -3316,11 +3519,11 @@ function saveProduct(){
       ? imageUrl 
       : (editingId ? products.find(x=>x.id===editingId).image : []);
 
-  saveProductData(title, price, desc, category, mainCategory, images);
+  saveProductData(title, price, desc, category, mainCategory, section, images);
 }
 
 // saveProductData с массивом изображений
-function saveProductData(title, price, desc, category, mainCategory, images){
+function saveProductData(title, price, desc, category, mainCategory, section, images){
   const normalizedImages = Array.isArray(images) ? images.filter(Boolean) : [images].filter(Boolean);
 
   if(editingId){
@@ -3331,6 +3534,7 @@ function saveProductData(title, price, desc, category, mainCategory, images){
     p.desc = desc;
     p.category = category;
     p.mainCategory = mainCategory || "";
+    p.section = section || "";
     p.image = normalizedImages;
   } else {
     products.push({
@@ -3340,6 +3544,7 @@ function saveProductData(title, price, desc, category, mainCategory, images){
       desc,
       category,
       mainCategory: mainCategory || "",
+      section: section || "",
       image: normalizedImages
     });
   }
@@ -3789,7 +3994,8 @@ selectedProducts = loadCartFromStorage();
 updateSelectedUI();
 if(typeof updateUserBadge === 'function') updateUserBadge();
 loadOfficeContent();
-loadData();
+loadData(true);
+startCatalogRealtimeSync();
 
 function loadCartFromStorage(){
   try {
@@ -4219,6 +4425,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function getFreshAdImageSrc(src, version){
+  if(!src) return '';
+  if(String(src).startsWith('data:')) return src;
+  const separator = String(src).includes('?') ? '&' : '?';
+  return `${src}${separator}v=${encodeURIComponent(version || Date.now())}`;
+}
+
 function renderAds(){
   const list = document.getElementById('adsList');
   if(!list) return;
@@ -4251,8 +4464,9 @@ function renderAds(){
     const card = document.createElement('div');
     card.className = 'ad-card';
     card.dataset.id = ad.id;
-    const imageHtml = ad.image
-      ? `<img src="${ad.image}" alt="Реклама">`
+    const adImageSrc = ad.image ? getFreshAdImageSrc(ad.image, ad.updatedAt || ad.id) : '';
+    const imageHtml = adImageSrc
+      ? `<img src="${adImageSrc}" alt="Реклама">`
       : `<div class="ad-card-placeholder"><div><div class="ad-card-placeholder-title">Реклама</div><div class="ad-card-placeholder-text">Натисни редагувати і додай фото.</div></div></div>`;
 
     card.innerHTML = `
@@ -4352,21 +4566,21 @@ function saveAdPhoto(){
 
   if(editingAdId){
     const ad = ads.find(x => String(x.id) === String(editingAdId));
-    if(ad) ad.image = tempAdImage;
+    if(ad){ ad.image = tempAdImage; ad.updatedAt = Date.now(); }
   }else{
     ads.push({
       id: Date.now(),
       image: tempAdImage,
-      productId: ''
+      productId: '',
+      updatedAt: Date.now()
     });
     currentAdSlide = ads.length - 1;
   }
 
   saveAdsLocalBackup();
-  saveAdsLocalBackup();
-  saveAdsLocalBackup();
   saveToDatabase();
   renderAds();
+  showSiteNotice('Рекламу збережено. На телефоні вона оновиться автоматично.');
   closeAdEditModal();
 }
 
@@ -4380,8 +4594,6 @@ function deleteAdById(id){
   const removedIndex = ads.findIndex(ad => String(ad.id) === String(id));
   ads = ads.filter(ad => String(ad.id) !== String(id));
   if(removedIndex >= 0 && currentAdSlide >= removedIndex) currentAdSlide = Math.max(0, currentAdSlide - 1);
-  saveAdsLocalBackup();
-  saveAdsLocalBackup();
   saveAdsLocalBackup();
   saveToDatabase();
   renderAds();
@@ -4443,6 +4655,7 @@ function saveAdLinkedProduct(){
     return;
   }
   ad.productId = selectedAdProductId;
+  ad.updatedAt = Date.now();
   saveAdsLocalBackup();
   saveToDatabase();
   renderAds();
@@ -4452,9 +4665,31 @@ function saveAdLinkedProduct(){
 // обновленный renderProducts
 function renderProducts(list = products){
   const container = document.getElementById("products");
+  if(!container) return;
   container.innerHTML = "";
 
+  const safeText = (value) => String(value ?? "");
+  const orderedSections = Array.isArray(productSections) ? [...productSections] : [];
+  const known = new Set(orderedSections);
+  const extraSections = [];
+
   list.forEach(p => {
+    const section = p.section || "";
+    if(section && !known.has(section) && !extraSections.includes(section)){
+      extraSections.push(section);
+    }
+  });
+
+  const finalSections = [...orderedSections, ...extraSections];
+
+  function appendSectionTitle(title, empty = false){
+    const block = document.createElement("div");
+    block.className = "product-section-block";
+    block.innerHTML = `<div class="product-section-title ${empty ? 'product-section-empty' : ''}">${title}</div>`;
+    container.appendChild(block);
+  }
+
+  function appendProduct(p){
     const displayImage = Array.isArray(p.image) ? p.image[0] : p.image;
 
     const div = document.createElement('div');
@@ -4464,19 +4699,17 @@ function renderProducts(list = products){
     const inCart = selectedProducts.some(item => String(item.id) === String(p.id));
     if(inCart) div.classList.add('selected');
 
-     div.innerHTML = `
-   <img src="${displayImage}">
-   <h4>${p.title}</h4>
-   <p>${p.price} грн</p>
+    div.innerHTML = `
+      <img src="${displayImage || ''}" alt="${safeText(p.title).replace(/"/g, '&quot;')}">
+      <h4>${safeText(p.title)}</h4>
+      <p>${safeText(p.price)} грн</p>
+      <div class="card-buttons">
+        <button class="order-btn ${inCart ? 'added' : ''}">${inCart ? '✔ Прибрати' : 'Додати в замовлення'}</button>
+        <button class="add-btn">Швидке замовлення</button>
+        ${adminMode ? `<button class="edit-btn">Редагувати</button>` : ""}
+      </div>
+    `;
 
-   <div class="card-buttons">
-     <button class="order-btn ${inCart ? 'added' : ''}">${inCart ? '✔ Прибрати' : 'Додати в замовлення'}</button>
-     <button class="add-btn">Швидке замовлення</button>
-     ${adminMode ? `<button class="edit-btn">Редагувати</button>` : ""}
-   </div>
- `;
-
-    // кнопка редагувати
     if(adminMode){
       const editBtn = div.querySelector('.edit-btn');
       editBtn.addEventListener('click', (e)=>{
@@ -4485,7 +4718,6 @@ function renderProducts(list = products){
       });
     }
 
-    // кнопка замовити
     const orderBtn = div.querySelector('.order-btn');
     orderBtn.addEventListener('click', (e)=>{
       e.stopPropagation();
@@ -4493,21 +4725,18 @@ function renderProducts(list = products){
       animateOrderButton(orderBtn);
     });
 
-    // кнопка додати в замовлення
     const addBtn = div.querySelector('.add-btn');
     addBtn.addEventListener('click', (e)=>{
       e.stopPropagation();
       quickOrderProduct(p.title, p.price);
     });
 
-    // клік по картці
     div.addEventListener('click', (e) => {
       if(e.target.tagName !== 'IMG' && e.target.tagName !== 'BUTTON') {
         openViewModal(p.id);
       }
     });
 
-    // відкриття фото
     const img = div.querySelector('img');
     img.addEventListener('click', (e)=>{
       e.stopPropagation();
@@ -4515,7 +4744,24 @@ function renderProducts(list = products){
     });
 
     container.appendChild(div);
-  });
+  }
+
+  if(finalSections.length){
+    finalSections.forEach(section => {
+      const sectionProducts = list.filter(p => (p.section || "") === section);
+      if(sectionProducts.length){
+        appendSectionTitle(section);
+        sectionProducts.forEach(appendProduct);
+      }
+    });
+    const noSectionProducts = list.filter(p => !(p.section || ""));
+    if(noSectionProducts.length){
+      appendSectionTitle("Без секції", true);
+      noSectionProducts.forEach(appendProduct);
+    }
+  } else {
+    list.forEach(appendProduct);
+  }
 }
 
 document.getElementById("viewModal").addEventListener("click", function(e){
