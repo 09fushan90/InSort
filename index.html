@@ -2906,6 +2906,25 @@ function openCart() {
   
 // Магазин
 let adminMode=false;
+
+function keepOfficeModeAfterSearchFix(){
+  // ВАЖЛИВО: пошук перемальовує товари, але не має вимикати режим Офісу.
+  if(typeof adminMode !== "undefined" && adminMode === true){
+    document.body.classList.add("office-active");
+
+    const addBtn = document.getElementById("addProductBtn");
+    const catBtn = document.getElementById("manageCategoriesBtn");
+    const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
+    const sectionBtn = document.getElementById("manageProductSectionsBtn");
+
+    if(addBtn) addBtn.style.display = "inline-block";
+    if(catBtn) catBtn.style.display = "inline-block";
+    if(mainCatBtn) mainCatBtn.style.display = "inline-block";
+    if(sectionBtn) sectionBtn.style.display = "inline-block";
+
+    if(typeof renderAds === "function") renderAds();
+  }
+}
 let editingId=null;
 let products = [];
 let categories = [];
@@ -3123,6 +3142,7 @@ function applyAllFilters(){
     filtered = filtered.filter(p => (p.title || "").toLowerCase().includes(searchValue));
   }
   renderProducts(filtered);
+  keepOfficeModeAfterSearchFix();
 }
 
 function openMainCategoryModal(){
@@ -3281,21 +3301,25 @@ function handleSearch(){
   const searchInput = document.getElementById("searchInput");
   const value = (searchInput?.value || "").toLowerCase();
 
-  // Секретний вхід лишився, але звичайний пошук більше НЕ вимикає режим Офісу.
+  // Секретний вхід залишився, але звичайний пошук більше НЕ скидає режим Офісу.
   if(value === "0990"){
     if(isAdminUser()){
       adminMode = true;
+      document.body.classList.add("office-active");
+
       const addBtn = document.getElementById("addProductBtn");
       const catBtn = document.getElementById("manageCategoriesBtn");
       const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
       const sectionBtn = document.getElementById("manageProductSectionsBtn");
+
       if(addBtn) addBtn.style.display = "inline-block";
       if(catBtn) catBtn.style.display = "inline-block";
       if(mainCatBtn) mainCatBtn.style.display = "inline-block";
       if(sectionBtn) sectionBtn.style.display = "inline-block";
+
       if(typeof setOfficeEditMode === "function") setOfficeEditMode(true);
-      renderProducts();
-      renderAds();
+      applyAllFilters();
+      keepOfficeModeAfterSearchFix();
     } else if(searchInput){
       searchInput.value = "";
     }
@@ -3303,6 +3327,7 @@ function handleSearch(){
   }
 
   applyAllFilters();
+  keepOfficeModeAfterSearchFix();
 }
 
 function filterMainCategory(){
@@ -4762,6 +4787,7 @@ function renderProducts(list = products){
   } else {
     list.forEach(appendProduct);
   }
+  keepOfficeModeAfterSearchFix();
 }
 
 document.getElementById("viewModal").addEventListener("click", function(e){
@@ -5625,6 +5651,36 @@ function chooseCategoryFromWindow(type, value, label){
 }
 </script>
 <!-- CATEGORY CHOOSE MODAL END -->
+
+
+<script>
+(function officeSearchTypingGuard(){
+  function init(){
+    const searchInput = document.getElementById("searchInput");
+    if(!searchInput) return;
+
+    searchInput.addEventListener("input", function(){
+      if(typeof adminMode !== "undefined" && adminMode === true){
+        document.body.classList.add("office-active");
+        const addBtn = document.getElementById("addProductBtn");
+        const catBtn = document.getElementById("manageCategoriesBtn");
+        const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
+        const sectionBtn = document.getElementById("manageProductSectionsBtn");
+        if(addBtn) addBtn.style.display = "inline-block";
+        if(catBtn) catBtn.style.display = "inline-block";
+        if(mainCatBtn) mainCatBtn.style.display = "inline-block";
+        if(sectionBtn) sectionBtn.style.display = "inline-block";
+      }
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", init);
+  }else{
+    init();
+  }
+})();
+</script>
 
 </body>
 
