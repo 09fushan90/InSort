@@ -2,6 +2,16 @@
 
 <html lang="uk">
 <head>
+
+<script>
+if (
+  location.hostname === "09fushan90.github.io" ||
+  location.hostname === "www.insort.kyiv.ua"
+) {
+  location.replace("https://insort.kyiv.ua" + location.pathname + location.search + location.hash);
+}
+</script>
+
   
   <script>
 if (location.pathname === '/InSort') {
@@ -14,11 +24,12 @@ if (location.pathname === '/InSort') {
 <meta name="application-name" content="InSort.ua">
 <meta name="apple-mobile-web-app-title" content="InSort.ua">
 <base href="https://insort.kyiv.ua/"/>
-<link rel="canonical" href="https://insort.kyiv.ua/"/>
+<link rel="canonical" href="https://insort.kyiv.ua/">
 <meta charset="utf-8"/>
+<meta name="robots" content="index, follow"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <meta content="R90ZXlLzp037z_5t419ui0wfGpBEPX-HGW7lTw3vT-c" name="google-site-verification"/>
-<meta content="InSort — магазин електроінструментів Procraft в Україні. Шуруповерти, болгарки, пилки, акумулятори, інструмент для дому та саду. Швидка доставка по Україні." name="description"/>
+<meta content="InSort — магазин електроінструментів Procraft в Україні. Шуруповерти, болгарки, пилки, акумулятори, інструмент для дому та саду." name="description"/>
 <meta content="InSort" name="author"/>
 <meta content="index, follow" name="robots"/>
 <meta name="keywords" content="InSort, інструменти, електроінструмент, Procraft, шуруповерт, болгарка, пила, купити інструмент, магазин інструментів Україна"/>
@@ -2766,11 +2777,50 @@ async function fetchCatalogFromDatabase(){
 }
 
 // Падаюче листя прибрано
+
+function showSiteNotice(message){
+  try{
+    let box = document.getElementById('siteNoticeBox');
+    if(!box){
+      box = document.createElement('div');
+      box.id = 'siteNoticeBox';
+      box.style.position = 'fixed';
+      box.style.left = '50%';
+      box.style.bottom = '22px';
+      box.style.transform = 'translateX(-50%)';
+      box.style.zIndex = '20000';
+      box.style.maxWidth = 'calc(100% - 28px)';
+      box.style.padding = '12px 16px';
+      box.style.borderRadius = '16px';
+      box.style.background = 'rgba(17,17,17,0.96)';
+      box.style.color = '#90ee90';
+      box.style.border = '1px solid rgba(144,238,144,0.55)';
+      box.style.boxShadow = '0 10px 28px rgba(0,0,0,0.35)';
+      box.style.fontWeight = '800';
+      box.style.textAlign = 'center';
+      box.style.opacity = '0';
+      box.style.pointerEvents = 'none';
+      box.style.transition = 'opacity .2s ease, bottom .2s ease';
+      document.body.appendChild(box);
+    }
+    box.textContent = String(message || '');
+    box.style.opacity = '1';
+    box.style.bottom = '22px';
+    clearTimeout(window.__siteNoticeTimer);
+    window.__siteNoticeTimer = setTimeout(() => {
+      box.style.opacity = '0';
+      box.style.bottom = '10px';
+    }, 2400);
+  }catch(e){
+    console.log(message);
+  }
+}
+
 function openCart() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     if (cart.length === 0) {
-      alert("Ви ще нічого не обрали");
+      showSiteNotice("Ви ще нічого не обрали");
       return;
     }
 
@@ -3020,7 +3070,7 @@ function openOffice(){
     if(catBtn) catBtn.style.display="inline-block";
     if(mainCatBtn) mainCatBtn.style.display="inline-block";
     if(typeof setOfficeEditMode === "function") setOfficeEditMode(true);
-    alert("Офіс увімкнено. Тепер натискай на текст або фото, щоб редагувати їх.");
+    showSiteNotice("Офіс увімкнено. Тепер натискай на текст або фото, щоб редагувати їх.");
   } else {
     if(addBtn) addBtn.style.display="none";
     if(catBtn) catBtn.style.display="none";
@@ -3258,7 +3308,7 @@ function saveProduct(){
     .map(x => x.trim())
     .filter(x => x);
 
-  if(!title || !price || !desc) return alert("Заповніть всі поля");
+  if(!title || !price || !desc) return showSiteNotice("Заповніть всі поля");
 
   let images = tempImages.length > 0 
     ? [...tempImages] 
@@ -3412,7 +3462,7 @@ async function saveOfficeContent(){
     return true;
   }catch(error){
     console.warn('Не вдалося зберегти зміни офісу у Firebase', error);
-    alert('Не вдалося зберегти для всіх. Перевір правила Firebase для catalog/siteContent. Зміни тимчасово збережені тільки на цьому пристрої.');
+    showSiteNotice('Не вдалося зберегти для всіх. Перевір правила Firebase для catalog/siteContent. Зміни тимчасово збережені тільки на цьому пристрої.');
     return false;
   }
 }
@@ -3664,10 +3714,10 @@ function initOfficeClickEditor(){
       setOfficeElementValue(currentOfficeImageElement, dataUrl);
       officeContent[key] = dataUrl;
       await saveOfficeContent();
-      alert('Фото збережено');
+      showSiteNotice('Фото збережено');
     }catch(error){
       console.error(error);
-      alert('Не вдалося завантажити фото');
+      showSiteNotice('Не вдалося завантажити фото');
     }finally{
       this.value = '';
       currentOfficeImageElement = null;
@@ -3879,7 +3929,7 @@ function formatPrice(value){
 
 function openCartModal(){
   if(!requireRegistration()) return;
-  if(selectedProducts.length === 0) return alert('Кошик порожній');
+  if(selectedProducts.length === 0) return showSiteNotice('Кошик порожній');
   renderCartModal();
   document.getElementById('cartModal').style.display = 'flex';
   document.body.classList.add('no-scroll');
@@ -3956,7 +4006,7 @@ function clearCart(){
 
 function openCheckoutModal(){
   if(!requireRegistration()) return;
-  if(selectedProducts.length === 0) return alert('Кошик порожній');
+  if(selectedProducts.length === 0) return showSiteNotice('Кошик порожній');
   document.getElementById('checkoutModal').style.display = 'flex';
 }
 
@@ -3966,7 +4016,7 @@ function closeCheckoutModal(){
 
 function buildOrderMessage(channel){
   if(selectedProducts.length === 0){
-    alert('Кошик порожній');
+    showSiteNotice('Кошик порожній');
     return null;
   }
   const name = document.getElementById('customerName').value.trim();
@@ -3977,7 +4027,7 @@ function buildOrderMessage(channel){
   const comment = document.getElementById('customerComment').value.trim();
 
   if(!name || !phone){
-    alert("Вкажіть ім'я і телефон");
+    showSiteNotice("Вкажіть ім'я і телефон");
     return null;
   }
 
@@ -4054,13 +4104,13 @@ async function submitOrder(channel){
   if(channel === 'instagram'){
     await copyTextSafe(message);
     window.open('https://www.instagram.com/inst_asortiments/', '_blank');
-    alert('Текст замовлення скопійовано. Встав його в Direct Instagram.');
+    showSiteNotice('Текст замовлення скопійовано. Встав його в Direct Instagram.');
     return;
   }
 
   if(channel === 'novaposhta'){
     await copyTextSafe(message);
-    alert('Дані замовлення для відправки Новою поштою скопійовано. Автоматичне створення ТТН потребує API Нової пошти.');
+    showSiteNotice('Дані замовлення для відправки Новою поштою скопійовано. Автоматичне створення ТТН потребує API Нової пошти.');
   }
 }
 
@@ -4232,7 +4282,7 @@ function renderAds(){
       }else if(adminMode){
         openAdProductPickerModal(ad.id);
       }else{
-        alert('До цієї реклами ще не прикріплено товар.');
+        showSiteNotice('До цієї реклами ще не прикріплено товар.');
       }
     });
 
@@ -4295,7 +4345,7 @@ if(adImageFileInput){
 function saveAdPhoto(){
   if(!isAdminUser()) return;
   if(!tempAdImage){
-    alert('Додай фото для реклами.');
+    showSiteNotice('Додай фото для реклами.');
     return;
   }
   if(!Array.isArray(ads)) ads = [];
@@ -4385,11 +4435,11 @@ function saveAdLinkedProduct(){
   if(!isAdminUser()) return;
   const ad = ads.find(x => String(x.id) === String(selectingAdId));
   if(!ad){
-    alert('Рекламу не знайдено.');
+    showSiteNotice('Рекламу не знайдено.');
     return;
   }
   if(!selectedAdProductId){
-    alert('Обери товар.');
+    showSiteNotice('Обери товар.');
     return;
   }
   ad.productId = selectedAdProductId;
