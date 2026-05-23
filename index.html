@@ -4771,6 +4771,25 @@ function renderProducts(list = products){
     container.appendChild(div);
   }
 
+  // Секції потрібні тільки в режимі офісу.
+  // Покупці бачать простий список товарів без написів "Без секції", "1 секція" і т.д.
+  if(!adminMode){
+    const sortedProducts = [...list].sort((a,b)=>{
+      const aSection = parseInt(a.section || 999999);
+      const bSection = parseInt(b.section || 999999);
+
+      if(aSection !== bSection){
+        return aSection - bSection;
+      }
+
+      return String(a.title || "").localeCompare(String(b.title || ""), 'uk');
+    });
+
+    sortedProducts.forEach(appendProduct);
+    keepOfficeModeAfterSearchFix();
+    return;
+  }
+
   if(finalSections.length){
     finalSections.forEach(section => {
       const sectionProducts = list.filter(p => (p.section || "") === section);
