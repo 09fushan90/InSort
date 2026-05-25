@@ -6995,6 +6995,93 @@ body.scroll-fixed-by-modal{
 </script>
 <!-- SCROLL + ORDER BUTTON FIX END -->
 
+
+
+<!-- DOUBLE CLICK CARD STYLE + BACKGROUND SCROLL FIX START -->
+<style>
+html, body{
+  background:#fff !important;
+  min-height:100% !important;
+}
+body.scroll-fixed-by-modal{
+  background:#fff !important;
+  min-height:100dvh !important;
+  overflow:hidden !important;
+}
+body.scroll-fixed-by-modal::before{
+  content:"" !important;
+  position:fixed !important;
+  inset:0 !important;
+  background:#fff !important;
+  z-index:-1 !important;
+  pointer-events:none !important;
+  display:block !important;
+}
+.modal{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  height:100dvh !important;
+  background:rgba(0,0,0,.74) !important;
+  z-index:14000 !important;
+}
+#fullscreenViewer{z-index:16000 !important;}
+#cardStyleModal{z-index:15500 !important;}
+body.card-style-modal-open #cardStyleOfficeBtn{
+  pointer-events:none !important;
+  opacity:.35 !important;
+  transform:scale(.96) !important;
+}
+/* коли сторінка прокручена і відкрито вікно — фон завжди рівний */
+html.no-scroll{
+  background:#fff !important;
+}
+</style>
+<script>
+(function(){
+  function modalVisible(id){
+    const el = document.getElementById(id);
+    return !!el && window.getComputedStyle(el).display !== 'none';
+  }
+
+  const oldOpenCardStyleModal2 = window.openCardStyleModal;
+  window.openCardStyleModal = function(){
+    const modal = document.getElementById('cardStyleModal');
+    if(modal && window.getComputedStyle(modal).display !== 'none'){
+      if(typeof window.__syncScrollLock === 'function') window.__syncScrollLock();
+      return; // захист від повторного натискання, коли вікно вже відкрите
+    }
+    if(typeof oldOpenCardStyleModal2 === 'function') oldOpenCardStyleModal2.apply(this, arguments);
+    document.body.classList.add('card-style-modal-open');
+    if(typeof window.__syncScrollLock === 'function') window.__syncScrollLock();
+  };
+
+  const oldCloseCardStyleModal2 = window.closeCardStyleModal;
+  window.closeCardStyleModal = function(){
+    if(typeof oldCloseCardStyleModal2 === 'function') oldCloseCardStyleModal2.apply(this, arguments);
+    document.body.classList.remove('card-style-modal-open');
+    if(typeof window.__syncScrollLock === 'function') setTimeout(window.__syncScrollLock, 0);
+  };
+
+  const oldSync = window.__syncScrollLock;
+  window.__syncScrollLock = function(){
+    if(typeof oldSync === 'function') oldSync.apply(this, arguments);
+    document.body.classList.toggle('card-style-modal-open', modalVisible('cardStyleModal'));
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const modal = document.getElementById('cardStyleModal');
+    if(modal){
+      new MutationObserver(function(){
+        document.body.classList.toggle('card-style-modal-open', modalVisible('cardStyleModal'));
+      }).observe(modal, {attributes:true, attributeFilter:['style','class']});
+    }
+  });
+})();
+</script>
+<!-- DOUBLE CLICK CARD STYLE + BACKGROUND SCROLL FIX END -->
+
 </body>
 
 </html>
