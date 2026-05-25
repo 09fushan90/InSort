@@ -1788,6 +1788,78 @@ body::before{
 }
 /* OUT OF STOCK CSS END */
 
+
+
+/* AD DETAIL MODAL START */
+#adDetailModal .modal-content{
+  max-width:760px;
+  width:94%;
+  border-radius:28px;
+  padding:20px;
+  background:linear-gradient(180deg,#101010,#151515);
+  border:1px solid rgba(107,255,42,.22);
+}
+.ad-detail-photo{
+  width:100%;
+  max-height:360px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:22px;
+  padding:10px;
+  margin:8px 0 16px;
+}
+.ad-detail-products{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  max-height:48vh;
+  overflow-y:auto;
+  padding:4px;
+}
+.ad-detail-product{
+  display:grid;
+  grid-template-columns:92px 1fr;
+  gap:10px;
+  align-items:center;
+  text-align:left;
+  background:#111;
+  border:1px solid rgba(107,255,42,.16);
+  border-radius:18px;
+  padding:10px;
+  cursor:pointer;
+}
+.ad-detail-product:hover{
+  border-color:rgba(107,255,42,.5);
+  box-shadow:0 0 16px rgba(107,255,42,.12);
+}
+.ad-detail-product img{
+  width:92px;
+  height:92px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:14px;
+  padding:8px;
+}
+.ad-detail-product-title{
+  color:#fff;
+  font-weight:900;
+  font-size:15px;
+  margin-bottom:6px;
+}
+.ad-detail-product-price{
+  color:var(--accent);
+  font-weight:900;
+  font-size:17px;
+}
+@media(max-width:700px){
+  #adDetailModal .modal-content{padding:14px;border-radius:22px;}
+  .ad-detail-photo{max-height:260px;border-radius:18px;}
+  .ad-detail-products{grid-template-columns:1fr;}
+  .ad-detail-product{grid-template-columns:82px 1fr;}
+  .ad-detail-product img{width:82px;height:82px;}
+}
+/* AD DETAIL MODAL END */
+
 /* CATEGORY CHOOSE MODAL CSS START */
 .category-choose-open-btn{
   background:#ffffff !important;
@@ -1941,12 +2013,134 @@ body::before{
   .product-section-title{font-size:19px;padding:12px 14px;}
 }
 /* PRODUCT SECTIONS CSS END */
+
+
+/* PRODUCT CARD STYLE EDITOR START */
+:root{
+  --card-admin-bg:#101010;
+  --card-admin-border:#90ee90;
+  --card-admin-title:#ffffff;
+  --card-admin-price:#90ee90;
+  --card-admin-image-bg:#ffffff;
+  --card-admin-font-size:18px;
+  --card-admin-image-height:210px;
+  --card-admin-radius:22px;
+}
+.product{
+  background:var(--card-admin-bg) !important;
+  border-color:var(--card-admin-border) !important;
+  border-radius:var(--card-admin-radius) !important;
+}
+.product h4{
+  color:var(--card-admin-title) !important;
+  font-size:var(--card-admin-font-size) !important;
+}
+.product p{
+  color:var(--card-admin-price) !important;
+  font-size:calc(var(--card-admin-font-size) + 2px) !important;
+}
+.product img{
+  height:var(--card-admin-image-height) !important;
+  background:var(--card-admin-image-bg) !important;
+}
+.card-hide-image .product img{display:none !important;}
+.card-hide-title .product h4{display:none !important;}
+.card-hide-price .product p{display:none !important;}
+.card-hide-buttons .product .card-buttons{display:none !important;}
+#cardStyleOfficeBtn{
+  display:none;
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:13020;
+  margin:0;
+  padding:13px 18px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#90ee90,#49d71c) !important;
+  color:#071007 !important;
+  font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+.office-active #cardStyleOfficeBtn{display:inline-flex;}
+#cardStyleModal .modal-content{
+  max-width:640px;
+  border-radius:26px;
+  background:#101010;
+  border:1px solid rgba(107,255,42,.28);
+  color:#fff;
+  padding:22px;
+  text-align:left;
+}
+.card-style-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.card-style-field{
+  background:#171717;
+  border:1px solid rgba(107,255,42,.14);
+  border-radius:16px;
+  padding:12px;
+}
+.card-style-field label{
+  display:block;
+  font-size:13px;
+  color:#b8efb8;
+  margin-bottom:8px;
+  font-weight:800;
+}
+.card-style-field input[type="color"]{
+  height:44px;
+  padding:4px;
+  border-radius:12px;
+}
+.card-style-field input[type="range"]{
+  width:100%;
+}
+.card-style-checks{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:12px 0;
+}
+.card-style-checks label{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  background:#171717;
+  border:1px solid rgba(107,255,42,.14);
+  border-radius:14px;
+  padding:10px;
+  color:#fff;
+  font-weight:800;
+}
+.card-style-checks input{width:auto;margin:0;}
+.card-style-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  margin-top:14px;
+}
+.card-style-actions button{margin:0;border-radius:14px;padding:12px 14px;font-weight:900;}
+#cardStylePreview{margin-top:12px;display:grid;grid-template-columns:170px 1fr;gap:12px;align-items:center;background:#0b0b0b;border-radius:18px;border:1px solid rgba(107,255,42,.14);padding:12px;}
+#cardStylePreviewBox{border:2px solid var(--card-admin-border);border-radius:var(--card-admin-radius);background:var(--card-admin-bg);padding:10px;text-align:center;}
+#cardStylePreviewPhoto{height:110px;background:var(--card-admin-image-bg);border-radius:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#111;font-weight:900;}
+#cardStylePreviewTitle{color:var(--card-admin-title);font-size:var(--card-admin-font-size);font-weight:900;}
+#cardStylePreviewPrice{color:var(--card-admin-price);font-size:calc(var(--card-admin-font-size) + 2px);font-weight:900;margin-top:4px;}
+@media(max-width:700px){
+  #cardStyleOfficeBtn{right:12px;bottom:12px;padding:11px 13px;font-size:13px;}
+  .card-style-grid,.card-style-checks,#cardStylePreview{grid-template-columns:1fr;}
+}
+/* PRODUCT CARD STYLE EDITOR END */
+
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
 <span class="cart-icon">🛒</span>
 <span class="selected-count" id="selectedCount">0</span>
 </button>
+<button id="cardStyleOfficeBtn" onclick="openCardStyleModal()" type="button">🎨 Змінити вигляд картки</button>
 
 <style>
 /* Вертикальна відстань між віконцями як у прикладі */
@@ -1954,6 +2148,238 @@ body::before{
   row-gap:18px !important;
   column-gap:14px !important;
 }
+
+
+/* PRODUCT VIEW MODAL VARIANT 5 START */
+#viewModal{
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(8px);
+  align-items:center;
+}
+#viewModal .product-view-v5{
+  position:relative;
+  width:min(96vw, 980px);
+  max-width:980px;
+  padding:18px;
+  border-radius:30px;
+  background:#ffffff;
+  color:#111;
+  border:1px solid rgba(107,255,42,.32);
+  box-shadow:0 24px 70px rgba(0,0,0,.45), 0 0 0 1px rgba(107,255,42,.15);
+  overflow:visible;
+}
+.product-v5-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:5;
+  width:38px;
+  height:38px;
+  margin:0;
+  padding:0;
+  border-radius:50%;
+  background:#ffffff !important;
+  color:#111 !important;
+  border:1px solid #dfe8df !important;
+  font-size:25px;
+  line-height:1;
+  box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+.product-v5-layout{
+  display:grid;
+  grid-template-columns:74px minmax(300px, 1fr) 330px;
+  gap:18px;
+  align-items:stretch;
+}
+.product-v5-tabs{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  justify-content:center;
+}
+.product-v5-tab{
+  width:62px;
+  min-height:62px;
+  margin:0;
+  padding:8px 5px;
+  border-radius:18px;
+  background:#f3f5f3 !important;
+  color:#111 !important;
+  border:1px solid #dce8dc !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  box-shadow:0 8px 18px rgba(0,0,0,.07);
+}
+.product-v5-tab.active,
+.product-v5-tab:hover{
+  background:linear-gradient(135deg,#90ee90,#49d71c) !important;
+  color:#071007 !important;
+  border-color:transparent !important;
+  box-shadow:0 10px 22px rgba(73,215,28,.24);
+}
+.product-v5-tab span{font-size:20px;font-weight:900;line-height:1;}
+.product-v5-tab small{font-size:10px;font-weight:900;text-transform:uppercase;}
+.product-v5-image-zone{
+  position:relative;
+  min-height:520px;
+  border-radius:28px;
+  background:linear-gradient(180deg,#ffffff,#f7f9f7);
+  border:1px solid #e2ece2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75), 0 18px 42px rgba(0,0,0,.10);
+}
+#viewModal #modalImg{
+  width:100%;
+  height:100%;
+  max-height:500px;
+  aspect-ratio:auto;
+  object-fit:contain;
+  padding:26px;
+  background:transparent !important;
+  border:none !important;
+  border-radius:26px;
+  cursor:pointer;
+}
+.product-v5-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  width:42px;
+  height:42px;
+  margin:0;
+  padding:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.88) !important;
+  color:#111 !important;
+  border:1px solid #dce8dc !important;
+  font-size:34px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.14);
+}
+.product-v5-arrow-left{left:12px;}
+.product-v5-arrow-right{right:12px;}
+.product-v5-info{
+  padding:34px 16px 10px 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:left;
+}
+.product-v5-badge{
+  width:max-content;
+  max-width:100%;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#f1fff1;
+  color:#158c15;
+  border:1px solid #c9f2c9;
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+#viewModal #modalTitle{
+  color:#111;
+  font-size:28px;
+  line-height:1.1;
+  margin:0 0 8px;
+  font-weight:900;
+}
+.product-v5-category{
+  color:#5f6b5f !important;
+  font-size:14px;
+  margin:0 0 12px !important;
+  font-weight:700;
+}
+.product-v5-price,
+#viewModal #modalPrice{
+  color:#55c91f;
+  font-size:32px;
+  font-weight:1000;
+  margin:0 0 8px;
+}
+#viewModal #modalPrice.product-unavailable-price{
+  color:#ff3b30 !important;
+}
+.product-v5-desc,
+#viewModal #modalDesc{
+  color:#3b443b;
+  font-size:15px;
+  line-height:1.45;
+  margin:6px 0 14px;
+  max-height:110px;
+  overflow:auto;
+}
+.product-v5-specs{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin:4px 0 18px;
+  color:#273027;
+  font-size:14px;
+  font-weight:700;
+}
+.product-v5-specs span{color:#55c91f;font-weight:1000;margin-right:7px;}
+.product-v5-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:auto;
+}
+.product-v5-actions button{
+  width:100%;
+  margin:0;
+  padding:14px 16px;
+  border-radius:16px;
+  font-weight:900;
+}
+.product-v5-buy{
+  background:linear-gradient(135deg,#90ee90,#49d71c) !important;
+  color:#071007 !important;
+  box-shadow:0 12px 24px rgba(73,215,28,.22);
+}
+.product-v5-back{
+  background:#f2f4f2 !important;
+  color:#111 !important;
+  border:1px solid #dce8dc !important;
+}
+#viewModal #editProductBtn{
+  background:#111 !important;
+  color:#fff !important;
+  border:1px solid rgba(107,255,42,.35) !important;
+}
+@media(max-width:900px){
+  #viewModal{align-items:flex-start;}
+  #viewModal .product-view-v5{width:100%;padding:14px;border-radius:24px;margin:8px 0;max-height:calc(100dvh - 16px);overflow-y:auto;}
+  .product-v5-layout{grid-template-columns:1fr;gap:12px;}
+  .product-v5-tabs{flex-direction:row;justify-content:flex-start;overflow-x:auto;padding-right:42px;}
+  .product-v5-tab{width:70px;min-width:70px;min-height:56px;border-radius:16px;}
+  .product-v5-image-zone{min-height:330px;border-radius:22px;}
+  #viewModal #modalImg{max-height:340px;padding:18px;}
+  .product-v5-info{padding:2px 4px 4px;}
+  #viewModal #modalTitle{font-size:23px;}
+  #viewModal #modalPrice{font-size:28px;}
+}
+@media(max-width:520px){
+  #viewModal .product-view-v5{border-radius:20px;padding:10px;}
+  .product-v5-image-zone{min-height:285px;}
+  .product-v5-arrow{width:36px;height:36px;font-size:28px;}
+  .product-v5-arrow-left{left:8px;}
+  .product-v5-arrow-right{right:8px;}
+  #viewModal #modalImg{max-height:300px;padding:14px;}
+  .product-v5-tabs{gap:8px;}
+  .product-v5-tab{width:62px;min-width:62px;min-height:54px;}
+}
+/* PRODUCT VIEW MODAL VARIANT 5 END */
 </style>
 
 </head>
@@ -2125,27 +2551,44 @@ body::before{
 </div>
 <!-- Модали -->
 <div class="modal" id="viewModal">
-<div class="modal-content" style="position:relative;">
-<!-- Кнопка влево -->
-<button onclick="prevImage()" style="position:absolute;left:-10px;top:45%;font-size:25px;background:none;border:none;color:#90ee90;cursor:pointer;">
-    ◀
-    </button>
-<!-- Картинка -->
-<img id="modalImg" onclick="openFullscreen(this.src)" style="width:100%; aspect-ratio:1/1; object-fit:contain; cursor:pointer;"/>
-<!-- Кнопка вправо -->
-<button onclick="nextImage()" style="position:absolute;right:-10px;top:45%;font-size:25px;background:none;border:none;color:#90ee90;cursor:pointer;">
-    ▶
-    </button>
-<h3 id="modalTitle"></h3>
-<p id="modalPrice"></p>
-<p id="modalDesc"></p>
-<p id="modalCategory"></p>
-<div style="display:flex; gap:5px; margin-top:10px;">
-<button onclick="closeModal()">Назад</button>
-<button class="order-btn" id="modalOrderBtn" onclick="addFromView()">Додати в замовлення</button>
-<button id="editProductBtn" onclick="editFromView()" style="display:none;">Редагувати</button>
-</div>
-</div>
+  <div class="modal-content product-view-v5" onclick="event.stopPropagation()">
+    <button class="product-v5-close" onclick="closeModal()" aria-label="Закрити">×</button>
+
+    <div class="product-v5-layout">
+      <div class="product-v5-tabs" aria-label="Інформація про товар">
+        <button class="product-v5-tab active" type="button"><span>ⓘ</span><small>Інфо</small></button>
+        <button class="product-v5-tab" type="button"><span>▣</span><small>Характ.</small></button>
+        <button class="product-v5-tab" type="button"><span>◈</span><small>Комплект</small></button>
+        <button class="product-v5-tab" type="button"><span>☆</span><small>Відгуки</small></button>
+      </div>
+
+      <div class="product-v5-image-zone">
+        <button class="product-v5-arrow product-v5-arrow-left" onclick="prevImage()" type="button">‹</button>
+        <img id="modalImg" onclick="openFullscreen(this.src)" alt="Фото товару" />
+        <button class="product-v5-arrow product-v5-arrow-right" onclick="nextImage()" type="button">›</button>
+      </div>
+
+      <div class="product-v5-info">
+        <div class="product-v5-badge">InSort • Procraft</div>
+        <h3 id="modalTitle"></h3>
+        <p id="modalCategory" class="product-v5-category"></p>
+        <p id="modalPrice" class="product-v5-price"></p>
+        <p id="modalDesc" class="product-v5-desc"></p>
+
+        <div class="product-v5-specs">
+          <div><span>✓</span> Фото не обрізається</div>
+          <div><span>✓</span> Швидке замовлення</div>
+          <div><span>✓</span> Доставка по Україні</div>
+        </div>
+
+        <div class="product-v5-actions">
+          <button class="order-btn product-v5-buy" id="modalOrderBtn" onclick="addFromView()">Додати в замовлення</button>
+          <button id="editProductBtn" onclick="editFromView()" style="display:none;">Редагувати</button>
+          <button class="product-v5-back" onclick="closeModal()">Назад</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="modal" id="editModal">
 <div class="modal-content">
@@ -2233,6 +2676,17 @@ body::before{
       <button onclick="saveAdLinkedProduct()">Зберегти</button>
       <button onclick="closeAdProductPickerModal()" style="background:#444;color:#fff;">Скасувати</button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="adDetailModal" onclick="handleModalBackdrop(event, 'adDetailModal', closeAdDetailModal)">
+  <div class="modal-content cart-modal-content">
+    <div class="cart-header">
+      <h3 style="margin:0;">Товари з реклами</h3>
+      <button onclick="closeAdDetailModal()" style="margin:0;">✕</button>
+    </div>
+    <img id="adDetailImage" class="ad-detail-photo" alt="Реклама"/>
+    <div class="ad-detail-products" id="adDetailProducts"></div>
   </div>
 </div>
 
@@ -2385,6 +2839,47 @@ body::before{
 </div>
 </div>
 <!-- Модалка для редагування маленьких вікон з двома строками -->
+
+<div class="modal" id="cardStyleModal" onclick="handleCardStyleBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3 style="margin:0 0 8px;text-align:center;">Змінити вигляд карток товару</h3>
+    <div style="color:#b8efb8;text-align:center;font-size:13px;margin-bottom:12px;">Ці налаштування змінять картки товарів у каталозі для всіх після натискання «Зберегти для всіх».</div>
+
+    <div class="card-style-checks">
+      <label><input id="csShowImage" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Фото</label>
+      <label><input id="csShowTitle" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Назва</label>
+      <label><input id="csShowPrice" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Ціна</label>
+      <label><input id="csShowButtons" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Кнопки</label>
+    </div>
+
+    <div class="card-style-grid">
+      <div class="card-style-field"><label>Колір фону картки</label><input id="csBg" type="color" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Колір контуру</label><input id="csBorder" type="color" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Колір назви</label><input id="csTitle" type="color" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Колір ціни</label><input id="csPrice" type="color" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Колір фону фото</label><input id="csImageBg" type="color" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Округлення картки: <span id="csRadiusVal"></span>px</label><input id="csRadius" type="range" min="0" max="40" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Розмір шрифту: <span id="csFontVal"></span>px</label><input id="csFont" type="range" min="12" max="30" oninput="updateCardStyleFromInputs(true)"></div>
+      <div class="card-style-field"><label>Розмір фото: <span id="csImageVal"></span>px</label><input id="csImage" type="range" min="80" max="360" oninput="updateCardStyleFromInputs(true)"></div>
+    </div>
+
+    <div id="cardStylePreview">
+      <div id="cardStylePreviewBox">
+        <div id="cardStylePreviewPhoto">ФОТО</div>
+        <div id="cardStylePreviewTitle">Назва товару</div>
+        <div id="cardStylePreviewPrice">2499 грн</div>
+      </div>
+      <div style="color:#dcebdc;font-size:13px;line-height:1.45;">Можна прибрати будь-який елемент картки або повернути його назад. «Скинути» повертає стандартний дизайн.</div>
+    </div>
+
+    <div class="card-style-actions">
+      <button onclick="resetCardStyleEditor()" style="background:#444;color:#fff;">Скинути</button>
+      <button onclick="closeCardStyleModal()" style="background:#222;color:#fff;border:1px solid rgba(107,255,42,.25);">Закрити</button>
+      <button onclick="saveCardStyleForAll()">Зберегти для всіх</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="officeCardTextModal" onclick="handleOfficeCardTextBackdrop(event)">
 <div class="modal-content">
 <h3 style="margin-top:0;">Редагувати вікно</h3>
@@ -3419,7 +3914,7 @@ renderAds();
 let tempImages = [];
 
 function openViewModal(id){
-  let p = products.find(x => x.id === id);
+  let p = products.find(x => String(x.id) === String(id));
   if(!p) return;
 
   currentProductId = id;
@@ -3646,6 +4141,22 @@ function scrollToProducts(){
 const OFFICE_CONTENT_CACHE_KEY = 'inst_asortiments_office_content_v1';
 const OFFICE_CUSTOM_CARDS_KEY = 'overview_custom_cards';
 const OFFICE_CONTENT_DB_PATH = 'catalog/siteContent';
+const PRODUCT_CARD_STYLE_KEY = 'product_card_style';
+const DEFAULT_PRODUCT_CARD_STYLE = {
+  bg:'#101010',
+  border:'#90ee90',
+  title:'#ffffff',
+  price:'#90ee90',
+  imageBg:'#ffffff',
+  fontSize:18,
+  imageHeight:210,
+  radius:22,
+  showImage:true,
+  showTitle:true,
+  showPrice:true,
+  showButtons:true
+};
+let productCardStyleDraft = null;
 let officeContent = {};
 let officeContentRealtimeStarted = false;
 let officeEditInitialized = false;
@@ -3654,6 +4165,118 @@ let currentOfficeImageElement = null;
 let activeOfficeSectionKey = null;
 let currentOfficeTextElement = null;
 let currentOfficeCustomCardId = null;
+
+
+function normalizeProductCardStyle(style){
+  const base = {...DEFAULT_PRODUCT_CARD_STYLE};
+  if(!style || typeof style !== 'object') return base;
+  return {
+    ...base,
+    ...style,
+    fontSize: Math.max(12, Math.min(30, Number(style.fontSize) || base.fontSize)),
+    imageHeight: Math.max(80, Math.min(360, Number(style.imageHeight) || base.imageHeight)),
+    radius: Math.max(0, Math.min(40, Number(style.radius) || base.radius)),
+    showImage: style.showImage !== false,
+    showTitle: style.showTitle !== false,
+    showPrice: style.showPrice !== false,
+    showButtons: style.showButtons !== false
+  };
+}
+function getCurrentProductCardStyle(){
+  return normalizeProductCardStyle(officeContent && officeContent[PRODUCT_CARD_STYLE_KEY]);
+}
+function applyProductCardStyle(style){
+  const s = normalizeProductCardStyle(style);
+  const root = document.documentElement;
+  root.style.setProperty('--card-admin-bg', s.bg);
+  root.style.setProperty('--card-admin-border', s.border);
+  root.style.setProperty('--card-admin-title', s.title);
+  root.style.setProperty('--card-admin-price', s.price);
+  root.style.setProperty('--card-admin-image-bg', s.imageBg);
+  root.style.setProperty('--card-admin-font-size', s.fontSize + 'px');
+  root.style.setProperty('--card-admin-image-height', s.imageHeight + 'px');
+  root.style.setProperty('--card-admin-radius', s.radius + 'px');
+  document.body.classList.toggle('card-hide-image', !s.showImage);
+  document.body.classList.toggle('card-hide-title', !s.showTitle);
+  document.body.classList.toggle('card-hide-price', !s.showPrice);
+  document.body.classList.toggle('card-hide-buttons', !s.showButtons);
+  updateCardStylePreview(s);
+}
+function updateCardStylePreview(s){
+  s = normalizeProductCardStyle(s || productCardStyleDraft || getCurrentProductCardStyle());
+  const ids = {
+    csShowImage:s.showImage, csShowTitle:s.showTitle, csShowPrice:s.showPrice, csShowButtons:s.showButtons
+  };
+  Object.keys(ids).forEach(id => { const el = document.getElementById(id); if(el) el.checked = ids[id]; });
+  const map = {csBg:s.bg, csBorder:s.border, csTitle:s.title, csPrice:s.price, csImageBg:s.imageBg};
+  Object.keys(map).forEach(id => { const el = document.getElementById(id); if(el) el.value = map[id]; });
+  const font = document.getElementById('csFont'); if(font) font.value = s.fontSize;
+  const image = document.getElementById('csImage'); if(image) image.value = s.imageHeight;
+  const radius = document.getElementById('csRadius'); if(radius) radius.value = s.radius;
+  const fv = document.getElementById('csFontVal'); if(fv) fv.textContent = s.fontSize;
+  const iv = document.getElementById('csImageVal'); if(iv) iv.textContent = s.imageHeight;
+  const rv = document.getElementById('csRadiusVal'); if(rv) rv.textContent = s.radius;
+  const photo = document.getElementById('cardStylePreviewPhoto'); if(photo) photo.style.display = s.showImage ? 'flex' : 'none';
+  const title = document.getElementById('cardStylePreviewTitle'); if(title) title.style.display = s.showTitle ? 'block' : 'none';
+  const price = document.getElementById('cardStylePreviewPrice'); if(price) price.style.display = s.showPrice ? 'block' : 'none';
+}
+function readCardStyleInputs(){
+  return normalizeProductCardStyle({
+    bg: document.getElementById('csBg')?.value || DEFAULT_PRODUCT_CARD_STYLE.bg,
+    border: document.getElementById('csBorder')?.value || DEFAULT_PRODUCT_CARD_STYLE.border,
+    title: document.getElementById('csTitle')?.value || DEFAULT_PRODUCT_CARD_STYLE.title,
+    price: document.getElementById('csPrice')?.value || DEFAULT_PRODUCT_CARD_STYLE.price,
+    imageBg: document.getElementById('csImageBg')?.value || DEFAULT_PRODUCT_CARD_STYLE.imageBg,
+    fontSize: Number(document.getElementById('csFont')?.value || DEFAULT_PRODUCT_CARD_STYLE.fontSize),
+    imageHeight: Number(document.getElementById('csImage')?.value || DEFAULT_PRODUCT_CARD_STYLE.imageHeight),
+    radius: Number(document.getElementById('csRadius')?.value || DEFAULT_PRODUCT_CARD_STYLE.radius),
+    showImage: !!document.getElementById('csShowImage')?.checked,
+    showTitle: !!document.getElementById('csShowTitle')?.checked,
+    showPrice: !!document.getElementById('csShowPrice')?.checked,
+    showButtons: !!document.getElementById('csShowButtons')?.checked
+  });
+}
+function updateCardStyleFromInputs(previewOnly){
+  productCardStyleDraft = readCardStyleInputs();
+  applyProductCardStyle(productCardStyleDraft);
+}
+function openCardStyleModal(){
+  if(!isAdminUser()) return;
+  productCardStyleDraft = getCurrentProductCardStyle();
+  updateCardStylePreview(productCardStyleDraft);
+  applyProductCardStyle(productCardStyleDraft);
+  const modal = document.getElementById('cardStyleModal');
+  if(modal) modal.style.display = 'flex';
+  openOverlayLock();
+}
+function closeCardStyleModal(){
+  const modal = document.getElementById('cardStyleModal');
+  if(modal) modal.style.display = 'none';
+  productCardStyleDraft = null;
+  applyProductCardStyle(getCurrentProductCardStyle());
+  closeOverlayLock();
+}
+function handleCardStyleBackdrop(event){
+  if(event && event.target && event.target.id === 'cardStyleModal') closeCardStyleModal();
+}
+function resetCardStyleEditor(){
+  productCardStyleDraft = normalizeProductCardStyle(DEFAULT_PRODUCT_CARD_STYLE);
+  updateCardStylePreview(productCardStyleDraft);
+  applyProductCardStyle(productCardStyleDraft);
+}
+async function saveCardStyleForAll(){
+  if(!isAdminUser()) return;
+  productCardStyleDraft = readCardStyleInputs();
+  officeContent = officeContent || {};
+  officeContent[PRODUCT_CARD_STYLE_KEY] = productCardStyleDraft;
+  applyProductCardStyle(productCardStyleDraft);
+  const ok = await saveOfficeContent();
+  if(ok) showSiteNotice('Дизайн карток збережено для всіх.');
+  const modal = document.getElementById('cardStyleModal');
+  if(modal) modal.style.display = 'none';
+  productCardStyleDraft = null;
+  closeOverlayLock();
+}
 
 function getOfficeEditableElements(){
   return Array.from(document.querySelectorAll('[data-office-editable][data-office-key]'));
@@ -3698,6 +4321,7 @@ function applyOfficeContent(){
     }
   });
   renderOfficeCustomCards();
+  applyProductCardStyle(getCurrentProductCardStyle());
 }
 
 function normalizeOfficeContentData(data){
@@ -4596,7 +5220,7 @@ function renderAds(){
     card.addEventListener('click', () => {
       const ids = getAdProductIds(ad);
       if(ids.length){
-        openViewModal(ids[0]);
+        openAdDetailModal(ad.id);
       }else if(adminMode){
         openAdProductPickerModal(ad.id);
       }else{
@@ -4703,6 +5327,60 @@ function deleteAdById(id){
   saveToDatabase();
   renderAds();
   closeAdEditModal();
+}
+
+function openAdDetailModal(adId){
+  const ad = ads.find(x => String(x.id) === String(adId));
+  if(!ad) return;
+
+  const ids = getAdProductIds(ad);
+  const linkedProducts = ids.map(id => getProductByIdForAd(id)).filter(Boolean);
+  if(!linkedProducts.length){
+    if(adminMode) openAdProductPickerModal(ad.id);
+    else showSiteNotice('До цієї реклами ще не прикріплено товар.');
+    return;
+  }
+
+  const img = document.getElementById('adDetailImage');
+  const list = document.getElementById('adDetailProducts');
+  if(!img || !list) return;
+
+  const adImageSrc = ad.image ? getFreshAdImageSrc(ad.image, ad.updatedAt || ad.id) : '';
+  if(adImageSrc){
+    img.src = adImageSrc;
+    img.style.display = 'block';
+  }else{
+    img.removeAttribute('src');
+    img.style.display = 'none';
+  }
+
+  list.innerHTML = '';
+  linkedProducts.forEach(product => {
+    const displayImage = Array.isArray(product.image) ? product.image[0] : product.image;
+    const row = document.createElement('div');
+    row.className = 'ad-detail-product';
+    row.innerHTML = `
+      <img src="${displayImage || ''}" alt="${product.title || ''}">
+      <div>
+        <div class="ad-detail-product-title">${product.title || ''}</div>
+        <div class="ad-detail-product-price ${product.unavailable === true ? 'product-unavailable-price' : ''}">${product.unavailable === true ? 'немає' : (product.price || 0) + ' грн'}</div>
+      </div>
+    `;
+    row.addEventListener('click', () => {
+      closeAdDetailModal();
+      openViewModal(product.id);
+    });
+    list.appendChild(row);
+  });
+
+  document.getElementById('adDetailModal').style.display = 'flex';
+  openOverlayLock();
+}
+
+function closeAdDetailModal(){
+  const modal = document.getElementById('adDetailModal');
+  if(modal) modal.style.display = 'none';
+  closeOverlayLock();
 }
 
 function openAdProductPickerModal(adId){
@@ -5845,6 +6523,332 @@ function chooseCategoryFromWindow(type, value, label){
     init();
   }
 })();
+</script>
+
+
+
+<script>
+/* AD FIELD FIX PATCH START — стабільна робота рекламного поля */
+(function(){
+  const AD_LOCAL_KEY = 'insort_ads_backup';
+
+  function adminOk(){
+    try{ return typeof isAdminUser === 'function' ? isAdminUser() : !!adminMode; }catch(e){ return !!adminMode; }
+  }
+
+  function adSafeProducts(){
+    try{ return Array.isArray(products) ? products : []; }catch(e){ return []; }
+  }
+
+  function adSafeList(){
+    try{
+      if(!Array.isArray(ads)) ads = [];
+      return ads;
+    }catch(e){
+      window.ads = window.ads || [];
+      return window.ads;
+    }
+  }
+
+  function adSaveLocal(){
+    try{ localStorage.setItem(AD_LOCAL_KEY, JSON.stringify(adSafeList())); }catch(e){}
+  }
+
+  async function adSaveFirebase(){
+    const list = adSafeList();
+    adSaveLocal();
+    try{
+      if(typeof db !== 'undefined' && db && db.ref){
+        await db.ref('catalog/ads').set(list);
+        await db.ref('catalog/updatedAt').set(Date.now());
+      }
+      return true;
+    }catch(err){
+      console.warn('Не вдалося зберегти рекламу у Firebase', err);
+      if(typeof showSiteNotice === 'function') showSiteNotice('Рекламу збережено на цьому пристрої. Перевір правила Firebase для catalog/ads.');
+      return false;
+    }
+  }
+
+  async function adLoadFirebase(){
+    try{
+      if(typeof db !== 'undefined' && db && db.ref){
+        const snap = await db.ref('catalog/ads').get();
+        if(snap.exists()){
+          ads = Array.isArray(snap.val()) ? snap.val() : [];
+          adSaveLocal();
+          return true;
+        }
+      }
+    }catch(e){ console.warn('Не вдалося завантажити рекламу', e); }
+    try{
+      const saved = localStorage.getItem(AD_LOCAL_KEY);
+      if(saved && (!Array.isArray(ads) || ads.length === 0)) ads = JSON.parse(saved) || [];
+    }catch(e){}
+    return false;
+  }
+
+  function adFreshSrc(src, version){
+    if(!src) return '';
+    if(String(src).startsWith('data:')) return src;
+    return String(src) + (String(src).includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(version || Date.now());
+  }
+
+  function adProductIds(ad){
+    if(!ad) return [];
+    if(Array.isArray(ad.productIds)) return ad.productIds.filter(Boolean).map(String);
+    if(ad.productId) return [String(ad.productId)];
+    return [];
+  }
+
+  function adProductById(id){
+    return adSafeProducts().find(p => String(p.id) === String(id));
+  }
+
+  window.renderAds = function(){
+    const listEl = document.getElementById('adsList');
+    const dotsEl = document.getElementById('adsDots');
+    const section = document.getElementById('adsSection');
+    const slider = document.querySelector('.ads-slider');
+    if(section) section.style.display = section.style.display === 'none' ? section.style.display : '';
+    if(!listEl) return;
+
+    const list = adSafeList();
+    listEl.innerHTML = '';
+
+    if(!list.length){
+      const slide = document.createElement('div');
+      slide.className = 'ad-slide';
+      slide.innerHTML = `
+        <div class="ad-card" role="button">
+          <div class="ad-card-placeholder">
+            <div>
+              <div class="ad-card-placeholder-title">АКЦІЇ ТА ЗНИЖКИ</div>
+              <div class="ad-card-placeholder-text">Увімкни Офіс і натисни “Додати рекламне фото”.</div>
+            </div>
+          </div>
+        </div>`;
+      const card = slide.querySelector('.ad-card');
+      if(card){ card.addEventListener('click', () => { if(adminOk()) window.openAdEditModal(); }); }
+      listEl.appendChild(slide);
+    }else{
+      list.forEach(ad => {
+        const ids = adProductIds(ad);
+        const linked = ids.map(adProductById).filter(Boolean);
+        const slide = document.createElement('div');
+        slide.className = 'ad-slide';
+        const card = document.createElement('div');
+        card.className = 'ad-card';
+        card.dataset.id = ad.id;
+        const src = adFreshSrc(ad.image, ad.updatedAt || ad.id);
+        card.innerHTML = `
+          ${src ? `<img src="${src}" alt="Реклама">` : `<div class="ad-card-placeholder"><div><div class="ad-card-placeholder-title">Реклама</div><div class="ad-card-placeholder-text">Додай фото реклами.</div></div></div>`}
+          <button class="ad-delete-btn" type="button">Видалити</button>
+          <button class="ad-bind-btn" type="button">Додати товар</button>
+          <button class="ad-edit-btn" type="button">Редагувати</button>
+          ${linked.length ? `<div class="ad-linked-label">Товарів: ${linked.length} — ${linked.map(p => p.title || '').slice(0,3).join(', ')}${linked.length > 3 ? '...' : ''}</div>` : `<div class="ad-linked-label">Товар не прикріплено</div>`}`;
+        card.querySelector('.ad-edit-btn')?.addEventListener('click', e => { e.stopPropagation(); window.openAdEditModal(ad.id); });
+        card.querySelector('.ad-bind-btn')?.addEventListener('click', e => { e.stopPropagation(); window.openAdProductPickerModal(ad.id); });
+        card.querySelector('.ad-delete-btn')?.addEventListener('click', e => { e.stopPropagation(); window.deleteAdById(ad.id); });
+        card.addEventListener('click', () => {
+          if(adProductIds(ad).length) window.openAdDetailModal(ad.id);
+          else if(adminOk()) window.openAdProductPickerModal(ad.id);
+          else if(typeof showSiteNotice === 'function') showSiteNotice('До цієї реклами ще не прикріплено товар.');
+        });
+        slide.appendChild(card);
+        listEl.appendChild(slide);
+      });
+    }
+
+    const count = Math.max(1, adSafeList().length || 1);
+    if(typeof currentAdSlide === 'undefined') currentAdSlide = 0;
+    if(currentAdSlide >= count) currentAdSlide = count - 1;
+    if(currentAdSlide < 0) currentAdSlide = 0;
+    listEl.style.transform = `translateX(-${currentAdSlide * 100}%)`;
+
+    if(dotsEl){
+      dotsEl.innerHTML = '';
+      for(let i=0;i<count;i++){
+        const d=document.createElement('div');
+        d.className='ads-dot' + (i === currentAdSlide ? ' active' : '');
+        d.addEventListener('click', () => window.goToAdSlide(i));
+        dotsEl.appendChild(d);
+      }
+    }
+    if(slider){ slider.querySelectorAll('.ads-arrow').forEach(b => b.style.display = count > 1 ? 'flex' : 'none'); }
+  };
+
+  window.goToAdSlide = function(index){
+    const count = Math.max(1, adSafeList().length || 1);
+    currentAdSlide = Math.max(0, Math.min(Number(index) || 0, count - 1));
+    window.renderAds();
+  };
+  window.nextAdSlide = function(){ const c = adSafeList().length || 1; if(c > 1){ currentAdSlide = (currentAdSlide + 1) % c; window.renderAds(); } };
+  window.prevAdSlide = function(){ const c = adSafeList().length || 1; if(c > 1){ currentAdSlide = (currentAdSlide - 1 + c) % c; window.renderAds(); } };
+
+  window.openAdEditModal = function(id=null){
+    if(!adminOk()) return;
+    editingAdId = id;
+    const ad = id ? adSafeList().find(x => String(x.id) === String(id)) : null;
+    tempAdImage = ad?.image || '';
+    const title = document.getElementById('adEditTitle'); if(title) title.innerText = id ? 'Редагувати рекламу' : 'Додати рекламне фото';
+    const del = document.getElementById('deleteAdBtn'); if(del) del.style.display = id ? 'inline-block' : 'none';
+    const preview = document.getElementById('adImagePreview');
+    const empty = document.getElementById('adUploadEmpty');
+    if(preview){
+      if(tempAdImage){ preview.src = tempAdImage; preview.style.display = 'block'; if(empty) empty.style.display = 'none'; }
+      else{ preview.removeAttribute('src'); preview.style.display = 'none'; if(empty) empty.style.display = 'block'; }
+    }
+    const file = document.getElementById('adImageFile'); if(file) file.value = '';
+    const modal = document.getElementById('adEditModal'); if(modal) modal.style.display = 'flex';
+    if(typeof openOverlayLock === 'function') openOverlayLock();
+  };
+
+  window.closeAdEditModal = function(){
+    const modal = document.getElementById('adEditModal'); if(modal) modal.style.display = 'none';
+    editingAdId = null; tempAdImage = '';
+    if(typeof closeOverlayLock === 'function') closeOverlayLock();
+  };
+
+  window.saveAdPhoto = async function(){
+    if(!adminOk()) return;
+    if(!tempAdImage){ if(typeof showSiteNotice === 'function') showSiteNotice('Додай фото для реклами.'); return; }
+    const list = adSafeList();
+    if(editingAdId){
+      const ad = list.find(x => String(x.id) === String(editingAdId));
+      if(ad){ ad.image = tempAdImage; ad.updatedAt = Date.now(); }
+    }else{
+      list.push({id:Date.now(), image:tempAdImage, productId:'', productIds:[], updatedAt:Date.now()});
+      currentAdSlide = list.length - 1;
+    }
+    await adSaveFirebase();
+    window.renderAds();
+    window.closeAdEditModal();
+    if(typeof showSiteNotice === 'function') showSiteNotice('Рекламу збережено.');
+  };
+
+  window.deleteCurrentAd = function(){ if(editingAdId) window.deleteAdById(editingAdId); };
+  window.deleteAdById = async function(id){
+    if(!adminOk()) return;
+    if(!confirm('Видалити цю рекламу?')) return;
+    ads = adSafeList().filter(a => String(a.id) !== String(id));
+    if(currentAdSlide >= ads.length) currentAdSlide = Math.max(0, ads.length - 1);
+    await adSaveFirebase();
+    window.renderAds();
+    window.closeAdEditModal();
+  };
+
+  window.openAdProductPickerModal = function(adId){
+    if(!adminOk()) return;
+    selectingAdId = adId;
+    const ad = adSafeList().find(x => String(x.id) === String(adId));
+    selectedAdProductIds = new Set(adProductIds(ad));
+    const input = document.getElementById('adProductPickerSearch'); if(input) input.value = '';
+    window.renderAdProductPicker();
+    const modal = document.getElementById('adProductPickerModal'); if(modal) modal.style.display = 'flex';
+    if(typeof openOverlayLock === 'function') openOverlayLock();
+  };
+
+  window.closeAdProductPickerModal = function(){
+    const modal = document.getElementById('adProductPickerModal'); if(modal) modal.style.display = 'none';
+    selectingAdId = null; selectedAdProductIds = new Set();
+    if(typeof closeOverlayLock === 'function') closeOverlayLock();
+  };
+
+  window.renderAdProductPicker = function(){
+    const list = document.getElementById('adProductPickerList'); if(!list) return;
+    const q = (document.getElementById('adProductPickerSearch')?.value || '').toLowerCase();
+    const arr = adSafeProducts().filter(p => String(p.title || '').toLowerCase().includes(q));
+    const sorted = typeof sortProductsUnavailableLast === 'function' ? sortProductsUnavailableLast(arr) : arr;
+    list.innerHTML = '';
+    sorted.forEach(p => {
+      const img = Array.isArray(p.image) ? p.image[0] : p.image;
+      const key = String(p.id);
+      const selected = selectedAdProductIds && selectedAdProductIds.has(key);
+      const item = document.createElement('div');
+      item.className = 'ad-picker-product' + (selected ? ' selected' : '');
+      item.innerHTML = `<img src="${img || ''}" alt="${p.title || ''}"><div class="ad-picker-product-title">${p.title || ''}</div><div class="ad-picker-product-price ${p.unavailable === true ? 'product-unavailable-price' : ''}">${p.unavailable === true ? 'немає' : (p.price || 0) + ' грн'}</div><button type="button">${selected ? 'Прибрати' : 'Обрати'}</button>`;
+      item.querySelector('button')?.addEventListener('click', () => { selected ? selectedAdProductIds.delete(key) : selectedAdProductIds.add(key); window.renderAdProductPicker(); });
+      list.appendChild(item);
+    });
+  };
+
+  window.saveAdLinkedProduct = async function(){
+    if(!adminOk()) return;
+    const ad = adSafeList().find(x => String(x.id) === String(selectingAdId));
+    if(!ad){ if(typeof showSiteNotice === 'function') showSiteNotice('Рекламу не знайдено.'); return; }
+    const ids = Array.from(selectedAdProductIds || []);
+    ad.productIds = ids;
+    ad.productId = ids[0] || '';
+    ad.updatedAt = Date.now();
+    await adSaveFirebase();
+    window.renderAds();
+    window.closeAdProductPickerModal();
+    if(typeof showSiteNotice === 'function') showSiteNotice('Товари прикріплено до реклами.');
+  };
+
+  window.openAdDetailModal = function(adId){
+    const ad = adSafeList().find(x => String(x.id) === String(adId));
+    if(!ad) return;
+    const linked = adProductIds(ad).map(adProductById).filter(Boolean);
+    if(!linked.length){ if(adminOk()) window.openAdProductPickerModal(ad.id); else if(typeof showSiteNotice === 'function') showSiteNotice('До цієї реклами ще не прикріплено товар.'); return; }
+    const img = document.getElementById('adDetailImage');
+    const list = document.getElementById('adDetailProducts');
+    if(img){ const src = adFreshSrc(ad.image, ad.updatedAt || ad.id); if(src){ img.src = src; img.style.display='block'; } else { img.removeAttribute('src'); img.style.display='none'; } }
+    if(list){
+      list.innerHTML='';
+      linked.forEach(p => {
+        const src = Array.isArray(p.image) ? p.image[0] : p.image;
+        const row=document.createElement('div');
+        row.className='ad-detail-product';
+        row.innerHTML = `<img src="${src || ''}" alt="${p.title || ''}"><div><div class="ad-detail-product-title">${p.title || ''}</div><div class="ad-detail-product-price ${p.unavailable === true ? 'product-unavailable-price' : ''}">${p.unavailable === true ? 'немає' : (p.price || 0) + ' грн'}</div></div>`;
+        row.addEventListener('click', () => { window.closeAdDetailModal(); if(typeof openViewModal === 'function') openViewModal(p.id); });
+        list.appendChild(row);
+      });
+    }
+    const modal = document.getElementById('adDetailModal'); if(modal) modal.style.display='flex';
+    if(typeof openOverlayLock === 'function') openOverlayLock();
+  };
+
+  window.closeAdDetailModal = function(){
+    const modal = document.getElementById('adDetailModal'); if(modal) modal.style.display='none';
+    if(typeof closeOverlayLock === 'function') closeOverlayLock();
+  };
+
+  document.addEventListener('DOMContentLoaded', async function(){
+    const input = document.getElementById('adImageFile');
+    if(input && !input.dataset.adFixReady){
+      input.dataset.adFixReady = '1';
+      input.addEventListener('change', function(){
+        const file = this.files && this.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          tempAdImage = e.target.result;
+          const preview = document.getElementById('adImagePreview');
+          const empty = document.getElementById('adUploadEmpty');
+          if(preview){ preview.src = tempAdImage; preview.style.display = 'block'; }
+          if(empty) empty.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    await adLoadFirebase();
+    window.renderAds();
+    try{
+      if(typeof db !== 'undefined' && db && db.ref){
+        db.ref('catalog/ads').on('value', snap => {
+          if(snap.exists()){
+            ads = Array.isArray(snap.val()) ? snap.val() : [];
+            adSaveLocal();
+            window.renderAds();
+          }
+        });
+      }
+    }catch(e){}
+  });
+})();
+/* AD FIELD FIX PATCH END */
 </script>
 
 </body>
