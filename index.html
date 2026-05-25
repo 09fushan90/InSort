@@ -1761,6 +1761,33 @@ body::before{
 }
 
 
+
+/* OUT OF STOCK CSS START */
+.product-unavailable-price{
+  color:#ff3b30 !important;
+  font-weight:900 !important;
+}
+.product.unavailable{
+  opacity:.92;
+}
+.unavailable-picker-product.selected{
+  border-color:#ff3b30 !important;
+  box-shadow:0 0 15px rgba(255,59,48,.55) !important;
+}
+.unavailable-picker-product .unavailable-state{
+  color:#ff3b30;
+  font-weight:900;
+  margin-bottom:8px;
+}
+.unavailable-save-row{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+/* OUT OF STOCK CSS END */
+
 /* CATEGORY CHOOSE MODAL CSS START */
 .category-choose-open-btn{
   background:#ffffff !important;
@@ -2080,6 +2107,7 @@ body::before{
 <button id="manageCategoriesBtn" onclick="openCategoryModal()" style="display:none;">Категорії</button>
 <button id="manageMainCategoriesBtn" onclick="openMainCategoryModal()" style="display:none;">Осн. категорії</button>
 <button id="manageProductSectionsBtn" onclick="openProductSectionModal()" style="display:none;">Секції товарів</button>
+<button id="manageUnavailableBtn" onclick="openUnavailablePickerModal()" style="display:none;background:#c62828;color:#fff;">Немає</button>
 </div>
 </div>
 <div class="search-box">
@@ -2203,6 +2231,23 @@ body::before{
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
       <button onclick="saveAdLinkedProduct()">Зберегти</button>
       <button onclick="closeAdProductPickerModal()" style="background:#444;color:#fff;">Скасувати</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="unavailablePickerModal">
+  <div class="modal-content cart-modal-content">
+    <div class="cart-header">
+      <h3 style="margin:0;">Позначити товари, яких немає</h3>
+      <button onclick="closeUnavailablePickerModal()" style="margin:0;">✕</button>
+    </div>
+    <p style="font-size:13px;color:#b8efb8;margin:0 0 10px;">Натискай “Обрати” під товарами. Вибрані товари будуть показувати червоне “немає” замість ціни.</p>
+    <input id="unavailablePickerSearch" onkeyup="renderUnavailablePicker()" placeholder="Пошук товару..." type="text"/>
+    <div class="ad-picker-list" id="unavailablePickerList"></div>
+    <div class="unavailable-save-row">
+      <button onclick="saveUnavailableProducts()">Зберегти</button>
+      <button onclick="clearUnavailableProducts()" style="background:#181818;color:#fff;border:1px solid rgba(107,255,42,.25);">Очистити всі</button>
+      <button onclick="closeUnavailablePickerModal()" style="background:#444;color:#fff;">Скасувати</button>
     </div>
   </div>
 </div>
@@ -2916,11 +2961,13 @@ function keepOfficeModeAfterSearchFix(){
     const catBtn = document.getElementById("manageCategoriesBtn");
     const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
     const sectionBtn = document.getElementById("manageProductSectionsBtn");
+    const unavailableBtn = document.getElementById("manageUnavailableBtn");
 
     if(addBtn) addBtn.style.display = "inline-block";
     if(catBtn) catBtn.style.display = "inline-block";
     if(mainCatBtn) mainCatBtn.style.display = "inline-block";
     if(sectionBtn) sectionBtn.style.display = "inline-block";
+    if(unavailableBtn) unavailableBtn.style.display = "inline-block";
 
     if(typeof renderAds === "function") renderAds();
   }
@@ -2938,6 +2985,7 @@ let editingAdId = null;
 let tempAdImage = "";
 let selectingAdId = null;
 let selectedAdProductId = null;
+let selectedUnavailableIds = new Set();
 let currentAdSlide = 0;
 let adsAutoSlideTimer = null;
 let currentMainCategoryFilter = '';
@@ -3275,12 +3323,14 @@ function openOffice(){
   const catBtn = document.getElementById("manageCategoriesBtn");
   const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
   const sectionBtn = document.getElementById("manageProductSectionsBtn");
+  const unavailableBtn = document.getElementById("manageUnavailableBtn");
 
   if(adminMode){
     if(addBtn) addBtn.style.display="inline-block";
     if(catBtn) catBtn.style.display="inline-block";
     if(mainCatBtn) mainCatBtn.style.display="inline-block";
     if(sectionBtn) sectionBtn.style.display="inline-block";
+    if(unavailableBtn) unavailableBtn.style.display="inline-block";
     if(typeof setOfficeEditMode === "function") setOfficeEditMode(true);
     showSiteNotice("Офіс увімкнено. Тепер натискай на текст або фото, щоб редагувати їх.");
   } else {
@@ -3288,6 +3338,7 @@ function openOffice(){
     if(catBtn) catBtn.style.display="none";
     if(mainCatBtn) mainCatBtn.style.display="none";
     if(sectionBtn) sectionBtn.style.display="none";
+    if(unavailableBtn) unavailableBtn.style.display="none";
     if(typeof setOfficeEditMode === "function") setOfficeEditMode(false);
     goToHomeScreen();
   }
@@ -3311,11 +3362,13 @@ function handleSearch(){
       const catBtn = document.getElementById("manageCategoriesBtn");
       const mainCatBtn = document.getElementById("manageMainCategoriesBtn");
       const sectionBtn = document.getElementById("manageProductSectionsBtn");
+      const unavailableBtn = document.getElementById("manageUnavailableBtn");
 
       if(addBtn) addBtn.style.display = "inline-block";
       if(catBtn) catBtn.style.display = "inline-block";
       if(mainCatBtn) mainCatBtn.style.display = "inline-block";
       if(sectionBtn) sectionBtn.style.display = "inline-block";
+      if(unavailableBtn) unavailableBtn.style.display = "inline-block";
 
       if(typeof setOfficeEditMode === "function") setOfficeEditMode(true);
       applyAllFilters();
@@ -3380,7 +3433,9 @@ function openViewModal(id){
 
   document.getElementById("modalImg").src = currentImages[currentIndex];
   document.getElementById("modalTitle").innerText = p.title;
-  document.getElementById("modalPrice").innerText = p.price + " грн";
+  const modalPriceEl = document.getElementById("modalPrice");
+  modalPriceEl.innerText = p.unavailable === true ? "немає" : p.price + " грн";
+  modalPriceEl.className = p.unavailable === true ? "product-unavailable-price" : "";
   document.getElementById("modalDesc").innerText = p.desc;
   document.getElementById("modalCategory").innerText = p.category ? "Категорія: " + p.category : "";
 
@@ -4657,7 +4712,7 @@ function renderAdProductPicker(){
     item.innerHTML = `
       <img src="${displayImage || ''}" alt="${p.title || ''}">
       <div class="ad-picker-product-title">${p.title || ''}</div>
-      <div class="ad-picker-product-price">${p.price || 0} грн</div>
+      <div class="ad-picker-product-price ${p.unavailable === true ? 'product-unavailable-price' : ''}">${p.unavailable === true ? 'немає' : (p.price || 0) + ' грн'}</div>
       <button type="button">Обрати</button>
     `;
     item.querySelector('button').addEventListener('click', () => {
@@ -4685,6 +4740,69 @@ function saveAdLinkedProduct(){
   saveToDatabase();
   renderAds();
   closeAdProductPickerModal();
+}
+
+
+function openUnavailablePickerModal(){
+  if(!isAdminUser()) return;
+  selectedUnavailableIds = new Set(products.filter(p => p.unavailable === true).map(p => String(p.id)));
+  const input = document.getElementById('unavailablePickerSearch');
+  if(input) input.value = '';
+  renderUnavailablePicker();
+  document.getElementById('unavailablePickerModal').style.display = 'flex';
+  openOverlayLock();
+}
+
+function closeUnavailablePickerModal(){
+  const modal = document.getElementById('unavailablePickerModal');
+  if(modal) modal.style.display = 'none';
+  selectedUnavailableIds = new Set();
+  closeOverlayLock();
+}
+
+function renderUnavailablePicker(){
+  const list = document.getElementById('unavailablePickerList');
+  if(!list) return;
+  const q = (document.getElementById('unavailablePickerSearch')?.value || '').toLowerCase();
+  const filtered = products.filter(p => (p.title || '').toLowerCase().includes(q));
+  list.innerHTML = '';
+  filtered.forEach(p => {
+    const displayImage = Array.isArray(p.image) ? p.image[0] : p.image;
+    const isSelected = selectedUnavailableIds.has(String(p.id));
+    const item = document.createElement('div');
+    item.className = 'ad-picker-product unavailable-picker-product' + (isSelected ? ' selected' : '');
+    item.innerHTML = `
+      <img src="${displayImage || ''}" alt="${p.title || ''}">
+      <div class="ad-picker-product-title">${p.title || ''}</div>
+      <div class="ad-picker-product-price ${p.unavailable === true ? 'product-unavailable-price' : ''}">${p.unavailable === true ? 'немає' : (p.price || 0) + ' грн'}</div>
+      <div class="unavailable-state">${isSelected ? 'Буде: немає' : 'Є в асортименті'}</div>
+      <button type="button">${isSelected ? 'Прибрати з немає' : 'Обрати'}</button>
+    `;
+    item.querySelector('button').addEventListener('click', () => {
+      const key = String(p.id);
+      if(selectedUnavailableIds.has(key)) selectedUnavailableIds.delete(key);
+      else selectedUnavailableIds.add(key);
+      renderUnavailablePicker();
+    });
+    list.appendChild(item);
+  });
+}
+
+function saveUnavailableProducts(){
+  if(!isAdminUser()) return;
+  products.forEach(p => {
+    p.unavailable = selectedUnavailableIds.has(String(p.id));
+  });
+  saveToDatabase();
+  applyAllFilters();
+  closeUnavailablePickerModal();
+  showSiteNotice('Статус “немає” збережено.');
+}
+
+function clearUnavailableProducts(){
+  if(!isAdminUser()) return;
+  selectedUnavailableIds = new Set();
+  renderUnavailablePicker();
 }
 
 // обновленный renderProducts
@@ -4722,12 +4840,17 @@ function renderProducts(list = products){
     div.dataset.id = p.id;
 
     const inCart = selectedProducts.some(item => String(item.id) === String(p.id));
+    const isUnavailable = p.unavailable === true;
     if(inCart) div.classList.add('selected');
+    if(isUnavailable) div.classList.add('unavailable');
+    const priceHtml = isUnavailable
+      ? '<p class="product-unavailable-price">немає</p>'
+      : `<p>${safeText(p.price)} грн</p>`;
 
     div.innerHTML = `
       <img src="${displayImage || ''}" alt="${safeText(p.title).replace(/"/g, '&quot;')}">
       <h4>${safeText(p.title)}</h4>
-      <p>${safeText(p.price)} грн</p>
+      ${priceHtml}
       <div class="card-buttons">
         <button class="order-btn ${inCart ? 'added' : ''}">${inCart ? '✔ Прибрати' : 'Додати в замовлення'}</button>
         <button class="add-btn">Швидке замовлення</button>
