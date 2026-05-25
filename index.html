@@ -6846,6 +6846,155 @@ function chooseCategoryFromWindow(type, value, label){
 /* AD FIELD FIX PATCH END */
 </script>
 
+
+
+<!-- SCROLL + ORDER BUTTON FIX START -->
+<style>
+/* Надійний червоний стан кнопки замовлення, навіть якщо інші стилі мають !important */
+.order-btn.added,
+.order-btn.is-added,
+.product-v5-buy.added,
+#modalOrderBtn.added{
+  background:#ff3b30 !important;
+  color:#fff !important;
+  border-color:#ff3b30 !important;
+  box-shadow:0 0 14px rgba(255,59,48,.45) !important;
+}
+.order-btn.added:hover,
+.order-btn.is-added:hover,
+.product-v5-buy.added:hover,
+#modalOrderBtn.added:hover{
+  background:#d92b22 !important;
+  color:#fff !important;
+}
+html.no-scroll,
+body.no-scroll{
+  overflow:hidden !important;
+  overscroll-behavior:none !important;
+}
+body.scroll-fixed-by-modal{
+  position:fixed !important;
+  left:0 !important;
+  right:0 !important;
+  width:100% !important;
+}
+.modal{
+  overscroll-behavior:contain !important;
+}
+.modal .modal-content,
+#viewModal .product-view-v5,
+#sideMenu{
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+</style>
+<script>
+(function(){
+  let savedScrollY = 0;
+  let locked = false;
+
+  function isShown(el){
+    if(!el) return false;
+    const st = window.getComputedStyle(el);
+    return st.display !== 'none' && st.visibility !== 'hidden' && st.opacity !== '0';
+  }
+
+  function anyOverlayOpen(){
+    const visibleModal = Array.from(document.querySelectorAll('.modal, #fullscreenViewer'))
+      .some(el => isShown(el));
+    const menuOpen = document.getElementById('sideMenu')?.classList.contains('open');
+    const menuOverlay = document.getElementById('menuOverlay')?.classList.contains('show');
+    return visibleModal || menuOpen || menuOverlay;
+  }
+
+  function lockScroll(){
+    if(locked) return;
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    locked = true;
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll','scroll-fixed-by-modal');
+    document.body.style.top = '-' + savedScrollY + 'px';
+  }
+
+  function unlockScroll(){
+    if(!locked) return;
+    locked = false;
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll','scroll-fixed-by-modal');
+    document.body.style.top = '';
+    window.scrollTo(0, savedScrollY);
+  }
+
+  function syncScrollLock(){
+    if(anyOverlayOpen()) lockScroll();
+    else unlockScroll();
+  }
+
+  window.lockPageScroll = lockScroll;
+  window.unlockPageScroll = unlockScroll;
+  window.openOverlayLock = syncScrollLock;
+  window.closeOverlayLock = function(){ setTimeout(syncScrollLock, 0); };
+  window.__syncScrollLock = syncScrollLock;
+
+  function syncOrderButtons(){
+    if(!Array.isArray(window.selectedProducts)) return;
+    const ids = new Set(window.selectedProducts.map(item => String(item.id)));
+    document.querySelectorAll('.product[data-id]').forEach(card => {
+      const inCart = ids.has(String(card.dataset.id));
+      card.classList.toggle('selected', inCart);
+      const btn = card.querySelector('.order-btn');
+      if(btn){
+        btn.textContent = inCart ? '✔ Прибрати' : 'Додати в замовлення';
+        btn.classList.toggle('added', inCart);
+        btn.classList.toggle('is-added', inCart);
+      }
+    });
+    const modalBtn = document.getElementById('modalOrderBtn');
+    if(modalBtn && window.currentProductId !== null && window.currentProductId !== undefined){
+      const inCart = ids.has(String(window.currentProductId));
+      modalBtn.textContent = inCart ? '✔ Прибрати' : 'Додати в замовлення';
+      modalBtn.classList.toggle('added', inCart);
+      modalBtn.classList.toggle('is-added', inCart);
+    }
+  }
+
+  const oldUpdateSelectedUI = window.updateSelectedUI;
+  window.updateSelectedUI = function(){
+    if(typeof oldUpdateSelectedUI === 'function') oldUpdateSelectedUI.apply(this, arguments);
+    syncOrderButtons();
+    setTimeout(syncScrollLock, 0);
+  };
+
+  const oldAddFromView = window.addFromView;
+  window.addFromView = function(){
+    if(typeof oldAddFromView === 'function') oldAddFromView.apply(this, arguments);
+    syncOrderButtons();
+  };
+
+  const oldOrderProduct = window.orderProduct;
+  window.orderProduct = function(){
+    if(typeof oldOrderProduct === 'function') oldOrderProduct.apply(this, arguments);
+    syncOrderButtons();
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const observer = new MutationObserver(function(){
+      syncScrollLock();
+      syncOrderButtons();
+    });
+    document.querySelectorAll('.modal, #fullscreenViewer, #sideMenu, #menuOverlay').forEach(el => {
+      observer.observe(el, {attributes:true, attributeFilter:['style','class']});
+    });
+    document.addEventListener('click', function(){
+      setTimeout(function(){ syncScrollLock(); syncOrderButtons(); }, 0);
+    }, true);
+    syncScrollLock();
+    syncOrderButtons();
+  });
+})();
+</script>
+<!-- SCROLL + ORDER BUTTON FIX END -->
+
 </body>
 
 </html>
