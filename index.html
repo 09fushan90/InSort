@@ -2223,9 +2223,10 @@ body::before{
 <div class="modal" id="adProductPickerModal">
   <div class="modal-content cart-modal-content">
     <div class="cart-header">
-      <h3 style="margin:0;">Обрати товар для реклами</h3>
+      <h3 style="margin:0;">Обрати товари для реклами</h3>
       <button onclick="closeAdProductPickerModal()" style="margin:0;">✕</button>
     </div>
+    <p style="font-size:13px;color:#b8efb8;margin:0 0 10px;">Можна вибрати багато товарів. Натисни “Обрати” під кожним потрібним товаром.</p>
     <input id="adProductPickerSearch" onkeyup="renderAdProductPicker()" placeholder="Пошук товару..." type="text"/>
     <div class="ad-picker-list" id="adProductPickerList"></div>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
@@ -2984,7 +2985,7 @@ let ads = [];
 let editingAdId = null;
 let tempAdImage = "";
 let selectingAdId = null;
-let selectedAdProductId = null;
+let selectedAdProductIds = new Set();
 let selectedUnavailableIds = new Set();
 let currentAdSlide = 0;
 let adsAutoSlideTimer = null;
@@ -3189,6 +3190,7 @@ function applyAllFilters(){
   if(searchValue){
     filtered = filtered.filter(p => (p.title || "").toLowerCase().includes(searchValue));
   }
+  filtered = sortProductsUnavailableLast(filtered);
   renderProducts(filtered);
   keepOfficeModeAfterSearchFix();
 }
@@ -4512,6 +4514,25 @@ function getFreshAdImageSrc(src, version){
   return `${src}${separator}v=${encodeURIComponent(version || Date.now())}`;
 }
 
+function getAdProductIds(ad){
+  if(!ad) return [];
+  if(Array.isArray(ad.productIds)) return ad.productIds.filter(id => id !== undefined && id !== null && String(id) !== '').map(id => String(id));
+  if(ad.productId !== undefined && ad.productId !== null && String(ad.productId) !== '') return [String(ad.productId)];
+  return [];
+}
+
+function sortProductsUnavailableLast(list){
+  return [...(Array.isArray(list) ? list : [])].sort((a,b)=>{
+    const au = a && a.unavailable === true ? 1 : 0;
+    const bu = b && b.unavailable === true ? 1 : 0;
+    if(au !== bu) return au - bu;
+    const aSection = parseInt((a && a.section) || 999999);
+    const bSection = parseInt((b && b.section) || 999999);
+    if(aSection !== bSection) return aSection - bSection;
+    return String((a && a.title) || '').localeCompare(String((b && b.title) || ''), 'uk');
+  });
+}
+
 function renderAds(){
   const list = document.getElementById('adsList');
   if(!list) return;
@@ -4537,7 +4558,9 @@ function renderAds(){
   }
 
   ads.forEach(ad => {
-    const product = getProductByIdForAd(ad.productId);
+    const linkedProductIds = getAdProductIds(ad);
+    const linkedProducts = linkedProductIds.map(id => getProductByIdForAd(id)).filter(Boolean);
+    const firstLinkedProduct = linkedProducts[0] || null;
     const slide = document.createElement('div');
     slide.className = 'ad-slide';
 
@@ -4554,7 +4577,7 @@ function renderAds(){
       <button class="ad-delete-btn" type="button">Видалити</button>
       <button class="ad-bind-btn" type="button">Додати товар</button>
       <button class="ad-edit-btn" type="button">Редагувати</button>
-      ${product ? `<div class="ad-linked-label">Товар: ${product.title}</div>` : `<div class="ad-linked-label">Товар не прикріплено</div>`}
+      ${linkedProducts.length ? `<div class="ad-linked-label">Товарів: ${linkedProducts.length} — ${linkedProducts.map(p => p.title).slice(0,3).join(', ')}${linkedProducts.length > 3 ? '...' : ''}</div>` : `<div class="ad-linked-label">Товар не прикріплено</div>`}
     `;
 
     card.querySelector('.ad-edit-btn').addEventListener('click', (e) => {
@@ -4571,8 +4594,9 @@ function renderAds(){
     });
 
     card.addEventListener('click', () => {
-      if(ad.productId){
-        openViewModal(ad.productId);
+      const ids = getAdProductIds(ad);
+      if(ids.length){
+        openViewModal(ids[0]);
       }else if(adminMode){
         openAdProductPickerModal(ad.id);
       }else{
@@ -4652,6 +4676,7 @@ function saveAdPhoto(){
       id: Date.now(),
       image: tempAdImage,
       productId: '',
+      productIds: [],
       updatedAt: Date.now()
     });
     currentAdSlide = ads.length - 1;
@@ -4684,7 +4709,7 @@ function openAdProductPickerModal(adId){
   if(!isAdminUser()) return;
   selectingAdId = adId;
   const ad = ads.find(x => String(x.id) === String(adId));
-  selectedAdProductId = ad?.productId || null;
+  selectedAdProductIds = new Set(getAdProductIds(ad));
   const input = document.getElementById('adProductPickerSearch');
   if(input) input.value = '';
   renderAdProductPicker();
@@ -4695,7 +4720,7 @@ function openAdProductPickerModal(adId){
 function closeAdProductPickerModal(){
   document.getElementById('adProductPickerModal').style.display = 'none';
   selectingAdId = null;
-  selectedAdProductId = null;
+  selectedAdProductIds = new Set();
   closeOverlayLock();
 }
 
@@ -4703,20 +4728,23 @@ function renderAdProductPicker(){
   const list = document.getElementById('adProductPickerList');
   if(!list) return;
   const q = (document.getElementById('adProductPickerSearch')?.value || '').toLowerCase();
-  const filtered = products.filter(p => (p.title || '').toLowerCase().includes(q));
+  const filtered = sortProductsUnavailableLast(products.filter(p => (p.title || '').toLowerCase().includes(q)));
   list.innerHTML = '';
   filtered.forEach(p => {
     const displayImage = Array.isArray(p.image) ? p.image[0] : p.image;
+    const isSelected = selectedAdProductIds.has(String(p.id));
     const item = document.createElement('div');
-    item.className = 'ad-picker-product' + (String(selectedAdProductId) === String(p.id) ? ' selected' : '');
+    item.className = 'ad-picker-product' + (isSelected ? ' selected' : '');
     item.innerHTML = `
       <img src="${displayImage || ''}" alt="${p.title || ''}">
       <div class="ad-picker-product-title">${p.title || ''}</div>
       <div class="ad-picker-product-price ${p.unavailable === true ? 'product-unavailable-price' : ''}">${p.unavailable === true ? 'немає' : (p.price || 0) + ' грн'}</div>
-      <button type="button">Обрати</button>
+      <button type="button">${isSelected ? 'Прибрати' : 'Обрати'}</button>
     `;
     item.querySelector('button').addEventListener('click', () => {
-      selectedAdProductId = p.id;
+      const key = String(p.id);
+      if(selectedAdProductIds.has(key)) selectedAdProductIds.delete(key);
+      else selectedAdProductIds.add(key);
       renderAdProductPicker();
     });
     list.appendChild(item);
@@ -4730,11 +4758,13 @@ function saveAdLinkedProduct(){
     showSiteNotice('Рекламу не знайдено.');
     return;
   }
-  if(!selectedAdProductId){
-    showSiteNotice('Обери товар.');
+  const ids = Array.from(selectedAdProductIds);
+  if(!ids.length){
+    showSiteNotice('Обери хоча б один товар.');
     return;
   }
-  ad.productId = selectedAdProductId;
+  ad.productIds = ids;
+  ad.productId = ids[0] || '';
   ad.updatedAt = Date.now();
   saveAdsLocalBackup();
   saveToDatabase();
@@ -4764,7 +4794,7 @@ function renderUnavailablePicker(){
   const list = document.getElementById('unavailablePickerList');
   if(!list) return;
   const q = (document.getElementById('unavailablePickerSearch')?.value || '').toLowerCase();
-  const filtered = products.filter(p => (p.title || '').toLowerCase().includes(q));
+  const filtered = sortProductsUnavailableLast(products.filter(p => (p.title || '').toLowerCase().includes(q)));
   list.innerHTML = '';
   filtered.forEach(p => {
     const displayImage = Array.isArray(p.image) ? p.image[0] : p.image;
@@ -4897,16 +4927,7 @@ function renderProducts(list = products){
   // Секції потрібні тільки в режимі офісу.
   // Покупці бачать простий список товарів без написів "Без секції", "1 секція" і т.д.
   if(!adminMode){
-    const sortedProducts = [...list].sort((a,b)=>{
-      const aSection = parseInt(a.section || 999999);
-      const bSection = parseInt(b.section || 999999);
-
-      if(aSection !== bSection){
-        return aSection - bSection;
-      }
-
-      return String(a.title || "").localeCompare(String(b.title || ""), 'uk');
-    });
+    const sortedProducts = sortProductsUnavailableLast(list);
 
     sortedProducts.forEach(appendProduct);
     keepOfficeModeAfterSearchFix();
@@ -4915,19 +4936,21 @@ function renderProducts(list = products){
 
   if(finalSections.length){
     finalSections.forEach(section => {
-      const sectionProducts = list.filter(p => (p.section || "") === section);
+      const sectionProducts = sortProductsUnavailableLast(list.filter(p => (p.section || "") === section && p.unavailable !== true));
       if(sectionProducts.length){
         appendSectionTitle(section);
         sectionProducts.forEach(appendProduct);
       }
     });
-    const noSectionProducts = list.filter(p => !(p.section || ""));
+    const noSectionProducts = sortProductsUnavailableLast(list.filter(p => !(p.section || "") && p.unavailable !== true));
     if(noSectionProducts.length){
       appendSectionTitle("Без секції", true);
       noSectionProducts.forEach(appendProduct);
     }
+    const unavailableProducts = sortProductsUnavailableLast(list.filter(p => p.unavailable === true));
+    unavailableProducts.forEach(appendProduct);
   } else {
-    list.forEach(appendProduct);
+    sortProductsUnavailableLast(list).forEach(appendProduct);
   }
   keepOfficeModeAfterSearchFix();
 }
