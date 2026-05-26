@@ -2550,7 +2550,7 @@ body::before{
   <div class="catalog-subtitle" data-office-editable="text" data-office-key="catalog_subtitle">Знайди потрібний інструмент через пошук або категорії.</div>
   <div class="catalog-inline-filters">
     <button class="category-choose-open-btn" onclick="openCategoryChooseModal()" type="button">Обрати категорію</button>
-    <span class="category-choose-current" id="categoryChooseCurrent">Усі товари</span>
+    <span class="category-choose-current" id="categoryChooseCurrent" style="display:none;"></span>
     <select id="mainCategoryFilter" onchange="filterMainCategory()" style="display:none;">
       <option value="">Основні категорії</option>
     </select>
@@ -8018,6 +8018,1240 @@ img,video,canvas,svg{max-width:100%;}
 })();
 </script>
 <!-- FINAL MOBILE CATEGORIES + FILTER FIX 2026-05-26 END -->
+
+
+
+<!-- PROCRAFT STYLE FILTERS + WHITE SCREEN FIX START -->
+<style>
+/* Фільтри як на Procraft: кнопка зліва від пошуку, випадаюче меню, підкатегорії тільки для вибраної основної категорії */
+@media (min-width:701px){
+  .search-box{
+    display:flex!important;
+    align-items:flex-start!important;
+    gap:10px!important;
+    position:relative!important;
+    overflow:visible!important;
+    z-index:50!important;
+  }
+  #filtersWrap.filters-wrap{
+    display:block!important;
+    position:relative!important;
+    flex:0 0 auto!important;
+    width:auto!important;
+    z-index:60000!important;
+  }
+  .filter-open-btn{
+    height:52px!important;
+    min-width:108px!important;
+    margin:0!important;
+    padding:0 18px!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    color:#071007!important;
+    border:2px solid rgba(107,255,42,.55)!important;
+    font-weight:900!important;
+    box-shadow:0 8px 20px rgba(0,0,0,.14)!important;
+  }
+  #filtersWrap:not(.open) .filter-panel{
+    display:none!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+  #filtersWrap.open .filter-panel,
+  #filtersWrap:hover .filter-panel{
+    display:grid!important;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+  .filter-panel{
+    position:absolute!important;
+    top:62px!important;
+    left:0!important;
+    width:min(980px, calc(100vw - 130px))!important;
+    max-width:calc(100vw - 130px)!important;
+    min-height:340px!important;
+    max-height:74vh!important;
+    overflow:hidden!important;
+    grid-template-columns:310px minmax(360px,1fr)!important;
+    gap:0!important;
+    background:#fff!important;
+    border:1px solid #d9e6d9!important;
+    border-radius:22px!important;
+    box-shadow:0 24px 60px rgba(0,0,0,.28)!important;
+    color:#111!important;
+    z-index:60001!important;
+  }
+  .filter-main-list{
+    background:#f7faf7!important;
+    border-right:1px solid #dfe8df!important;
+    padding:12px!important;
+    overflow:auto!important;
+    max-height:74vh!important;
+  }
+  .filter-main-item,
+  .filter-all-btn{
+    width:100%!important;
+    min-height:48px!important;
+    margin:0 0 8px 0!important;
+    padding:10px 12px!important;
+    border-radius:14px!important;
+    border:1px solid transparent!important;
+    background:#fff!important;
+    color:#111!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:10px!important;
+    text-align:left!important;
+    font-size:15px!important;
+    font-weight:900!important;
+    cursor:pointer!important;
+    box-shadow:none!important;
+  }
+  .filter-all-btn{
+    justify-content:center!important;
+    background:#101010!important;
+    color:#fff!important;
+    border-color:rgba(107,255,42,.45)!important;
+  }
+  .filter-main-item:hover,
+  .filter-main-item.active{
+    background:linear-gradient(90deg,#eef9ee,#fff)!important;
+    color:#ff7a00!important;
+    border-color:#e4efe4!important;
+  }
+  .filter-main-icon{
+    width:30px!important;
+    height:30px!important;
+    min-width:30px!important;
+    border-radius:10px!important;
+    background:#ff7a00!important;
+    color:#fff!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:14px!important;
+  }
+  .filter-sub-panel{
+    display:none!important;
+    position:absolute!important;
+    left:310px!important;
+    top:0!important;
+    right:0!important;
+    width:auto!important;
+    height:100%!important;
+    max-height:74vh!important;
+    overflow:auto!important;
+    padding:26px!important;
+    background:#fff!important;
+    border:0!important;
+    border-radius:0 22px 22px 0!important;
+    box-shadow:none!important;
+    grid-template-columns:repeat(4,minmax(110px,1fr))!important;
+    gap:22px 26px!important;
+    align-content:start!important;
+    z-index:2!important;
+  }
+  .filter-main-item:hover .filter-sub-panel,
+  .filter-main-item.active .filter-sub-panel{
+    display:grid!important;
+  }
+  .filter-sub-card{
+    min-width:0!important;
+    background:#fff!important;
+    color:#111!important;
+    border:0!important;
+    border-radius:16px!important;
+    padding:8px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    text-align:center!important;
+    cursor:pointer!important;
+    font-weight:900!important;
+    line-height:1.12!important;
+  }
+  .filter-sub-card:hover{
+    background:#f3fff3!important;
+    box-shadow:0 0 0 2px rgba(107,255,42,.35)!important;
+  }
+  .filter-sub-card img{
+    width:82px!important;
+    height:82px!important;
+    object-fit:contain!important;
+    background:#000!important;
+    border-radius:0!important;
+    padding:0!important;
+    margin:0 0 8px!important;
+  }
+  .filter-sub-card span{
+    color:#111!important;
+    font-size:14px!important;
+    overflow-wrap:anywhere!important;
+  }
+  .filter-empty-sub{
+    grid-column:1/-1!important;
+    color:#111!important;
+    font-weight:800!important;
+    background:#f5f5f5!important;
+    border-radius:16px!important;
+    padding:18px!important;
+  }
+}
+
+/* Телефон: залишаємо тільки кнопку Категорії */
+@media (max-width:700px){
+  #filtersWrap,.filters-wrap,.filter-panel,.filter-open-btn{display:none!important;}
+  .catalog-inline-filters{display:flex!important;}
+}
+
+/* Фікс білого екрану/білої плашки при першому наведенні */
+.products,
+.product,
+.product:hover,
+.catalog-shell{
+  backface-visibility:hidden!important;
+  transform-style:flat!important;
+}
+.product{
+  background:#101010!important;
+  color:#fff!important;
+  isolation:isolate!important;
+  position:relative!important;
+}
+.product:hover{
+  background:#101010!important;
+  color:#fff!important;
+  z-index:3!important;
+}
+#filtersWrap:not(.open):not(:hover) .filter-sub-panel{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+</style>
+<script>
+(function(){
+  'use strict';
+  function safeText(value){return String(value ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function arr(name){try{return Array.isArray(window[name]) ? window[name] : (Array.isArray(eval(name)) ? eval(name) : []);}catch(e){return [];}}
+  function logo(){return 'logo.png.jpg';}
+  function getCatImage(cat){
+    try{
+      const imgs = window.categoryImages || (typeof categoryImages !== 'undefined' ? categoryImages : {});
+      return (imgs && imgs[cat]) || logo();
+    }catch(e){return logo();}
+  }
+  function getSubForMain(main){
+    const result = [];
+    const productsArr = arr('products');
+    productsArr.forEach(p=>{
+      const pMain = String((p && p.mainCategory) || '').trim();
+      const pCat = String((p && p.category) || '').trim();
+      if(pMain === String(main || '').trim() && pCat && !result.includes(pCat)) result.push(pCat);
+    });
+    return result;
+  }
+  function setCurrentMain(value){
+    try{ currentMainCategoryFilter = value || ''; }catch(e){}
+    window.currentMainCategoryFilter = value || '';
+    const mf = document.getElementById('mainCategoryFilter');
+    if(mf) mf.value = value || '';
+  }
+  function setCurrentSub(value){
+    const cf = document.getElementById('categoryFilter');
+    if(cf) cf.value = value || '';
+  }
+  window.selectFilterAll = function(){
+    setCurrentMain('');
+    setCurrentSub('');
+    const label=document.getElementById('categoryChooseCurrent');
+    if(label) label.textContent='Усі товари';
+    if(typeof applyAllFilters === 'function') applyAllFilters();
+    if(typeof renderFiltersPanel === 'function') renderFiltersPanel();
+  };
+  window.selectMainFilter = function(e, main){
+    if(e && e.stopPropagation) e.stopPropagation();
+    setCurrentMain(main || '');
+    setCurrentSub('');
+    const label=document.getElementById('categoryChooseCurrent');
+    if(label) label.textContent=main || 'Усі товари';
+    if(typeof syncCategoryOptionsForMain === 'function') syncCategoryOptionsForMain();
+    if(typeof applyAllFilters === 'function') applyAllFilters();
+    if(typeof renderFiltersPanel === 'function') renderFiltersPanel();
+  };
+  window.selectSubFilter = function(e, main, sub){
+    if(e && e.stopPropagation) e.stopPropagation();
+    /* Як на Procraft: підкатегорія працює всередині своєї основної категорії */
+    setCurrentMain(main || '');
+    if(typeof syncCategoryOptionsForMain === 'function') syncCategoryOptionsForMain();
+    setCurrentSub(sub || '');
+    const label=document.getElementById('categoryChooseCurrent');
+    if(label) label.textContent = main ? (main + ' / ' + sub) : (sub || 'Усі товари');
+    if(typeof applyAllFilters === 'function') applyAllFilters();
+    document.getElementById('filtersWrap')?.classList.remove('open');
+    if(typeof renderFiltersPanel === 'function') renderFiltersPanel();
+  };
+  window.renderFiltersPanel = function(){
+    const panel = document.getElementById('filtersPanel');
+    if(!panel) return;
+    const mains = arr('mainCategories');
+    const activeMain = String(window.currentMainCategoryFilter || (document.getElementById('mainCategoryFilter')?.value || '')).trim();
+    let left = '<div class="filter-main-list"><button class="filter-all-btn" type="button" onclick="selectFilterAll()">Усі товари</button>';
+    let firstWithSubs = '';
+    mains.forEach((main)=>{
+      const subs = getSubForMain(main);
+      if(!firstWithSubs && subs.length) firstWithSubs = main;
+      const active = activeMain ? activeMain === main : firstWithSubs === main;
+      left += '<div class="filter-main-item '+(active?'active':'')+'" onclick="selectMainFilter(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+')">';
+      left += '<div class="filter-main-icon">⚙</div><span>'+safeText(main)+'</span>';
+      left += '<div class="filter-sub-panel">';
+      if(subs.length){
+        subs.forEach(sub=>{
+          left += '<div class="filter-sub-card" onclick="selectSubFilter(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+','+JSON.stringify(sub).replace(/"/g,'&quot;')+')"><img src="'+safeText(getCatImage(sub))+'" alt=""><span>'+safeText(sub)+'</span></div>';
+        });
+      }else{
+        left += '<div class="filter-empty-sub">У цій основній категорії ще немає підкатегорій з товарами.</div>';
+      }
+      left += '</div></div>';
+    });
+    if(!mains.length){
+      left += '<div class="filter-empty-sub">Додай основні категорії в Офісі.</div>';
+    }
+    left += '</div>';
+    panel.innerHTML = left;
+  };
+  window.filterCategory = function(){
+    const sub = document.getElementById('categoryFilter')?.value || '';
+    if(!sub){ if(typeof applyAllFilters === 'function') applyAllFilters(); return; }
+    /* Якщо вибрали прихований select — не даємо сайту падати в білий екран */
+    if(typeof applyAllFilters === 'function') applyAllFilters();
+  };
+  window.addEventListener('load',()=>setTimeout(()=>{try{renderFiltersPanel();}catch(e){}},300));
+  document.addEventListener('mouseover', function(e){
+    if(e.target.closest && e.target.closest('.product')){
+      const fp=document.getElementById('filtersPanel');
+      if(fp && !document.getElementById('filtersWrap')?.classList.contains('open')){
+        fp.style.pointerEvents='none';
+        setTimeout(()=>{fp.style.pointerEvents='';},120);
+      }
+    }
+  }, true);
+})();
+</script>
+<!-- PROCRAFT STYLE FILTERS + WHITE SCREEN FIX END -->
+
+
+
+<!-- FILTER WHITE AREA + PROCRAFT BEHAVIOR HOTFIX START -->
+<style>
+@media (min-width:701px){
+  .catalog-shell,.container,.search-box{overflow:visible!important;}
+  #filtersWrap.filters-wrap{z-index:90000!important;}
+  #filtersWrap:not(.open):not(:hover) #filtersPanel{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+  #filtersWrap.open #filtersPanel,#filtersWrap:hover #filtersPanel{display:grid!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;}
+  #filtersPanel.filter-panel{
+    width:min(980px, calc(100vw - 150px))!important;
+    max-width:calc(100vw - 150px)!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:560px!important;
+    overflow:hidden!important;
+    align-items:stretch!important;
+    background:#fff!important;
+  }
+  #filtersPanel .filter-main-list{max-height:560px!important;overflow-y:auto!important;}
+  #filtersPanel .filter-sub-panel{max-height:560px!important;overflow-y:auto!important;}
+  #products.products{min-height:260px!important;background:transparent!important;}
+  .filter-no-products{
+    grid-column:1/-1;
+    background:#101010;
+    color:#90ee90;
+    border:1px solid rgba(107,255,42,.25);
+    border-radius:20px;
+    padding:28px;
+    text-align:center;
+    font-size:18px;
+    font-weight:900;
+  }
+}
+.product,.product:hover,.products,.catalog-shell{background-clip:padding-box!important;}
+.product:hover{background:#101010!important;color:#fff!important;}
+</style>
+<script>
+(function(){
+  'use strict';
+  let visualMainForFilters = '';
+  function getText(v){ return String(v || '').trim(); }
+  function productsArr(){ try{ return Array.isArray(products) ? products : []; }catch(e){ return []; } }
+  function mainsArr(){ try{ return Array.isArray(mainCategories) ? mainCategories : []; }catch(e){ return []; } }
+  function catsArr(){ try{ return Array.isArray(categories) ? categories : []; }catch(e){ return []; } }
+  function unique(list){ const out=[]; list.forEach(x=>{x=getText(x); if(x && !out.includes(x)) out.push(x);}); return out; }
+  function subcatsForMainSmart(main){
+    main = getText(main);
+    const found = [];
+    productsArr().forEach(p=>{
+      const pm=getText(p && p.mainCategory);
+      const pc=getText(p && p.category);
+      if(pc && (!main || pm === main)) found.push(pc);
+    });
+    // Якщо товари ще не прив'язані до основної категорії — не показуємо всі підкатегорії в кожній основній.
+    // Для таких основних категорій показуємо підказку, а не білий екран.
+    return unique(found);
+  }
+  function safeHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function safeLogo(cat){
+    try{
+      const imgs = window.categoryImages || (typeof categoryImages !== 'undefined' ? categoryImages : {});
+      return (imgs && imgs[cat]) || 'logo.png.jpg';
+    }catch(e){ return 'logo.png.jpg'; }
+  }
+
+  window.renderFiltersPanel = function(){
+    const panel = document.getElementById('filtersPanel');
+    if(!panel) return;
+    const mains = unique(mainsArr());
+    const selectedMain = getText(window.currentMainCategoryFilter || document.getElementById('mainCategoryFilter')?.value);
+    const activeMain = visualMainForFilters || selectedMain || mains.find(m => subcatsForMainSmart(m).length) || mains[0] || '';
+
+    let html = '<div class="filter-main-list"><button class="filter-all-btn" type="button" onclick="selectFilterAllFixed(event)">Усі товари</button>';
+    if(!mains.length){
+      html += '<div class="filter-empty-sub">Додай основні категорії в Офісі.</div>';
+    }
+    mains.forEach(main=>{
+      const active = main === activeMain;
+      const subs = subcatsForMainSmart(main);
+      html += '<div class="filter-main-item '+(active?'active':'')+'" onmouseenter="previewMainFilterFixed(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+')" onclick="previewMainFilterFixed(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+')">';
+      html += '<div class="filter-main-icon">⚙</div><span>'+safeHtml(main)+'</span>';
+      html += '<div class="filter-sub-panel">';
+      if(subs.length){
+        subs.forEach(sub=>{
+          html += '<div class="filter-sub-card" onclick="selectSubFilterFixed(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+','+JSON.stringify(sub).replace(/"/g,'&quot;')+')"><img src="'+safeHtml(safeLogo(sub))+'" alt=""><span>'+safeHtml(sub)+'</span></div>';
+        });
+      }else{
+        html += '<div class="filter-empty-sub">У цій основній категорії поки немає привʼязаних підкатегорій. Привʼяжи товари або підкатегорії в Офісі.</div>';
+      }
+      html += '</div></div>';
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+  };
+
+  window.previewMainFilterFixed = function(e, main){
+    if(e && e.stopPropagation) e.stopPropagation();
+    visualMainForFilters = getText(main);
+    if(typeof renderFiltersPanel === 'function') renderFiltersPanel();
+    const wrap = document.getElementById('filtersWrap');
+    if(wrap) wrap.classList.add('open');
+    // Важливо: як на Procraft, наведення/натискання основної категорії лише відкриває підкатегорії,
+    // а не очищає каталог і не робить білий екран.
+  };
+
+  window.selectFilterAllFixed = function(e){
+    if(e && e.stopPropagation) e.stopPropagation();
+    visualMainForFilters = '';
+    try{ currentMainCategoryFilter = ''; }catch(err){}
+    window.currentMainCategoryFilter = '';
+    const mf=document.getElementById('mainCategoryFilter'); if(mf) mf.value='';
+    const cf=document.getElementById('categoryFilter'); if(cf) cf.value='';
+    const label=document.getElementById('categoryChooseCurrent'); if(label) label.textContent='Усі товари';
+    document.getElementById('filtersWrap')?.classList.remove('open');
+    if(typeof applyAllFilters === 'function') applyAllFilters();
+    setTimeout(()=>{try{renderFiltersPanel();}catch(err){}},0);
+  };
+
+  window.selectSubFilterFixed = function(e, main, sub){
+    if(e && e.stopPropagation) e.stopPropagation();
+    main=getText(main); sub=getText(sub);
+    visualMainForFilters = main;
+    try{ currentMainCategoryFilter = main; }catch(err){}
+    window.currentMainCategoryFilter = main;
+    const mf=document.getElementById('mainCategoryFilter'); if(mf) mf.value=main;
+    if(typeof syncCategoryOptionsForMain === 'function') syncCategoryOptionsForMain();
+    const cf=document.getElementById('categoryFilter'); if(cf) cf.value=sub;
+    const label=document.getElementById('categoryChooseCurrent'); if(label) label.textContent = main ? (main + ' / ' + sub) : sub;
+    document.getElementById('filtersWrap')?.classList.remove('open');
+    if(typeof applyAllFilters === 'function') applyAllFilters();
+    setTimeout(()=>{try{renderFiltersPanel();}catch(err){}},0);
+  };
+
+  // Перехоплюємо старі функції, щоб вони не очищали каталог при наведенні/першому кліку.
+  window.selectMainFilter = window.previewMainFilterFixed;
+  window.selectFilterAll = window.selectFilterAllFixed;
+  window.selectSubFilter = window.selectSubFilterFixed;
+
+  const oldRender = window.renderProducts;
+  if(typeof oldRender === 'function'){
+    window.renderProducts = function(list){
+      const safeList = Array.isArray(list) ? list : productsArr();
+      oldRender.call(this, safeList);
+      const container = document.getElementById('products');
+      if(container && safeList.length === 0){
+        container.innerHTML = '<div class="filter-no-products">Товарів у цій категорії поки немає. Обери іншу підкатегорію або натисни “Усі товари”.</div>';
+      }
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>setTimeout(()=>{try{renderFiltersPanel();}catch(e){}},300));
+  window.addEventListener('load', ()=>setTimeout(()=>{try{renderFiltersPanel();}catch(e){}},600));
+})();
+</script>
+<!-- FILTER WHITE AREA + PROCRAFT BEHAVIOR HOTFIX END -->
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // прибрати напис "Усі товари"
+  const current = document.getElementById('categoryChooseCurrent');
+  if(current){
+    current.style.display = 'none';
+    current.textContent = '';
+  }
+
+  // примусовий рендер товарів якщо каталог порожній
+  setTimeout(() => {
+    const productsContainer =
+      document.getElementById('products') ||
+      document.querySelector('.products');
+
+    const cards = productsContainer ? productsContainer.querySelectorAll('.product') : [];
+
+    if ((!cards || cards.length === 0) && typeof renderProducts === 'function') {
+      try {
+        renderProducts();
+      } catch(e) {
+        console.log('renderProducts fix error', e);
+      }
+    }
+
+    // якщо після фільтрів все зникло — скинути фільтри
+    setTimeout(() => {
+      const checkCards = productsContainer ? productsContainer.querySelectorAll('.product') : [];
+
+      if ((!checkCards || checkCards.length === 0) && typeof products !== 'undefined' && typeof renderProducts === 'function') {
+        try {
+          if (typeof currentCategory !== 'undefined') currentCategory = '';
+          if (typeof currentMainCategory !== 'undefined') currentMainCategory = '';
+          if (typeof selectedCategory !== 'undefined') selectedCategory = '';
+
+          renderProducts(products);
+
+          if(productsContainer){
+            productsContainer.style.display = 'grid';
+            productsContainer.style.visibility = 'visible';
+            productsContainer.style.opacity = '1';
+          }
+        } catch(e) {
+          console.log('fallback catalog fix error', e);
+        }
+      }
+    }, 600);
+
+  }, 300);
+});
+</script>
+
+
+<!-- DESKTOP FILTERS / MOBILE CATEGORIES SEPARATION FIX START -->
+<style>
+/* ПК і ноут: показуємо тільки Фільтри біля пошуку */
+@media (min-width:701px){
+  .catalog-inline-filters{
+    display:none !important;
+  }
+
+  #filtersWrap,
+  #filtersWrap.filters-wrap{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
+
+  .filter-open-btn{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+
+  .search-box{
+    display:flex !important;
+    align-items:flex-start !important;
+    gap:10px !important;
+    overflow:visible !important;
+  }
+
+  .search-box .search-wrapper{
+    flex:1 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+  }
+}
+
+/* Телефон: показуємо тільки кнопку Категорії, фільтри повністю ховаємо */
+@media (max-width:700px){
+  #filtersWrap,
+  #filtersWrap.filters-wrap,
+  .filters-wrap,
+  .filter-panel,
+  #filtersPanel,
+  .filter-open-btn{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  .catalog-inline-filters{
+    display:flex !important;
+    width:100% !important;
+    margin-top:8px !important;
+  }
+
+  .category-choose-open-btn{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:50px !important;
+    margin:0 !important;
+    border-radius:16px !important;
+    background:#fff !important;
+    color:#111 !important;
+    border:2px solid rgba(107,255,42,.42) !important;
+    font-weight:900 !important;
+    font-size:16px !important;
+  }
+
+  .category-choose-open-btn::before{
+    content:'☰';
+    margin-right:8px;
+    font-weight:900;
+  }
+
+  #categoryChooseCurrent{
+    display:none !important;
+  }
+
+  .catalog-subtitle-row{
+    display:block !important;
+  }
+}
+</style>
+
+<script>
+(function desktopFiltersMobileCategoriesFix(){
+  function applyMode(){
+    const isMobile = window.matchMedia('(max-width:700px)').matches;
+    const filtersWrap = document.getElementById('filtersWrap');
+    const inlineFilters = document.querySelector('.catalog-inline-filters');
+    const current = document.getElementById('categoryChooseCurrent');
+
+    if(current){
+      current.style.display = 'none';
+      current.textContent = '';
+    }
+
+    if(isMobile){
+      if(filtersWrap) filtersWrap.classList.remove('open');
+      if(inlineFilters) inlineFilters.style.display = 'flex';
+    }else{
+      if(inlineFilters) inlineFilters.style.display = 'none';
+      if(filtersWrap) filtersWrap.style.display = 'block';
+    }
+
+    if(typeof renderFiltersPanel === 'function' && !isMobile){
+      try{ renderFiltersPanel(); }catch(e){}
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(applyMode, 100);
+    setTimeout(applyMode, 700);
+  });
+
+  window.addEventListener('load', function(){
+    setTimeout(applyMode, 300);
+  });
+
+  window.addEventListener('resize', function(){
+    clearTimeout(window.__filterCategoryModeTimer);
+    window.__filterCategoryModeTimer = setTimeout(applyMode, 120);
+  });
+})();
+</script>
+<!-- DESKTOP FILTERS / MOBILE CATEGORIES SEPARATION FIX END -->
+
+
+
+<!-- FULL CATEGORY FILTER RELATION FIX 2026-05-26 START -->
+<style>
+/* Чистий фінальний шар для фільтрів: без білих збоїв і зайвих старих підкатегорій */
+@media (min-width:701px){
+  #filtersWrap{display:block!important;position:relative!important;z-index:35000!important;}
+  #filtersPanel.filter-panel{display:block!important;min-width:280px!important;background:#fff!important;border:1px solid rgba(107,255,42,.35)!important;border-radius:20px!important;box-shadow:0 18px 45px rgba(0,0,0,.22)!important;padding:10px!important;color:#111!important;}
+  #filtersPanel .filter-main-list{display:flex!important;flex-direction:column!important;gap:8px!important;max-height:68vh!important;overflow:auto!important;}
+  #filtersPanel .filter-main-item{position:relative!important;display:flex!important;align-items:center!important;gap:10px!important;min-height:50px!important;padding:12px 14px!important;border-radius:16px!important;background:#121212!important;color:#fff!important;border:1px solid rgba(107,255,42,.18)!important;font-weight:900!important;cursor:pointer!important;}
+  #filtersPanel .filter-main-item.active,#filtersPanel .filter-main-item:hover{background:linear-gradient(135deg,#fff,#90ee90)!important;color:#071007!important;}
+  #filtersPanel .filter-sub-panel{position:absolute!important;left:calc(100% + 10px)!important;top:0!important;min-width:260px!important;max-width:min(520px,calc(100vw - 420px))!important;display:none!important;grid-template-columns:repeat(2,minmax(120px,1fr))!important;gap:10px!important;background:#fff!important;border:1px solid rgba(107,255,42,.35)!important;border-radius:20px!important;box-shadow:0 18px 45px rgba(0,0,0,.22)!important;padding:12px!important;color:#111!important;}
+  #filtersPanel .filter-main-item:hover .filter-sub-panel,#filtersPanel .filter-main-item.active .filter-sub-panel{display:grid!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;}
+  #filtersPanel .filter-sub-card{display:flex!important;align-items:center!important;gap:9px!important;padding:10px!important;border-radius:15px!important;background:#f6f6f6!important;border:1px solid #dfeadf!important;color:#111!important;font-weight:900!important;cursor:pointer!important;}
+  #filtersPanel .filter-sub-card:hover{background:#90ee90!important;}
+  #filtersPanel .filter-sub-card img{width:44px!important;height:44px!important;object-fit:contain!important;background:#fff!important;border-radius:12px!important;padding:4px!important;flex:0 0 44px!important;}
+  #filtersPanel .filter-empty-sub{grid-column:1/-1!important;padding:14px!important;border-radius:15px!important;background:#f5f5f5!important;color:#111!important;font-weight:800!important;line-height:1.35!important;}
+  #filtersPanel .filter-all-btn{width:100%!important;margin:0!important;border-radius:16px!important;padding:13px 14px!important;background:#90ee90!important;color:#071007!important;font-weight:900!important;text-align:left!important;}
+}
+@media (max-width:700px){
+  #filtersWrap,#filtersPanel,.filter-panel,.filter-open-btn{display:none!important;}
+  .catalog-inline-filters{display:flex!important;width:100%!important;}
+}
+.filter-no-products{grid-column:1/-1!important;background:#101010!important;color:#90ee90!important;border:1px solid rgba(107,255,42,.25)!important;border-radius:20px!important;padding:28px!important;text-align:center!important;font-size:17px!important;font-weight:900!important;}
+</style>
+<script>
+(function finalCategoryFilterRelationFix(){
+  'use strict';
+  function txt(v){ return String(v == null ? '' : v).trim(); }
+  function norm(v){ return txt(v).toLowerCase(); }
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function allProducts(){ try{ return Array.isArray(products) ? products : []; }catch(e){ return []; } }
+  function allMains(){ try{ return Array.isArray(mainCategories) ? mainCategories.map(txt).filter(Boolean) : []; }catch(e){ return []; } }
+  function allCats(){ try{ return Array.isArray(categories) ? categories.map(txt).filter(Boolean) : []; }catch(e){ return []; } }
+  function uniq(arr){ const seen=new Set(), out=[]; (arr||[]).forEach(x=>{x=txt(x); const k=norm(x); if(x && !seen.has(k)){seen.add(k); out.push(x);}}); return out; }
+  function productMain(p){ return txt(p && (p.mainCategory || p.main || p.parentCategory || p.mainCat)); }
+  function productCat(p){ return txt(p && (p.category || p.subCategory || p.subcategory)); }
+  function imgForCat(cat){ try{ const imgs = window.categoryImages || categoryImages || {}; return imgs[cat] || 'logo.png.jpg'; }catch(e){ return 'logo.png.jpg'; } }
+
+  function subcatsForMain(main){
+    main = txt(main);
+    if(!main) return allCats();
+    const fromProducts = [];
+    allProducts().forEach(p => {
+      if(norm(productMain(p)) === norm(main) && productCat(p)) fromProducts.push(productCat(p));
+    });
+    return uniq(fromProducts);
+  }
+
+  function mainForSubcat(sub){
+    sub = txt(sub);
+    if(!sub) return '';
+    const p = allProducts().find(item => norm(productCat(item)) === norm(sub) && productMain(item));
+    return p ? productMain(p) : '';
+  }
+
+  window.getCategoriesForMainCategory = function(mainCategoryName){
+    return subcatsForMain(mainCategoryName);
+  };
+
+  window.syncCategoryOptionsForMain = function(){
+    const select = document.getElementById('categoryFilter');
+    if(!select) return;
+    const old = txt(select.value);
+    const main = txt(document.getElementById('mainCategoryFilter')?.value || (typeof currentMainCategoryFilter !== 'undefined' ? currentMainCategoryFilter : ''));
+    const allowed = subcatsForMain(main);
+    select.innerHTML = '<option value="">Категорії</option>';
+    allowed.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+    select.value = allowed.some(c => norm(c) === norm(old)) ? old : '';
+  };
+
+  window.applyAllFilters = function(){
+    const search = norm(document.getElementById('searchInput')?.value || '');
+    const main = txt(document.getElementById('mainCategoryFilter')?.value || (typeof currentMainCategoryFilter !== 'undefined' ? currentMainCategoryFilter : ''));
+    const sub = txt(document.getElementById('categoryFilter')?.value || '');
+    try{ currentMainCategoryFilter = main; }catch(e){}
+    let list = allProducts().filter(p => {
+      const pm = productMain(p);
+      const pc = productCat(p);
+      const title = norm(p && p.title);
+      if(main && norm(pm) !== norm(main)) return false;
+      if(sub && norm(pc) !== norm(sub)) return false;
+      if(search && !title.includes(search)) return false;
+      return true;
+    });
+    if(typeof sortProductsUnavailableLast === 'function') list = sortProductsUnavailableLast(list);
+    if(typeof renderProducts === 'function') renderProducts(list);
+    if(typeof updateSubCategoryBackButton === 'function') updateSubCategoryBackButton();
+    if(typeof keepOfficeModeAfterSearchFix === 'function') keepOfficeModeAfterSearchFix();
+    const box = document.getElementById('products');
+    if(box && list.length === 0){
+      box.innerHTML = '<div class="filter-no-products">Товарів у цій категорії поки немає. Перевір, чи в Офісі товар має одночасно основну категорію і свою підкатегорію.</div>';
+    }
+  };
+
+  window.filterMainCategory = function(){
+    const mainSelect = document.getElementById('mainCategoryFilter');
+    const categorySelect = document.getElementById('categoryFilter');
+    const main = txt(mainSelect?.value || '');
+    try{ currentMainCategoryFilter = main; }catch(e){}
+    if(categorySelect) categorySelect.value = '';
+    window.syncCategoryOptionsForMain();
+    const label = document.getElementById('categoryChooseCurrent');
+    if(label) label.textContent = main || 'Усі товари';
+    window.applyAllFilters();
+    window.renderFiltersPanel && window.renderFiltersPanel();
+  };
+
+  window.filterCategory = function(){
+    const select = document.getElementById('categoryFilter');
+    const sub = txt(select?.value || '');
+    const mainSelect = document.getElementById('mainCategoryFilter');
+    if(sub && !txt(mainSelect?.value || '')){
+      const main = mainForSubcat(sub);
+      if(main){
+        if(mainSelect) mainSelect.value = main;
+        try{ currentMainCategoryFilter = main; }catch(e){}
+        window.syncCategoryOptionsForMain();
+        const select2 = document.getElementById('categoryFilter');
+        if(select2) select2.value = sub;
+      }
+    }
+    window.applyAllFilters();
+    window.renderFiltersPanel && window.renderFiltersPanel();
+  };
+
+  window.renderFiltersPanel = function(){
+    const panel = document.getElementById('filtersPanel');
+    if(!panel) return;
+    const mains = uniq(allMains());
+    const activeMain = txt(document.getElementById('mainCategoryFilter')?.value || (typeof currentMainCategoryFilter !== 'undefined' ? currentMainCategoryFilter : ''));
+    let html = '<div class="filter-main-list"><button class="filter-all-btn" type="button" onclick="selectFilterAllFixed(event)">Усі товари</button>';
+    if(!mains.length) html += '<div class="filter-empty-sub">Основні категорії ще не додані.</div>';
+    mains.forEach(main => {
+      const subs = subcatsForMain(main);
+      const active = norm(main) === norm(activeMain);
+      html += '<div class="filter-main-item '+(active?'active':'')+'" onclick="selectMainFilterFixed(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+')">';
+      html += '<div class="filter-main-icon">⚙</div><span>'+esc(main)+'</span><div class="filter-sub-panel">';
+      if(subs.length){
+        subs.forEach(sub => {
+          html += '<div class="filter-sub-card" onclick="selectSubFilterFixed(event,'+JSON.stringify(main).replace(/"/g,'&quot;')+','+JSON.stringify(sub).replace(/"/g,'&quot;')+')"><img src="'+esc(imgForCat(sub))+'" alt=""><span>'+esc(sub)+'</span></div>';
+        });
+      }else{
+        html += '<div class="filter-empty-sub">Немає підкатегорій, привʼязаних до цієї основної категорії.</div>';
+      }
+      html += '</div></div>';
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+  };
+
+  window.selectFilterAllFixed = function(e){
+    if(e && e.stopPropagation) e.stopPropagation();
+    const mf=document.getElementById('mainCategoryFilter'); if(mf) mf.value='';
+    const cf=document.getElementById('categoryFilter'); if(cf) cf.value='';
+    try{ currentMainCategoryFilter=''; }catch(err){}
+    const label=document.getElementById('categoryChooseCurrent'); if(label) label.textContent='Усі товари';
+    document.getElementById('filtersWrap')?.classList.remove('open');
+    window.syncCategoryOptionsForMain();
+    window.applyAllFilters();
+    window.renderFiltersPanel();
+  };
+
+  window.selectMainFilterFixed = function(e, main){
+    if(e && e.stopPropagation) e.stopPropagation();
+    main = txt(main);
+    const mf=document.getElementById('mainCategoryFilter'); if(mf) mf.value=main;
+    const cf=document.getElementById('categoryFilter'); if(cf) cf.value='';
+    try{ currentMainCategoryFilter=main; }catch(err){}
+    const label=document.getElementById('categoryChooseCurrent'); if(label) label.textContent=main || 'Усі товари';
+    window.syncCategoryOptionsForMain();
+    window.applyAllFilters();
+    window.renderFiltersPanel();
+    document.getElementById('filtersWrap')?.classList.add('open');
+  };
+
+  window.selectSubFilterFixed = function(e, main, sub){
+    if(e && e.stopPropagation) e.stopPropagation();
+    main = txt(main); sub = txt(sub);
+    const mf=document.getElementById('mainCategoryFilter'); if(mf) mf.value=main;
+    try{ currentMainCategoryFilter=main; }catch(err){}
+    window.syncCategoryOptionsForMain();
+    const cf=document.getElementById('categoryFilter'); if(cf) cf.value=sub;
+    const label=document.getElementById('categoryChooseCurrent'); if(label) label.textContent = main ? (main + ' / ' + sub) : sub;
+    document.getElementById('filtersWrap')?.classList.remove('open');
+    window.applyAllFilters();
+    window.renderFiltersPanel();
+  };
+
+  window.selectFilterAll = window.selectFilterAllFixed;
+  window.selectMainFilter = window.selectMainFilterFixed;
+  window.selectSubFilter = window.selectSubFilterFixed;
+
+  window.buildCategoryChooseItems = function(){
+    const items = [{type:'all', value:'', label:'Усі товари', group:'all'}];
+    const mains = uniq(allMains());
+    mains.forEach(main => items.push({type:'main', value:main, label:main, group:'main'}));
+    const activeMain = txt(document.getElementById('mainCategoryFilter')?.value || (typeof currentMainCategoryFilter !== 'undefined' ? currentMainCategoryFilter : ''));
+    if(activeMain){
+      subcatsForMain(activeMain).forEach(sub => items.push({type:'category', value:sub, label:sub, group:'category'}));
+    }
+    return items;
+  };
+
+  window.openCategoryChooseModal = function(){
+    const modal = document.getElementById('categoryChooseModal');
+    const list = document.getElementById('categoryChooseList');
+    if(!modal || !list) return;
+    window.syncCategoryOptionsForMain();
+    const mainValue = txt(document.getElementById('mainCategoryFilter')?.value || (typeof currentMainCategoryFilter !== 'undefined' ? currentMainCategoryFilter : ''));
+    const categoryValue = txt(document.getElementById('categoryFilter')?.value || '');
+    list.innerHTML = '';
+    const groups = [
+      {key:'all', title:''},
+      {key:'main', title:'Основні категорії'},
+      {key:'category', title: mainValue ? 'Підкатегорії: ' + mainValue : ''}
+    ];
+    const items = window.buildCategoryChooseItems();
+    groups.forEach(group => {
+      const groupItems = items.filter(item => item.group === group.key);
+      if(!groupItems.length) return;
+      if(group.title){
+        const title = document.createElement('div'); title.className='category-choose-section-title'; title.textContent=group.title; list.appendChild(title);
+      }
+      groupItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type='button'; btn.className='category-choose-item';
+        const active = (item.type === 'all' && !mainValue && !categoryValue) || (item.type === 'main' && norm(mainValue) === norm(item.value)) || (item.type === 'category' && norm(categoryValue) === norm(item.value));
+        if(active) btn.classList.add('active');
+        if(item.type === 'category'){
+          btn.innerHTML = '<img src="'+esc(imgForCat(item.value))+'" alt=""><span>'+esc(item.label)+'</span>';
+        }else{
+          btn.textContent = item.label;
+        }
+        btn.onclick = () => window.chooseCategoryFromWindow(item.type, item.value, item.label);
+        list.appendChild(btn);
+      });
+    });
+    if(mainValue && !subcatsForMain(mainValue).length){
+      const empty = document.createElement('div'); empty.className='filter-empty-sub'; empty.textContent='У цієї основної категорії ще немає своїх підкатегорій.'; list.appendChild(empty);
+    }
+    modal.style.display='flex';
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+  };
+
+  window.chooseCategoryFromWindow = function(type, value, label){
+    if(type === 'all') return window.selectFilterAllFixed();
+    if(type === 'main') window.selectMainFilterFixed(null, value);
+    if(type === 'category'){
+      const main = txt(document.getElementById('mainCategoryFilter')?.value || (typeof currentMainCategoryFilter !== 'undefined' ? currentMainCategoryFilter : '') || mainForSubcat(value));
+      window.selectSubFilterFixed(null, main, value);
+    }
+    if(typeof closeCategoryChooseModal === 'function') closeCategoryChooseModal();
+  };
+
+  function refresh(){
+    try{ window.syncCategoryOptionsForMain(); }catch(e){}
+    try{ window.renderFiltersPanel(); }catch(e){}
+  }
+  document.addEventListener('DOMContentLoaded', () => setTimeout(refresh, 250));
+  window.addEventListener('load', () => setTimeout(refresh, 700));
+})();
+</script>
+<!-- FULL CATEGORY FILTER RELATION FIX 2026-05-26 END -->
+
+
+
+<!-- EMPTY CATEGORY FILTER PANEL HEIGHT FIX 2026-05-26 START -->
+<style>
+/* Фікс: коли в категорії немає товарів, каталог більше не стискається і білий блок фільтрів не перекриває область товарів */
+@media (min-width:701px){
+  .catalog-shell,
+  #catalogSection{
+    position:relative !important;
+    min-height:430px !important;
+    overflow:visible !important;
+  }
+
+  .search-box,
+  .search-wrapper{
+    position:relative !important;
+    z-index:20 !important;
+  }
+
+  #filtersWrap,
+  #filtersWrap.filters-wrap{
+    position:relative !important;
+    flex:0 0 auto !important;
+    z-index:50000 !important;
+  }
+
+  #filtersPanel,
+  #filtersPanel.filter-panel{
+    position:absolute !important;
+    top:calc(100% + 10px) !important;
+    left:0 !important;
+    width:320px !important;
+    min-width:320px !important;
+    max-width:320px !important;
+    max-height:58vh !important;
+    overflow:visible !important;
+    display:none !important;
+    z-index:50001 !important;
+  }
+
+  #filtersWrap.open #filtersPanel,
+  #filtersWrap:hover #filtersPanel{
+    display:block !important;
+  }
+
+  #filtersPanel .filter-main-list{
+    max-height:58vh !important;
+    overflow-y:auto !important;
+    overflow-x:visible !important;
+    padding-right:6px !important;
+  }
+
+  #filtersPanel .filter-main-item{
+    position:relative !important;
+  }
+
+  #filtersPanel .filter-sub-panel{
+    position:absolute !important;
+    left:calc(100% + 10px) !important;
+    top:0 !important;
+    width:min(620px, calc(100vw - 540px)) !important;
+    min-width:300px !important;
+    min-height:unset !important;
+    height:auto !important;
+    max-height:58vh !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    z-index:50002 !important;
+  }
+
+  #products.products{
+    position:relative !important;
+    z-index:1 !important;
+    min-height:260px !important;
+    align-content:start !important;
+  }
+
+  .filter-no-products{
+    grid-column:1 / -1 !important;
+    min-height:180px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin-top:12px !important;
+    position:relative !important;
+    z-index:1 !important;
+  }
+}
+
+@media (max-width:700px){
+  #catalogSection{
+    min-height:320px !important;
+  }
+  #products.products{
+    min-height:220px !important;
+  }
+}
+</style>
+<script>
+(function emptyCategoryOverlayFinalFix(){
+  function ensureCatalogSpace(){
+    var catalog = document.getElementById('catalogSection');
+    var productsBox = document.getElementById('products');
+    if(!catalog || !productsBox) return;
+
+    var hasProducts = productsBox.querySelector('.product');
+    var hasEmpty = productsBox.querySelector('.filter-no-products');
+
+    if(!hasProducts && !hasEmpty){
+      productsBox.innerHTML = '<div class="filter-no-products">Товарів у цій категорії поки немає. Перевір прив’язку товару до основної категорії та підкатегорії в Офісі.</div>';
+    }
+
+    catalog.style.minHeight = window.innerWidth > 700 ? '430px' : '320px';
+    productsBox.style.minHeight = window.innerWidth > 700 ? '260px' : '220px';
+  }
+
+  var oldApply = window.applyAllFilters;
+  if(typeof oldApply === 'function'){
+    window.applyAllFilters = function(){
+      var result = oldApply.apply(this, arguments);
+      setTimeout(ensureCatalogSpace, 0);
+      return result;
+    };
+  }
+
+  var oldRender = window.renderProducts;
+  if(typeof oldRender === 'function'){
+    window.renderProducts = function(){
+      var result = oldRender.apply(this, arguments);
+      setTimeout(ensureCatalogSpace, 0);
+      return result;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(ensureCatalogSpace, 300); });
+  window.addEventListener('load', function(){ setTimeout(ensureCatalogSpace, 500); });
+  window.addEventListener('resize', ensureCatalogSpace);
+})();
+</script>
+<!-- EMPTY CATEGORY FILTER PANEL HEIGHT FIX 2026-05-26 END -->
+
+
+<!-- FILTER DROPDOWN NO WHITE CUT FIX 2026-05-27 START -->
+<style>
+@media (min-width:701px){
+  body.filters-panel-open #catalogSection,
+  body.filters-panel-open .catalog-shell{
+    overflow:visible !important;
+    position:relative !important;
+  }
+
+  body.filters-panel-open #products.products{
+    z-index:1 !important;
+  }
+
+  body.filters-panel-open #filtersWrap,
+  body.filters-panel-open #filtersPanel{
+    z-index:90000 !important;
+  }
+
+  body.filters-panel-open #filtersPanel.filter-panel{
+    overflow:visible !important;
+    max-height:none !important;
+  }
+
+  body.filters-panel-open #filtersPanel .filter-main-list{
+    overflow:visible !important;
+    max-height:none !important;
+  }
+
+  body.filters-panel-open #filtersPanel .filter-sub-panel{
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    max-height:calc(100vh - 190px) !important;
+  }
+
+  body.filters-panel-open .filter-no-products{
+    z-index:0 !important;
+  }
+}
+</style>
+<script>
+(function fixFilterPanelWhiteCut(){
+  function isDesktop(){
+    return window.innerWidth > 700;
+  }
+
+  function panelIsOpen(){
+    var wrap = document.getElementById('filtersWrap');
+    return !!(wrap && (wrap.classList.contains('open') || (wrap.matches && wrap.matches(':hover'))));
+  }
+
+  function resetCatalogSpace(){
+    var catalog = document.getElementById('catalogSection');
+    var productsBox = document.getElementById('products');
+    if(!catalog) return;
+    catalog.style.minHeight = isDesktop() ? '430px' : '320px';
+    if(productsBox) productsBox.style.minHeight = isDesktop() ? '260px' : '220px';
+  }
+
+  function fixCatalogSpace(){
+    var wrap = document.getElementById('filtersWrap');
+    var panel = document.getElementById('filtersPanel');
+    var catalog = document.getElementById('catalogSection');
+    var productsBox = document.getElementById('products');
+
+    if(!wrap || !panel || !catalog || !isDesktop()){
+      document.body.classList.remove('filters-panel-open');
+      resetCatalogSpace();
+      return;
+    }
+
+    if(!panelIsOpen()){
+      document.body.classList.remove('filters-panel-open');
+      resetCatalogSpace();
+      return;
+    }
+
+    document.body.classList.add('filters-panel-open');
+
+    /*
+      Головний фікс бага зі скріну:
+      панель фільтрів абсолютна і не займає висоту в каталозі.
+      Коли товарів немає, каталог стискався, а білий фон сторінки перекривав нижню частину фільтрів.
+      Тут ми додаємо каталогу мінімальну висоту під фактичну висоту відкритого меню.
+    */
+    var catalogRect = catalog.getBoundingClientRect();
+    var wrapRect = wrap.getBoundingClientRect();
+
+    var mainList = panel.querySelector('.filter-main-list') || panel;
+    var neededPanelHeight = Math.max(panel.scrollHeight, mainList.scrollHeight, 280);
+    var offsetInsideCatalog = Math.max(0, wrapRect.bottom - catalogRect.top + 14);
+    var requiredCatalogHeight = Math.ceil(offsetInsideCatalog + neededPanelHeight + 32);
+
+    catalog.style.minHeight = Math.max(430, requiredCatalogHeight) + 'px';
+    if(productsBox){
+      productsBox.style.minHeight = Math.max(260, requiredCatalogHeight - offsetInsideCatalog - 20) + 'px';
+    }
+  }
+
+  var oldToggle = window.toggleFiltersPanel;
+  window.toggleFiltersPanel = function(e){
+    if(typeof oldToggle === 'function') oldToggle.apply(this, arguments);
+    setTimeout(fixCatalogSpace, 0);
+    setTimeout(fixCatalogSpace, 80);
+  };
+
+  document.addEventListener('click', function(){
+    setTimeout(fixCatalogSpace, 0);
+  }, true);
+
+  document.addEventListener('mouseover', function(e){
+    if(e.target && e.target.closest && e.target.closest('#filtersWrap')){
+      setTimeout(fixCatalogSpace, 0);
+      setTimeout(fixCatalogSpace, 80);
+    }
+  }, true);
+
+  document.addEventListener('mouseout', function(e){
+    if(e.target && e.target.closest && e.target.closest('#filtersWrap')){
+      setTimeout(fixCatalogSpace, 120);
+    }
+  }, true);
+
+  var oldRenderFilters = window.renderFiltersPanel;
+  if(typeof oldRenderFilters === 'function'){
+    window.renderFiltersPanel = function(){
+      var result = oldRenderFilters.apply(this, arguments);
+      setTimeout(fixCatalogSpace, 0);
+      return result;
+    };
+  }
+
+  var oldApplyFilters = window.applyAllFilters;
+  if(typeof oldApplyFilters === 'function'){
+    window.applyAllFilters = function(){
+      var result = oldApplyFilters.apply(this, arguments);
+      setTimeout(fixCatalogSpace, 0);
+      return result;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(fixCatalogSpace, 400);
+  });
+  window.addEventListener('load', function(){
+    setTimeout(fixCatalogSpace, 700);
+  });
+  window.addEventListener('resize', function(){
+    setTimeout(fixCatalogSpace, 0);
+  });
+})();
+</script>
+<!-- FILTER DROPDOWN NO WHITE CUT FIX 2026-05-27 END -->
 
 </body>
 
