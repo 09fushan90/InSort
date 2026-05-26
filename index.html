@@ -2134,6 +2134,39 @@ body::before{
 }
 /* PRODUCT CARD STYLE EDITOR END */
 
+
+/* FIX 2026-05-26: "показати весь каталог" як клікабельний напис, без тексту про 20 товарів */
+.catalog-show-all-wrap{
+  margin:6px 0 12px !important;
+}
+.catalog-show-all-link,
+#catalogShowAllBtn.catalog-show-all-link{
+  display:inline-block;
+  color:#111 !important;
+  background:transparent !important;
+  border:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  font-size:16px !important;
+  font-weight:900 !important;
+  text-decoration:underline !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+.catalog-show-all-link:hover,
+#catalogShowAllBtn.catalog-show-all-link:hover{
+  color:#2f7a2f !important;
+  background:transparent !important;
+}
+.catalog-limit-note{
+  display:none !important;
+}
+#catalogShowAllBtn::before,
+#catalogShowAllBtn::after{
+  content:none !important;
+}
+
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -2512,7 +2545,7 @@ body::before{
 <div class="catalog-shell" id="catalogSection">
 <div class="catalog-head">
 <div>
-<h2 class="catalog-title" data-office-editable="text" data-office-key="catalog_title">Каталог товарів</h2>
+<h2 class="catalog-title"><button type="button" class="catalog-brand-home" onclick="goToHomeScreen()">InSort</button></h2>
 <div class="catalog-subtitle-row">
   <div class="catalog-subtitle" data-office-editable="text" data-office-key="catalog_subtitle">Знайди потрібний інструмент через пошук або категорії.</div>
   <div class="catalog-inline-filters">
@@ -2528,7 +2561,7 @@ body::before{
 </div>
 </div>
 <div style="text-align:center;display:flex;gap:8px;flex-wrap:wrap;">
-<button id="catalogReturnBtn" onclick="toggleCatalogView()" style="display:none;">Повернутися</button>
+
 <button id="addProductBtn" onclick="openAddModal()" style="display:none;">Додати товар</button>
 <button id="manageCategoriesBtn" onclick="openCategoryModal()" style="display:none;">Категорії</button>
 <button id="manageMainCategoriesBtn" onclick="openMainCategoryModal()" style="display:none;">Осн. категорії</button>
@@ -2577,9 +2610,9 @@ body::before{
         </div>
 
         <div class="product-v5-actions">
-          <button class="order-btn product-v5-buy" id="modalOrderBtn" onclick="addFromView()">Додати в замовлення</button>
+          <button class="order-btn product-v5-buy" id="modalOrderBtn" onclick="addFromView()">Обрати</button>
           <button id="editProductBtn" onclick="editFromView()" style="display:none;">Редагувати</button>
-          <button class="product-v5-back" onclick="closeModal()">Назад</button>
+          
         </div>
       </div>
     </div>
@@ -2628,12 +2661,21 @@ body::before{
 </div>
 
 <div class="modal" id="categoryModal">
-<div class="modal-content">
-<h3>Категорії</h3>
-<div id="categoryList"></div>
-<input id="newCategory" placeholder="Нова категорія" type="text"/>
-<button onclick="addCategory()">Додати</button>
-<button onclick="closeCategoryModal()">Скасувати</button>
+<div class="modal-content category-editor-modal">
+<h3 style="margin-top:0;">Додати підкатегорію</h3>
+<div class="category-editor-note">Назва буде показуватись у фільтрах, а фото — у підкатегоріях при наведенні.</div>
+<div id="categoryList" class="category-editor-list"></div>
+<input id="newCategory" placeholder="Назва підкатегорії" type="text"/>
+<label class="category-photo-upload" for="newCategoryImageFile">
+  <img id="newCategoryImagePreview" alt="Фото підкатегорії"/>
+  <span>＋ Додати фото підкатегорії</span>
+</label>
+<input accept="image/*" id="newCategoryImageFile" style="display:none;" type="file"/>
+<textarea id="newCategoryImageUrl" placeholder="Або встав посилання на фото"></textarea>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
+  <button onclick="addCategory()">Додати</button>
+  <button onclick="closeCategoryModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
 </div>
 </div>
 
@@ -3289,12 +3331,13 @@ const db = firebase.database();
 // Економний режим для Blaze: кеш каталогу в localStorage,
 // один вузол catalog замість трьох окремих читань і без analytics/storage.
 const CATALOG_CACHE_KEY = 'inst_asortiments_catalog_cache_v1';
-const CATALOG_CACHE_MAX_AGE = 1000 * 60 * 5; // 5 хвилин, щоб телефон швидко бачив нові рекламні фото
+const CATALOG_CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 годин кешу для покупців, адмін оновлює напряму
 
 function getCatalogPayload(){
   const payload = {
     products: Array.isArray(products) ? products : [],
     categories: Array.isArray(categories) ? categories : [],
+    categoryImages: (typeof categoryImages === 'object' && categoryImages) ? categoryImages : {},
     mainCategories: Array.isArray(mainCategories) ? mainCategories : [],
     productSections: Array.isArray(productSections) ? productSections : [],
     ads: Array.isArray(ads) ? ads : [],
@@ -3314,6 +3357,7 @@ function saveCatalogToCache(payload){
       data: {
         products: Array.isArray(payload.products) ? payload.products : [],
         categories: Array.isArray(payload.categories) ? payload.categories : [],
+        categoryImages: (typeof payload.categoryImages === 'object' && payload.categoryImages) ? payload.categoryImages : {},
         mainCategories: Array.isArray(payload.mainCategories) ? payload.mainCategories : [],
         productSections: Array.isArray(payload.productSections) ? payload.productSections : [],
         ads: Array.isArray(payload.ads) ? payload.ads : [],
@@ -3341,6 +3385,7 @@ function getCatalogFromCache(maxAge = CATALOG_CACHE_MAX_AGE){
 function applyCatalogData(payload){
   products = Array.isArray(payload?.products) ? payload.products : [];
   categories = Array.isArray(payload?.categories) ? payload.categories : [];
+  categoryImages = (payload && typeof payload.categoryImages === 'object' && payload.categoryImages) ? payload.categoryImages : {};
   mainCategories = Array.isArray(payload?.mainCategories) ? payload.mainCategories : [];
   productSections = Array.isArray(payload?.productSections) ? payload.productSections : [];
   ads = Array.isArray(payload?.ads) ? payload.ads : [];
@@ -3365,6 +3410,7 @@ async function fetchCatalogFromDatabase(){
     return {
       products: Array.isArray(catalog.products) ? catalog.products : [],
       categories: Array.isArray(catalog.categories) ? catalog.categories : [],
+      categoryImages: (typeof catalog.categoryImages === 'object' && catalog.categoryImages) ? catalog.categoryImages : {},
       mainCategories: Array.isArray(catalog.mainCategories) ? catalog.mainCategories : [],
       productSections: Array.isArray(catalog.productSections) ? catalog.productSections : [],
       ads: Array.isArray(catalog.ads) ? catalog.ads : [],
@@ -3466,6 +3512,7 @@ function keepOfficeModeAfterSearchFix(){
 let editingId=null;
 let products = [];
 let categories = [];
+let categoryImages = {};
 let currentProductId = null;
 let currentImages = [];
 let currentIndex = 0;
@@ -3495,7 +3542,7 @@ function isAdminUser(){
 
 // Економне завантаження каталогу: показуємо кеш одразу, але завжди перевіряємо базу.
 async function loadData(forceRefresh = false){
-  const cachedCatalog = !forceRefresh ? getCatalogFromCache() : null;
+  const cachedCatalog = (!forceRefresh && !isAdminUser()) ? getCatalogFromCache() : null;
 
   if(cachedCatalog){
     applyCatalogData(cachedCatalog);
@@ -3523,6 +3570,7 @@ async function loadData(forceRefresh = false){
 
     products = [];
     categories = [];
+    categoryImages = {};
     mainCategories = [];
     productSections = [];
     ads = [];
@@ -3566,7 +3614,7 @@ function hideLoader(){
 }
 
 window.addEventListener('online', () => {
-  if(!getCatalogFromCache()) loadData(true);
+  if(!getCatalogFromCache()) loadData(isAdminUser());
 });
 
 // Категорії
@@ -4695,7 +4743,7 @@ selectedProducts = loadCartFromStorage();
 updateSelectedUI();
 if(typeof updateUserBadge === 'function') updateUserBadge();
 loadOfficeContent();
-loadData(true);
+loadData(isAdminUser());
 startCatalogRealtimeSync();
 
 function loadCartFromStorage(){
@@ -4762,12 +4810,20 @@ function addToCart(id) {
 
 function removeFromCart(id, rerenderCart = false) {
   selectedProducts = selectedProducts.filter(x => String(x.id) !== String(id));
+
   const productDiv = document.querySelector(`.product[data-id='${id}']`);
-  if(productDiv) productDiv.classList.remove('selected');
+  if(productDiv){
+    productDiv.classList.remove('selected');
+  }
+
   saveCartToStorage();
   updateSelectedUI();
-  renderProducts();
-  if(rerenderCart) renderCartModal();
+
+  // Не перерендерюємо весь каталог після повторного натискання,
+  // бо це викликало білий екран і злам карток.
+  if(rerenderCart){
+    renderCartModal();
+  }
 }
 
 function toggleSelectProduct(id) {
@@ -4790,7 +4846,7 @@ function updateModalOrderButton(){
   const btn = document.getElementById('modalOrderBtn');
   if(!btn || currentProductId === null || currentProductId === undefined) return;
   const inCart = selectedProducts.some(item => String(item.id) === String(currentProductId));
-  btn.textContent = inCart ? '✔ Прибрати' : 'Додати в замовлення';
+  btn.textContent = inCart ? 'В кошику' : 'Обрати';
   btn.classList.toggle('added', inCart);
 }
 
@@ -4808,7 +4864,7 @@ function updateSelectedUI() {
 
     const orderBtn = card.querySelector('.order-btn');
     if(orderBtn){
-      orderBtn.textContent = inCart ? '✔ Прибрати' : 'Додати в замовлення';
+      orderBtn.textContent = inCart ? 'В кошику' : 'Обрати';
       orderBtn.classList.toggle('added', inCart);
     }
   });
@@ -5555,8 +5611,8 @@ function renderProducts(list = products){
       <h4>${safeText(p.title)}</h4>
       ${priceHtml}
       <div class="card-buttons">
-        <button class="order-btn ${inCart ? 'added' : ''}">${inCart ? '✔ Прибрати' : 'Додати в замовлення'}</button>
-        <button class="add-btn">Швидке замовлення</button>
+        <button class="order-btn ${inCart ? 'added' : ''}">${inCart ? 'В кошику' : 'Обрати'}</button>
+        <button class="add-btn">Замовити одразу</button>
         ${adminMode ? `<button class="edit-btn">Редагувати</button>` : ""}
       </div>
     `;
@@ -6944,7 +7000,7 @@ body.scroll-fixed-by-modal{
       card.classList.toggle('selected', inCart);
       const btn = card.querySelector('.order-btn');
       if(btn){
-        btn.textContent = inCart ? '✔ Прибрати' : 'Додати в замовлення';
+        btn.textContent = inCart ? 'В кошику' : 'Обрати';
         btn.classList.toggle('added', inCart);
         btn.classList.toggle('is-added', inCart);
       }
@@ -7081,6 +7137,581 @@ html.no-scroll{
 })();
 </script>
 <!-- DOUBLE CLICK CARD STYLE + BACKGROUND SCROLL FIX END -->
+
+
+
+<!-- INSORT FILTERS + HOME CLEANUP UPDATE START -->
+<style>
+/* головний екран без старих чорних віконець */
+#overviewSection,.overview-grid{display:none!important;}
+/* прибрати верхній текст каталогу зі скрінів, залишити назву магазину */
+.catalog-subtitle{display:none!important;}
+.catalog-title{margin:0!important;}
+.catalog-brand-home{background:transparent!important;color:#fff!important;border:0!important;font-size:34px!important;font-weight:1000!important;padding:0!important;margin:0!important;text-align:left!important;box-shadow:none!important;cursor:pointer;}
+.catalog-brand-home:hover{color:#90ee90!important;background:transparent!important;}
+.catalog-head{align-items:center!important;}
+#catalogReturnBtn,.product-v5-back{display:none!important;}
+/* кнопки соцмереж з меню прибрані, виведені на головний екран */
+#sideMenu > a[href*="tiktok.com"],#sideMenu > a[href*="t.me/+YcJzXN4"]{display:none!important;}
+.ads-section{margin-top:8px!important;}
+.home-social-links{max-width:1300px;margin:14px auto 0;padding:0 20px;display:flex;justify-content:center;gap:14px;align-items:center;position:relative;z-index:2;}
+.home-social-btn{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 12px 26px rgba(0,0,0,.22);transition:.22s;}
+.home-social-btn:hover{transform:translateY(-3px) scale(1.04);}
+.home-social-btn svg{width:30px;height:30px;fill:#fff;}
+.home-social-btn.tiktok{background:linear-gradient(135deg,#111,#ff0050 55%,#00f2ea);}
+.home-social-btn.telegram{background:linear-gradient(135deg,#2AABEE,#1479b8);}
+.home-link-field{max-width:820px;margin:12px auto 0;padding:0 20px;position:relative;z-index:2;display:flex;gap:8px;}
+.home-link-field input{height:46px;border-radius:16px;border:1px solid #dce8dc;background:#fff;color:#111;padding:0 14px;margin:0;}
+.home-link-field button{height:46px;margin:0;border-radius:16px;white-space:nowrap;}
+.home-saved-link{max-width:820px;margin:8px auto 0;padding:0 20px;text-align:center;position:relative;z-index:2;}
+.home-saved-link a{color:#127b18;font-weight:900;word-break:break-all;}
+.home-link-admin-note{display:none;color:#647064;font-size:12px;margin-top:5px;}
+.office-active .home-link-admin-note{display:block;}
+/* новий фільтр біля пошуку */
+.catalog-filter-line{display:flex;align-items:stretch;gap:10px;width:100%;}
+.filters-wrap{position:relative;flex:0 0 auto;}
+.filter-open-btn{height:52px;margin:0!important;border-radius:18px!important;background:#fff!important;color:#111!important;border:2px solid rgba(107,255,42,.36)!important;font-weight:1000!important;padding:0 20px!important;box-shadow:0 8px 20px rgba(0,0,0,.14);}
+.search-box .search-wrapper{flex:1 1 auto;}
+.filter-panel{position:absolute;top:calc(100% + 8px);left:0;width:315px;background:#fff;border:1px solid #dce8dc;border-radius:22px;box-shadow:0 22px 50px rgba(0,0,0,.25);padding:10px;display:none;z-index:120;}
+.filters-wrap:hover .filter-panel,.filters-wrap.open .filter-panel{display:block;}
+.filter-main-item{position:relative;display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;color:#202820;font-weight:900;cursor:pointer;}
+.filter-main-item:hover,.filter-main-item.active{background:#eff4ef;color:#ff7900;}
+.filter-main-icon{width:28px;height:28px;border-radius:8px;background:#ff7900;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 28px;}
+.filter-sub-panel{position:absolute;left:100%;top:0;width:min(760px,calc(100vw - 370px));min-height:100%;background:#fff;border:1px solid #dce8dc;border-radius:22px;box-shadow:0 22px 50px rgba(0,0,0,.22);padding:18px;display:none;grid-template-columns:repeat(4,minmax(120px,1fr));gap:18px;}
+.filter-main-item:hover .filter-sub-panel,.filter-main-item.open .filter-sub-panel{display:grid;}
+.filter-sub-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;border-radius:18px;padding:10px;color:#222;text-decoration:none;cursor:pointer;}
+.filter-sub-card:hover{background:#f3f6f3;color:#ff7900;}
+.filter-sub-card img{width:100%;height:82px;object-fit:contain;background:#fff;border-radius:14px;}
+.filter-sub-card span{font-size:14px;font-weight:900;line-height:1.2;}
+.filter-all-btn{width:100%;margin:0 0 8px!important;background:#111!important;color:#fff!important;border:1px solid rgba(107,255,42,.28)!important;}
+.catalog-inline-filters{display:none!important;}
+.search-box{display:block!important;}
+/* модалка категорій як додавання товару */
+.category-editor-modal{max-width:560px!important;border-radius:28px!important;background:linear-gradient(180deg,#101010,#151515)!important;padding:22px!important;}
+.category-editor-note{color:#b8efb8;font-size:14px;margin-bottom:12px;}
+.category-editor-list{max-height:180px;overflow:auto;text-align:left;margin-bottom:10px;}
+.category-editor-list div{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#181818;border:1px solid rgba(107,255,42,.16);border-radius:14px;padding:8px 10px;margin:6px 0;color:#fff;}
+.category-editor-list button{margin:0!important;background:#c62828!important;color:#fff!important;padding:7px 10px!important;border-radius:10px!important;}
+.category-photo-upload{display:flex;align-items:center;justify-content:center;min-height:170px;border:2px dashed rgba(107,255,42,.55);border-radius:22px;background:#0b0b0b;color:#90ee90;font-weight:900;margin:8px 0;cursor:pointer;overflow:hidden;position:relative;}
+.category-photo-upload img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:10px;display:none;}
+.category-photo-upload.has-image span{display:none;}
+.category-photo-upload.has-image img{display:block;}
+/* товарна картка */
+.product-view-v5 .product-v5-layout{grid-template-columns:1.05fr .95fr!important;}
+.product-v5-image-zone{transform:translateX(-10px);}
+.product-v5-info{background:#fff!important;border:1px solid #dce8dc!important;border-radius:22px!important;padding:20px!important;min-height:100%;}
+.product-v5-actions{margin-top:24px!important;}
+.product-v5-buy{background:#fff!important;color:#111!important;border:2px solid rgba(107,255,42,.45)!important;box-shadow:none!important;}
+.product-v5-buy.added,.order-btn.added{background:linear-gradient(135deg,#90ee90,#49d71c)!important;color:#071007!important;}
+.order-btn{background:#fff!important;color:#111!important;border:1px solid rgba(107,255,42,.45)!important;}
+.order-btn.added{border-color:transparent!important;}
+/* кошик у меню */
+#orderSelectedBtn{display:none!important;}
+.menu-cart-btn{position:relative;display:block;width:100%;margin:10px 0;padding:12px 14px;border:none;border-radius:12px;text-align:left;font-size:16px;font-weight:bold;cursor:pointer;background:#90ee90;color:#000;}
+.menu-cart-count,.menu-main-count{display:none;min-width:22px;height:22px;border-radius:50%;background:#ff3b30;color:#fff;align-items:center;justify-content:center;font-size:12px;font-weight:1000;position:absolute;right:10px;top:50%;transform:translateY(-50%);border:2px solid #111;}
+#menuBtn{position:fixed;}
+.menu-main-count{right:-8px;top:-8px;transform:none;}
+/* професійне оформлення замовлення */
+#checkoutModal .cart-modal-content{max-width:760px!important;background:#fff!important;color:#111!important;border-radius:28px!important;border:0!important;padding:24px!important;box-shadow:0 28px 80px rgba(0,0,0,.42)!important;}
+#checkoutModal .cart-header{border-bottom:1px solid #e2e9e2;padding-bottom:12px;margin-bottom:16px;}
+#checkoutModal h3{font-size:26px;color:#111;}
+#checkoutModal input,#checkoutModal textarea,#checkoutModal select{background:#f6f8f6!important;border:1px solid #dce8dc!important;border-radius:16px!important;padding:14px!important;}
+#checkoutModal textarea{min-height:100px;resize:vertical;}
+#checkoutModal .checkout-note{background:#f0f8f0;color:#285028;border:1px solid #d9efd9;border-radius:16px;padding:12px;}
+#checkoutModal .checkout-actions button{padding:14px 16px!important;border-radius:16px!important;font-weight:1000!important;}
+/* loader лініями логотипу */
+.spinner{width:96px!important;height:96px!important;border:0!important;border-radius:24px!important;animation:none!important;position:relative;background:transparent!important;}
+.spinner::before{content:"";position:absolute;inset:8px;border-radius:20px;border:5px solid transparent;border-top-color:#90ee90;border-right-color:#90ee90;animation:insortLine1 1.5s ease-in-out infinite;}
+.spinner::after{content:"I";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:1000;color:#90ee90;animation:insortLine2 1.5s ease-in-out infinite;}
+@keyframes insortLine1{0%{clip-path:inset(0 100% 100% 0)}45%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 0 0)}}
+@keyframes insortLine2{0%,42%{opacity:.15;transform:scale(.9)}70%,100%{opacity:1;transform:scale(1)}}
+@media(max-width:800px){.catalog-filter-line{gap:8px}.filter-open-btn{padding:0 14px!important}.filter-panel{width:calc(100vw - 28px);left:0}.filter-sub-panel{position:static;width:100%;box-shadow:none;border-radius:16px;margin-top:8px;grid-template-columns:repeat(2,1fr)}.filter-main-item{display:block}.home-link-field{flex-direction:column}.home-link-field button{width:100%}.product-view-v5 .product-v5-layout{grid-template-columns:1fr!important}.product-v5-image-zone{transform:none}.home-social-links{padding:0 14px}}
+</style>
+<script>
+(function(){
+  const HOME_LINK_KEY='insort_home_custom_link_v1';
+  let tempCategoryImage='';
+  function normalizeUrl(v){v=String(v||'').trim(); if(!v) return ''; if(!/^https?:\/\//i.test(v)) v='https://'+v; return v;}
+  function ensureHomeBlocks(){
+    const ads=document.querySelector('.ads-section'); if(!ads) return;
+    if(!document.getElementById('homeSocialLinks')){
+      const social=document.createElement('div'); social.id='homeSocialLinks'; social.className='home-social-links';
+      social.innerHTML='<a class="home-social-btn telegram" href="https://t.me/+YcJzXN4kkpZmMDE6" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24"><path d="M9.04 15.47 8.9 19.4c.5 0 .72-.22.99-.48l2.37-2.27 4.92 3.6c.9.5 1.54.24 1.78-.83l3.22-15.08c.3-1.38-.5-1.92-1.38-1.6L1.9 10c-1.3.5-1.28 1.22-.22 1.54l4.84 1.5L17.76 5.9c.53-.35 1.01-.15.61.2z"/></svg></a><a class="home-social-btn tiktok" href="https://www.tiktok.com/@inst_asortiment?_r=1&_t=ZS-95VwGRTQxhV" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.1V2h-3.12v13.18a2.66 2.66 0 1 1-1.82-2.52V9.5a5.8 5.8 0 1 0 5 5.74V8.57a7.9 7.9 0 0 0 4.62 1.48V6.96c-.31 0-.62-.09-.91-.27Z"/></svg></a>';
+      ads.insertAdjacentElement('afterend',social);
+    }
+    if(!document.getElementById('homeLinkField')){
+      const wrap=document.createElement('div'); wrap.id='homeLinkField'; wrap.className='home-link-field';
+      wrap.innerHTML='<input id="homeCustomLinkInput" placeholder="Текст або посилання для головного екрана"><button type="button" onclick="saveHomeCustomLink()">Зберегти</button>';
+      document.getElementById('homeSocialLinks').insertAdjacentElement('afterend',wrap);
+      const saved=document.createElement('div'); saved.id='homeSavedLink'; saved.className='home-saved-link'; wrap.insertAdjacentElement('afterend',saved);
+    }
+    renderHomeCustomLink();
+  }
+  window.saveHomeCustomLink=function(){
+    const input=document.getElementById('homeCustomLinkInput'); if(!input) return;
+    const val=input.value.trim(); localStorage.setItem(HOME_LINK_KEY,val); renderHomeCustomLink(); if(typeof showSiteNotice==='function') showSiteNotice('Поле збережено');
+  };
+  function renderHomeCustomLink(){
+    const box=document.getElementById('homeSavedLink'); if(!box) return;
+    const val=localStorage.getItem(HOME_LINK_KEY)||'';
+    const input=document.getElementById('homeCustomLinkInput'); if(input && !input.value) input.value=val;
+    if(!val){box.innerHTML='<div class="home-link-admin-note">В офісі можна вписати текст або посилання.</div>';return;}
+    const isLink=/^(https?:\/\/|www\.|[\w-]+\.[a-z]{2,})/i.test(val);
+    box.innerHTML=isLink?('<a href="'+normalizeUrl(val).replace(/"/g,'&quot;')+'" target="_blank" rel="noopener">'+val.replace(/</g,'&lt;')+'</a>'):'<strong>'+val.replace(/</g,'&lt;')+'</strong>';
+  }
+  function ensureFilterLayout(){
+    const searchBox=document.querySelector('.search-box'); const searchWrap=document.querySelector('.search-box .search-wrapper'); if(!searchBox||!searchWrap||document.getElementById('filtersWrap')) return;
+    const line=document.createElement('div'); line.className='catalog-filter-line';
+    const filters=document.createElement('div'); filters.id='filtersWrap'; filters.className='filters-wrap';
+    filters.innerHTML='<button class="filter-open-btn" type="button" onclick="toggleFiltersPanel(event)">Фільтри</button><div class="filter-panel" id="filtersPanel"></div>';
+    searchBox.insertBefore(line,searchWrap); line.appendChild(filters); line.appendChild(searchWrap); renderFiltersPanel();
+  }
+  window.toggleFiltersPanel=function(e){if(e)e.stopPropagation();document.getElementById('filtersWrap')?.classList.toggle('open');};
+  document.addEventListener('click',function(e){if(!e.target.closest('#filtersWrap'))document.getElementById('filtersWrap')?.classList.remove('open');});
+  function categoryImg(cat){return (window.categoryImages&&window.categoryImages[cat])||categoryImages?.[cat]||'';}
+  window.renderFiltersPanel=function(){
+    const panel=document.getElementById('filtersPanel'); if(!panel) return;
+    const mains=Array.isArray(mainCategories)?mainCategories:[]; const subs=Array.isArray(categories)?categories:[];
+    let html='<button class="filter-all-btn" type="button" onclick="selectFilterAll()">Усі товари</button>';
+    if(!mains.length){html+='<div class="filter-main-item">Додай основні категорії в Офісі</div>'}
+    mains.forEach((m,i)=>{
+      const active=(currentMainCategoryFilter===m)?' active':'';
+      html+='<div class="filter-main-item'+active+'" onclick="selectMainFilter(event,'+JSON.stringify(m).replace(/"/g,'&quot;')+')"><div class="filter-main-icon">⚙</div><span>'+escapeHtml(m)+'</span><div class="filter-sub-panel">';
+      subs.forEach(c=>{const img=categoryImg(c);html+='<div class="filter-sub-card" onclick="selectSubFilter(event,'+JSON.stringify(m).replace(/"/g,'&quot;')+','+JSON.stringify(c).replace(/"/g,'&quot;')+')">'+(img?'<img src="'+escapeHtml(img)+'" alt="">':'<img src="logo.png.jpg" alt="">')+'<span>'+escapeHtml(c)+'</span></div>';});
+      html+='</div></div>';
+    });
+    panel.innerHTML=html;
+  };
+  function escapeHtml(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+  window.selectFilterAll=function(){currentMainCategoryFilter=''; const cf=document.getElementById('categoryFilter'); if(cf)cf.value=''; const cc=document.getElementById('categoryChooseCurrent'); if(cc)cc.textContent='Усі товари'; applyAllFilters(); renderFiltersPanel();};
+  window.selectMainFilter=function(e,m){e.stopPropagation(); currentMainCategoryFilter=m; const cf=document.getElementById('categoryFilter'); if(cf)cf.value=''; const cc=document.getElementById('categoryChooseCurrent'); if(cc)cc.textContent=m; applyAllFilters(); renderFiltersPanel();};
+  window.selectSubFilter=function(e,m,c){e.stopPropagation(); currentMainCategoryFilter=m; const cf=document.getElementById('categoryFilter'); if(cf)cf.value=c; const cc=document.getElementById('categoryChooseCurrent'); if(cc)cc.textContent=m+' / '+c; applyAllFilters(); document.getElementById('filtersWrap')?.classList.remove('open'); renderFiltersPanel();};
+  const oldPopulate=window.populateCategorySelects;
+  window.populateCategorySelects=function(){ if(typeof oldPopulate==='function') oldPopulate.apply(this,arguments); renderFiltersPanel(); };
+  const oldRender=window.renderProducts;
+  if(typeof oldRender==='function') window.renderProducts=function(list){ oldRender.call(this,list); renderFiltersPanel(); updateMenuCartCounts(); };
+  const oldUpdate=window.updateSelectedUI;
+  window.updateSelectedUI=function(){ if(typeof oldUpdate==='function') oldUpdate.apply(this,arguments); updateMenuCartCounts(); };
+  function ensureMenuCart(){
+    const menu=document.getElementById('sideMenu'); if(menu&&!document.getElementById('menuCartBtn')){
+      const btn=document.createElement('button'); btn.id='menuCartBtn'; btn.className='menu-cart-btn'; btn.type='button'; btn.onclick=function(){openCartModal();}; btn.innerHTML='🛒 Кошик <span id="menuCartCount" class="menu-cart-count">0</span>';
+      const hist=menu.querySelector('button[onclick="openOrderHistoryModal()"]'); menu.insertBefore(btn,hist||menu.firstChild);
+    }
+    const mb=document.getElementById('menuBtn'); if(mb&&!document.getElementById('menuMainCount')){const s=document.createElement('span');s.id='menuMainCount';s.className='menu-main-count';s.textContent='0';mb.appendChild(s);}
+    updateMenuCartCounts();
+  }
+  function updateMenuCartCounts(){
+    const total=(selectedProducts||[]).reduce((a,it)=>a+(Number(it.quantity)||0),0);
+    ['menuCartCount','menuMainCount','selectedCount'].forEach(id=>{const el=document.getElementById(id); if(el){el.textContent=total; el.style.display=total>0?'flex':'none';}});
+  }
+  const oldGo=window.goToHomeScreen;
+  window.goToHomeScreen=function(){ if(typeof oldGo==='function') oldGo.apply(this,arguments); window.scrollTo({top:0,behavior:'smooth'}); };
+  document.addEventListener('click',function(e){
+    if(e.target===document.body || e.target===document.documentElement){ if(typeof goToHomeScreen==='function') goToHomeScreen(); }
+  });
+  window.populateCategoryList=function(){
+    const list=document.getElementById('categoryList'); if(!list) return; list.innerHTML='';
+    (categories||[]).forEach(cat=>{const row=document.createElement('div'); row.innerHTML='<span>'+(categoryImg(cat)?'🖼️ ':'')+escapeHtml(cat)+'</span><button type="button">Видалити</button>'; row.querySelector('button').onclick=()=>removeCategory(cat); list.appendChild(row);});
+  };
+  const oldAddCategory=window.addCategory;
+  window.addCategory=function(){
+    if(!isAdminUser()) return; const input=document.getElementById('newCategory'); const cat=(input?.value||'').trim(); if(!cat) return;
+    const url=(document.getElementById('newCategoryImageUrl')?.value||'').trim(); const img=tempCategoryImage||url;
+    if(!categories.includes(cat)) categories.push(cat); if(img){categoryImages=categoryImages||{}; categoryImages[cat]=img; window.categoryImages=categoryImages;}
+    if(input) input.value=''; const u=document.getElementById('newCategoryImageUrl'); if(u)u.value=''; tempCategoryImage=''; updateCategoryPreview(''); saveToDatabase(); populateCategorySelects(); renderFiltersPanel();
+  };
+  const oldRemove=window.removeCategory;
+  window.removeCategory=function(cat){ if(!isAdminUser()) return; if(confirm('Видалити підкатегорію "'+cat+'"?')){categories=categories.filter(c=>c!==cat); if(categoryImages) delete categoryImages[cat]; products.forEach(p=>{if(p.category===cat)p.category='';}); saveToDatabase(); populateCategorySelects(); applyAllFilters();}};
+  function updateCategoryPreview(src){const img=document.getElementById('newCategoryImagePreview'); const lab=document.querySelector('.category-photo-upload'); if(img)img.src=src||''; if(lab)lab.classList.toggle('has-image',!!src);}
+  document.addEventListener('change',function(e){if(e.target&&e.target.id==='newCategoryImageFile'){const f=e.target.files&&e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{tempCategoryImage=r.result; updateCategoryPreview(tempCategoryImage);}; r.readAsDataURL(f);}});
+  const oldApply=window.applyCatalogData;
+  window.applyCatalogData=function(payload){ if(typeof oldApply==='function') oldApply.apply(this,arguments); categoryImages=(payload&&payload.categoryImages)||categoryImages||{}; window.categoryImages=categoryImages; };
+  const oldPayload=window.getCatalogPayload;
+  window.getCatalogPayload=function(){ const p=typeof oldPayload==='function'?oldPayload():{}; p.categoryImages=categoryImages||{}; return p; };
+  document.addEventListener('DOMContentLoaded',function(){ensureHomeBlocks();ensureFilterLayout();ensureMenuCart();renderFiltersPanel();setTimeout(()=>{ensureHomeBlocks();ensureFilterLayout();ensureMenuCart();renderFiltersPanel();},500);});
+})();
+</script>
+<!-- INSORT FILTERS + HOME CLEANUP UPDATE END -->
+
+
+
+<!-- FINAL FIXES 2026-05-26 START -->
+<style>
+/* 1) Виправлення вікна товару: стара порожня колонка більше не ламає картку */
+#viewModal .product-v5-tabs{display:none!important;}
+#viewModal .product-view-v5{width:min(96vw,1050px)!important;max-width:1050px!important;max-height:92vh!important;overflow:auto!important;}
+#viewModal .product-v5-layout{display:grid!important;grid-template-columns:minmax(360px,1.05fr) minmax(330px,.95fr)!important;gap:22px!important;align-items:stretch!important;}
+#viewModal .product-v5-image-zone{grid-column:1!important;min-height:520px!important;transform:none!important;margin:0!important;}
+#viewModal .product-v5-info{grid-column:2!important;margin:0!important;align-self:stretch!important;justify-content:flex-start!important;background:#fff!important;border:1px solid #dce8dc!important;border-radius:24px!important;padding:24px!important;box-shadow:0 14px 35px rgba(0,0,0,.08)!important;}
+#viewModal #modalDesc{max-height:185px!important;overflow:auto!important;padding-right:8px;}
+#viewModal .product-v5-actions{margin-top:auto!important;padding-top:18px!important;}
+#viewModal .product-v5-back{display:none!important;}
+#viewModal .product-v5-buy{background:#fff!important;color:#111!important;border:2px solid rgba(107,255,42,.55)!important;}
+#viewModal .product-v5-buy.added{background:linear-gradient(135deg,#90ee90,#49d71c)!important;color:#071007!important;border-color:transparent!important;}
+@media(max-width:900px){
+  #viewModal .product-view-v5{width:100%!important;max-height:calc(100dvh - 16px)!important;}
+  #viewModal .product-v5-layout{grid-template-columns:1fr!important;}
+  #viewModal .product-v5-image-zone,#viewModal .product-v5-info{grid-column:1!important;}
+  #viewModal .product-v5-image-zone{min-height:310px!important;}
+}
+
+/* 2) Соцмережі тільки на головному екрані і ближче до правого нижнього кута блоку */
+#homeSocialLinks.home-social-links{max-width:1300px!important;margin:8px auto 0!important;padding:0 24px!important;justify-content:flex-end!important;gap:12px!important;}
+#homeSocialLinks .home-social-btn{width:60px!important;height:60px!important;}
+#homeSocialLinks .home-social-btn svg{width:31px!important;height:31px!important;}
+body.catalog-open #homeSocialLinks,
+body.catalog-open #homeLinkField,
+body.catalog-open #homeSavedLink{display:none!important;}
+@media(max-width:700px){#homeSocialLinks.home-social-links{padding:0 18px!important;justify-content:flex-end!important;}}
+
+/* 3) Прибираємо старі віконця з головного екрана повністю */
+#overviewSection{display:none!important;}
+
+/* 4) Фільтри: панель ближче до кнопки + затримка зникнення 1 секунда */
+.filters-wrap{position:relative!important;padding-bottom:10px!important;margin-bottom:-10px!important;}
+.filter-panel{display:block!important;top:100%!important;margin-top:0!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(2px)!important;transition:opacity .16s ease,visibility 0s linear 1s,transform .16s ease!important;}
+.filters-wrap:hover .filter-panel,.filters-wrap.open .filter-panel{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateY(0)!important;transition-delay:0s!important;}
+.filter-sub-panel{display:grid!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateX(2px)!important;transition:opacity .16s ease,visibility 0s linear 1s,transform .16s ease!important;top:0!important;}
+.filter-main-item:hover .filter-sub-panel,.filter-main-item.open .filter-sub-panel{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translateX(0)!important;transition-delay:0s!important;}
+.filter-main-item::after{content:"";position:absolute;top:0;right:-18px;width:18px;height:100%;}
+
+/* 5) Логотип на загрузці: лінії доходять повністю, без обрізання на половину */
+.spinner{width:104px!important;height:104px!important;border:0!important;border-radius:26px!important;background:transparent!important;animation:none!important;position:relative!important;}
+.spinner::before{content:""!important;position:absolute!important;inset:10px!important;border-radius:23px!important;border:5px solid rgba(144,238,144,.22)!important;box-shadow:0 0 28px rgba(144,238,144,.18)!important;}
+.spinner::after{content:""!important;position:absolute!important;inset:10px!important;border-radius:23px!important;background:conic-gradient(from -90deg,#90ee90 0deg,#90ee90 var(--logoDraw,360deg),transparent var(--logoDraw,360deg),transparent 360deg)!important;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;-webkit-mask-composite:xor!important;mask-composite:exclude!important;padding:5px!important;animation:insortFullDraw 1.55s ease-in-out infinite!important;}
+.spinner .logo-loader-i{display:none!important;}
+#loader .spinner + .loader-letter{display:none!important;}
+.spinner:has(+ *){}
+@keyframes insortFullDraw{0%{--logoDraw:0deg;}72%{--logoDraw:360deg;}100%{--logoDraw:360deg;}}
+#loader::after{content:"I";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:48px;font-weight:1000;color:#90ee90;animation:insortLetter 1.55s ease-in-out infinite;}
+@keyframes insortLetter{0%,35%{opacity:.18;transform:translate(-50%,-50%) scale(.88)}72%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+/* 6) Поле тексту/посилання не повинно вилізати в каталозі */
+.home-link-field,.home-saved-link{transition:opacity .15s ease;}
+</style>
+<script>
+(function(){
+  function isCatalogOpen(){
+    const catalog=document.querySelector('.container');
+    return !!(catalog && !catalog.classList.contains('catalog-hidden'));
+  }
+  function syncHomeOnlyBlocks(){
+    document.body.classList.toggle('catalog-open', isCatalogOpen());
+    const show=!isCatalogOpen();
+    ['homeSocialLinks','homeLinkField','homeSavedLink'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.style.display=show?'':'none';
+    });
+  }
+  const oldToggle=window.toggleCatalogView;
+  if(typeof oldToggle==='function'){
+    window.toggleCatalogView=function(){
+      oldToggle.apply(this,arguments);
+      setTimeout(syncHomeOnlyBlocks,30);
+    };
+  }
+  const oldGo=window.goToHomeScreen;
+  if(typeof oldGo==='function'){
+    window.goToHomeScreen=function(){
+      oldGo.apply(this,arguments);
+      setTimeout(syncHomeOnlyBlocks,30);
+    };
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(syncHomeOnlyBlocks,80));
+  window.addEventListener('load',()=>setTimeout(syncHomeOnlyBlocks,120));
+
+  // Страховка: після перемальовки кнопка товару лишається правильною
+  function fixOrderTexts(){
+    document.querySelectorAll('.order-btn').forEach(btn=>{
+      if(btn.classList.contains('added')) btn.textContent='В кошику';
+      else if(btn.textContent.trim().toLowerCase().includes('замов')) btn.textContent='Обрати';
+    });
+    const quick=document.querySelectorAll('button');
+    quick.forEach(b=>{ if(b.textContent.trim()==='Швидко замовити') b.textContent='Замовити одразу'; });
+  }
+  const oldRender=window.renderProducts;
+  if(typeof oldRender==='function'){
+    window.renderProducts=function(){const r=oldRender.apply(this,arguments); setTimeout(fixOrderTexts,0); return r;};
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(fixOrderTexts,100));
+})();
+</script>
+<!-- FINAL FIXES 2026-05-26 END -->
+
+
+
+<!-- USER REQUEST FIX 2026-05-26 19-30 START -->
+<style>
+/* Поле тексту/посилання бачать усі, але редагування тільки в Офісі */
+#homeLinkField{
+  display:none !important;
+}
+body.office-active #homeLinkField{
+  display:flex !important;
+}
+body.catalog-open #homeLinkField,
+body.catalog-open #homeSavedLink,
+body.catalog-open #homeSocialLinks{
+  display:none !important;
+}
+#homeSavedLink{
+  max-width:1300px;
+  margin:10px auto 0;
+  padding:0 24px;
+  text-align:right;
+  box-sizing:border-box;
+}
+#homeSavedLink:empty{display:none!important;}
+#homeSavedLink .home-saved-display{
+  display:inline-block;
+  max-width:min(680px,100%);
+  color:var(--home-note-color,#111);
+  font-size:var(--home-note-size,18px);
+  font-weight:var(--home-note-weight,700);
+  background:var(--home-note-bg,#ffffff);
+  border:1px solid var(--home-note-border,#d7ead7);
+  border-radius:var(--home-note-radius,18px);
+  padding:12px 16px;
+  box-shadow:0 10px 24px rgba(0,0,0,.08);
+  word-break:break-word;
+}
+#homeSavedLink .home-saved-display a{
+  color:inherit;
+  text-decoration:underline;
+  font-weight:inherit;
+}
+.home-link-admin-note{
+  display:none!important;
+}
+.home-link-style-editor{
+  display:none;
+  max-width:1300px;
+  margin:10px auto 0;
+  padding:12px 24px;
+  box-sizing:border-box;
+  gap:10px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+body.office-active .home-link-style-editor{
+  display:flex;
+}
+.home-link-style-editor label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#fff;
+  border:1px solid #d7ead7;
+  border-radius:14px;
+  padding:8px 10px;
+  color:#111;
+  font-size:13px;
+  font-weight:800;
+}
+.home-link-style-editor input[type="color"]{width:42px;height:34px;padding:2px;margin:0;border-radius:10px;}
+.home-link-style-editor input[type="number"]{width:78px;margin:0;padding:9px;border:1px solid #d7ead7;border-radius:10px;}
+.home-link-style-editor button{margin:0!important;padding:11px 16px!important;border-radius:14px!important;}
+/* Назва магазину у каталозі має бути явною кнопкою */
+.catalog-brand-home{cursor:pointer!important;}
+.catalog-brand-home:focus{outline:2px solid #90ee90!important;outline-offset:4px!important;}
+.catalog-show-all-wrap{margin:8px 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.catalog-show-all-btn{
+  background:#fff!important;
+  color:#111!important;
+  border:1px solid rgba(107,255,42,.45)!important;
+  border-radius:999px!important;
+  padding:10px 16px!important;
+  margin:0!important;
+  font-weight:1000!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.08)!important;
+}
+.catalog-show-all-btn:hover{background:#90ee90!important;color:#071007!important;}
+.catalog-limit-note{color:#b9c7b9;font-size:14px;font-weight:700;}
+</style>
+<script>
+(function(){
+  const LINK_KEY='insort_home_custom_link_v1';
+  const STYLE_KEY='insort_home_custom_link_style_v1';
+  let catalogShowAll=false;
+  let lastCatalogList=null;
+
+  function adminCanEdit(){
+    try{return typeof isAdminUser==='function' && isAdminUser() && document.body.classList.contains('office-active');}
+    catch(e){return false;}
+  }
+  function normalizeUrl(v){v=String(v||'').trim(); if(!v) return ''; if(!/^https?:\/\//i.test(v)) v='https://'+v; return v;}
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+  function getStyle(){
+    try{return Object.assign({color:'#111111',size:18,bg:'#ffffff',border:'#d7ead7',radius:18,bold:true}, JSON.parse(localStorage.getItem(STYLE_KEY)||'{}'));}
+    catch(e){return {color:'#111111',size:18,bg:'#ffffff',border:'#d7ead7',radius:18,bold:true};}
+  }
+  function applyHomeLinkStyle(){
+    const st=getStyle();
+    document.documentElement.style.setProperty('--home-note-color',st.color||'#111111');
+    document.documentElement.style.setProperty('--home-note-size',(Number(st.size)||18)+'px');
+    document.documentElement.style.setProperty('--home-note-bg',st.bg||'#ffffff');
+    document.documentElement.style.setProperty('--home-note-border',st.border||'#d7ead7');
+    document.documentElement.style.setProperty('--home-note-radius',(Number(st.radius)||18)+'px');
+    document.documentElement.style.setProperty('--home-note-weight',st.bold===false?'400':'800');
+  }
+  function renderHomeLinkClean(){
+    applyHomeLinkStyle();
+    const box=document.getElementById('homeSavedLink');
+    if(!box) return;
+    const val=(localStorage.getItem(LINK_KEY)||'').trim();
+    if(!val){ box.innerHTML=''; return; }
+    const isLink=/^(https?:\/\/|www\.|[\w-]+\.[a-z]{2,})/i.test(val);
+    const content=isLink?('<a href="'+esc(normalizeUrl(val))+'" target="_blank" rel="noopener">'+esc(val)+'</a>'):esc(val);
+    box.innerHTML='<div class="home-saved-display">'+content+'</div>';
+    const input=document.getElementById('homeCustomLinkInput');
+    if(input && !input.value) input.value=val;
+  }
+  function ensureHomeStyleEditor(){
+    const field=document.getElementById('homeLinkField');
+    if(!field || document.getElementById('homeLinkStyleEditor')) return;
+    const ed=document.createElement('div');
+    ed.id='homeLinkStyleEditor';
+    ed.className='home-link-style-editor';
+    ed.innerHTML=`
+      <label>Колір букв <input id="homeNoteColor" type="color"></label>
+      <label>Розмір <input id="homeNoteSize" type="number" min="10" max="60"> px</label>
+      <label>Фон <input id="homeNoteBg" type="color"></label>
+      <label>Рамка <input id="homeNoteBorder" type="color"></label>
+      <label>Кути <input id="homeNoteRadius" type="number" min="0" max="60"> px</label>
+      <label><input id="homeNoteBold" type="checkbox" style="width:auto;margin:0;"> Жирний</label>
+      <button type="button" onclick="saveHomeLinkStyle()">Зберегти стиль</button>`;
+    field.insertAdjacentElement('afterend',ed);
+    fillStyleInputs();
+  }
+  function fillStyleInputs(){
+    const st=getStyle();
+    const map={homeNoteColor:st.color,homeNoteSize:st.size,homeNoteBg:st.bg,homeNoteBorder:st.border,homeNoteRadius:st.radius};
+    Object.entries(map).forEach(([id,val])=>{const el=document.getElementById(id); if(el) el.value=val;});
+    const bold=document.getElementById('homeNoteBold'); if(bold) bold.checked=st.bold!==false;
+  }
+  window.saveHomeLinkStyle=function(){
+    if(!adminCanEdit()) return;
+    const st={
+      color:document.getElementById('homeNoteColor')?.value||'#111111',
+      size:Number(document.getElementById('homeNoteSize')?.value)||18,
+      bg:document.getElementById('homeNoteBg')?.value||'#ffffff',
+      border:document.getElementById('homeNoteBorder')?.value||'#d7ead7',
+      radius:Number(document.getElementById('homeNoteRadius')?.value)||18,
+      bold:!!document.getElementById('homeNoteBold')?.checked
+    };
+    localStorage.setItem(STYLE_KEY,JSON.stringify(st));
+    applyHomeLinkStyle();
+    if(typeof showSiteNotice==='function') showSiteNotice('Стиль підпису збережено');
+  };
+  const prevSave=window.saveHomeCustomLink;
+  window.saveHomeCustomLink=function(){
+    if(!adminCanEdit()){ if(typeof showSiteNotice==='function') showSiteNotice('Редагувати це поле можна тільки в Офісі'); return; }
+    const input=document.getElementById('homeCustomLinkInput');
+    localStorage.setItem(LINK_KEY,(input?.value||'').trim());
+    renderHomeLinkClean();
+    if(typeof showSiteNotice==='function') showSiteNotice('Підпис збережено');
+  };
+  function syncHomeEditorVisibility(){
+    ensureHomeStyleEditor();
+    renderHomeLinkClean();
+    const catalog=document.querySelector('.container');
+    const catalogOpen=!!(catalog && !catalog.classList.contains('catalog-hidden'));
+    document.body.classList.toggle('catalog-open',catalogOpen);
+    const field=document.getElementById('homeLinkField');
+    const editor=document.getElementById('homeLinkStyleEditor');
+    if(field) field.style.display=(!catalogOpen && adminCanEdit())?'flex':'none';
+    if(editor) editor.style.display=(!catalogOpen && adminCanEdit())?'flex':'none';
+    const saved=document.getElementById('homeSavedLink');
+    if(saved) saved.style.display=(!catalogOpen && saved.innerHTML.trim())?'block':'none';
+  }
+
+  function forceHome(){
+    const catalog=document.querySelector('.container');
+    const categories=document.getElementById('topMainCategories');
+    const header=document.getElementById('topHeaderSection');
+    const hero=document.getElementById('heroSection');
+    const overview=document.getElementById('overviewSection');
+    const ads=document.getElementById('adsSection');
+    const btn=document.getElementById('catalogToggleBtn');
+    if(catalog) catalog.classList.add('catalog-hidden');
+    if(categories) categories.classList.add('catalog-hidden');
+    if(header) header.style.display='';
+    if(hero) hero.style.display='';
+    if(overview) overview.style.display='none';
+    if(ads) ads.style.display='';
+    if(btn) btn.textContent='Переглянути каталог';
+    document.body.classList.remove('catalog-open');
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(syncHomeEditorVisibility,30);
+  }
+  window.goToHomeScreen=forceHome;
+
+  function ensureCatalogShowAllButton(){
+    const title=document.querySelector('.catalog-title');
+    if(!title || document.getElementById('catalogShowAllWrap')) return;
+    const wrap=document.createElement('div');
+    wrap.id='catalogShowAllWrap';
+    wrap.className='catalog-show-all-wrap';
+    wrap.innerHTML='<span id="catalogShowAllBtn" class="catalog-show-all-link" role="button" tabindex="0" onclick="showFullCatalog()">показати весь каталог</span><span id="catalogLimitNote" class="catalog-limit-note"></span>';
+    title.insertAdjacentElement('afterend',wrap);
+  }
+  function updateCatalogLimitNote(total){
+    const note=document.getElementById('catalogLimitNote');
+    const btn=document.getElementById('catalogShowAllBtn');
+    if(!note||!btn) return;
+    note.textContent='';
+    if(catalogShowAll){btn.style.display='none';}
+    else if((Number(total)||0)>20){btn.style.display='inline-block';}
+    else {btn.style.display='none';}
+  }
+  window.showFullCatalog=function(){
+    catalogShowAll=true;
+    if(typeof applyAllFilters==='function') applyAllFilters();
+    else if(lastCatalogList && typeof renderProducts==='function') renderProducts(lastCatalogList);
+    setTimeout(()=>updateCatalogLimitNote(lastCatalogList?.length||0),0);
+  };
+  const prevToggle=window.toggleCatalogView;
+  window.toggleCatalogView=function(){
+    const catalog=document.querySelector('.container');
+    const opening=!!(catalog && catalog.classList.contains('catalog-hidden'));
+    if(opening) catalogShowAll=false;
+    if(typeof prevToggle==='function') prevToggle.apply(this,arguments);
+    ensureCatalogShowAllButton();
+    if(opening){
+      setTimeout(()=>{ if(typeof applyAllFilters==='function') applyAllFilters(); updateCatalogLimitNote(lastCatalogList?.length||0); },50);
+    }
+    setTimeout(syncHomeEditorVisibility,60);
+  };
+  const prevRender=window.renderProducts;
+  if(typeof prevRender==='function'){
+    window.renderProducts=function(list){
+      const arr=Array.isArray(list)?list:[];
+      lastCatalogList=arr;
+      const catalog=document.querySelector('.container');
+      const catalogOpen=!!(catalog && !catalog.classList.contains('catalog-hidden'));
+      const limited=(catalogOpen && !catalogShowAll && arr.length>20)?arr.slice(0,20):arr;
+      const res=prevRender.call(this,limited);
+      ensureCatalogShowAllButton();
+      updateCatalogLimitNote(arr.length);
+      return res;
+    };
+  }
+  document.addEventListener('click',function(e){
+    const b=e.target.closest('.catalog-brand-home');
+    if(b){e.preventDefault(); e.stopPropagation(); forceHome();}
+  },true);
+  document.addEventListener('DOMContentLoaded',function(){
+    ensureCatalogShowAllButton();
+    ensureHomeStyleEditor();
+    renderHomeLinkClean();
+    syncHomeEditorVisibility();
+    setInterval(syncHomeEditorVisibility,1000);
+  });
+  window.addEventListener('load',function(){setTimeout(()=>{ensureCatalogShowAllButton();renderHomeLinkClean();syncHomeEditorVisibility();},200);});
+})();
+</script>
+<!-- USER REQUEST FIX 2026-05-26 19-30 END -->
 
 </body>
 
