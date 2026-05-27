@@ -2194,6 +2194,69 @@ body::before{
   border-color:#ffffff !important;
 }
 
+
+
+/* OFFICE LAYOUT DRAG EDITOR START */
+#officeLayoutEditorBtn,
+#officeLayoutResetBtn{
+  display:none;
+  position:fixed;
+  right:18px;
+  z-index:13035;
+  margin:0;
+  padding:12px 16px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#90ee90,#49d71c) !important;
+  color:#071007 !important;
+  font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+#officeLayoutEditorBtn{bottom:74px;}
+#officeLayoutResetBtn{bottom:128px;background:#181818 !important;color:#fff !important;border:1px solid rgba(107,255,42,.28) !important;}
+.office-active #officeLayoutEditorBtn,
+.office-active.layout-edit-active #officeLayoutResetBtn{display:inline-flex;align-items:center;gap:8px;}
+.office-layout-draggable{
+  touch-action:none;
+  transform:translate(var(--office-layout-x,0px), var(--office-layout-y,0px));
+}
+.office-active.layout-edit-active .office-layout-draggable{
+  outline:2px dashed rgba(107,255,42,.72) !important;
+  outline-offset:4px;
+  cursor:grab !important;
+  user-select:none !important;
+}
+.office-active.layout-edit-active .office-layout-draggable:hover{
+  box-shadow:0 0 0 4px rgba(107,255,42,.12), 0 14px 32px rgba(0,0,0,.28) !important;
+}
+.office-active.layout-edit-active .office-layout-dragging{
+  cursor:grabbing !important;
+  z-index:15000 !important;
+  position:relative;
+  opacity:.96;
+}
+.office-layout-save-badge{
+  display:none;
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:15010;
+  background:#111;
+  color:#90ee90;
+  border:1px solid rgba(107,255,42,.35);
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+  pointer-events:none;
+}
+.office-layout-save-badge.show{display:block;}
+@media(max-width:700px){
+  #officeLayoutEditorBtn{right:12px;bottom:70px;padding:10px 12px;font-size:12px;}
+  #officeLayoutResetBtn{right:12px;bottom:118px;padding:10px 12px;font-size:12px;}
+}
+/* OFFICE LAYOUT DRAG EDITOR END */
+
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -3584,7 +3647,10 @@ async function loadData(forceRefresh = false){
   }
 
   try{
-    const freshCatalog = await fetchCatalogFromDatabase();
+    const freshCatalog = await Promise.race([
+      fetchCatalogFromDatabase(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('catalog_load_timeout')), 8000))
+    ]);
     applyCatalogData(freshCatalog);
     saveCatalogToCache(freshCatalog);
     renderCatalogUI();
@@ -9652,6 +9718,340 @@ document.addEventListener('keydown', function(e){
 </script>
 <!-- MANUAL SUBCATEGORY LINKS END -->
 
+
+
+<!-- FILTER PANEL HEIGHT FIX START -->
+<style>
+@media (min-width:701px){
+  /* Коли фільтри відкриті, чорний блок каталогу має резервувати місце під випадаючу панель.
+     Інакше absolute-панель вилазить на білий фон, особливо коли в категорії немає товарів. */
+  .catalog-shell:has(#filtersWrap.open),
+  .catalog-shell:has(#filtersWrap:hover),
+  .catalog-shell:has(#filtersPanel:hover){
+    min-height:590px!important;
+    padding-bottom:118px!important;
+  }
+
+  .catalog-shell:has(#filtersWrap.open) #products.products,
+  .catalog-shell:has(#filtersWrap:hover) #products.products,
+  .catalog-shell:has(#filtersPanel:hover) #products.products{
+    min-height:360px!important;
+  }
+
+  #filtersPanel.filter-panel{
+    box-sizing:border-box!important;
+    max-height:520px!important;
+  }
+
+  #filtersPanel .filter-main-list,
+  #filtersPanel .filter-sub-panel{
+    max-height:520px!important;
+  }
+}
+</style>
+<script>
+(function(){
+  'use strict';
+  function syncFilterSpace(){
+    const shell = document.getElementById('catalogSection');
+    const wrap = document.getElementById('filtersWrap');
+    const panel = document.getElementById('filtersPanel');
+    if(!shell || !wrap) return;
+    const opened = wrap.classList.contains('open') || wrap.matches(':hover') || (panel && panel.matches(':hover'));
+    shell.classList.toggle('filters-space-active', opened);
+  }
+  const css = document.createElement('style');
+  css.textContent = '@media (min-width:701px){.catalog-shell.filters-space-active{min-height:590px!important;padding-bottom:118px!important}.catalog-shell.filters-space-active #products.products{min-height:360px!important}}';
+  document.head.appendChild(css);
+  document.addEventListener('mouseover', syncFilterSpace, true);
+  document.addEventListener('mouseout', function(){setTimeout(syncFilterSpace, 80);}, true);
+  document.addEventListener('click', function(){setTimeout(syncFilterSpace, 80);}, true);
+  window.addEventListener('load', function(){setTimeout(syncFilterSpace, 400);});
+})();
+</script>
+<!-- FILTER PANEL HEIGHT FIX END -->
+
+
+
+<script>
+/* OFFICE LAYOUT DRAG EDITOR START */
+(function(){
+  const LAYOUT_KEY = '__office_layout_positions_v1';
+  let layoutEditMode = false;
+  let dragState = null;
+  let saveTimer = null;
+  let initialized = false;
+
+  function getLayoutStore(){
+    if(typeof officeContent !== 'undefined' && officeContent && typeof officeContent === 'object'){
+      if(!officeContent[LAYOUT_KEY] || typeof officeContent[LAYOUT_KEY] !== 'object') officeContent[LAYOUT_KEY] = {};
+      return officeContent[LAYOUT_KEY];
+    }
+    return {};
+  }
+
+  function showLayoutBadge(text){
+    let badge = document.getElementById('officeLayoutSaveBadge');
+    if(!badge){
+      badge = document.createElement('div');
+      badge.id = 'officeLayoutSaveBadge';
+      badge.className = 'office-layout-save-badge';
+      document.body.appendChild(badge);
+    }
+    badge.textContent = text;
+    badge.classList.add('show');
+    clearTimeout(badge._hideTimer);
+    badge._hideTimer = setTimeout(() => badge.classList.remove('show'), 1600);
+  }
+
+  function persistLayoutSoon(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try{
+        if(typeof saveOfficeContent === 'function'){
+          const ok = await saveOfficeContent();
+          showLayoutBadge(ok ? 'Позиції збережено для всіх' : 'Збережено тільки на цьому пристрої');
+        }else{
+          localStorage.setItem('inst_asortiments_layout_fallback_v1', JSON.stringify(getLayoutStore()));
+          showLayoutBadge('Позиції збережено');
+        }
+      }catch(e){
+        try{ localStorage.setItem('inst_asortiments_layout_fallback_v1', JSON.stringify(getLayoutStore())); }catch(_e){}
+        showLayoutBadge('Помилка Firebase: позиції збережено локально');
+      }
+    }, 450);
+  }
+
+  function safeKey(str){
+    return String(str || '').trim().replace(/[^a-zA-Z0-9_\-а-яА-ЯіїєґІЇЄҐ]+/g,'_').slice(0,80);
+  }
+
+  function makeKey(el, index){
+    if(el.dataset.officeKey) return 'office_' + safeKey(el.dataset.officeKey);
+    if(el.id) return 'id_' + safeKey(el.id);
+    const cls = Array.from(el.classList || []).filter(c => !String(c).startsWith('office-layout')).slice(0,3).join('_');
+    const txt = (el.textContent || el.alt || '').trim().slice(0,28);
+    return 'auto_' + safeKey(cls || el.tagName) + '_' + safeKey(txt) + '_' + index;
+  }
+
+  function getCandidates(){
+    const selectors = [
+      'button:not(.office-section-edit-btn):not(#officeLayoutEditorBtn):not(#officeLayoutResetBtn)',
+      '.topbar', '.hero-card', '.hero-copy', '.hero-visual', '.overview-card',
+      '.ad-card', '.catalog-shell', '.catalog-head', '.search-wrapper', '.filter-wrap',
+      '#filtersPanel', '#products .product', '.modal-content', '#sideMenu', '.header-chip',
+      '.hero-feature', '.top-main-category-btn', '.category-choose-open-btn', '#catalogReturnBtn'
+    ];
+    return Array.from(document.querySelectorAll(selectors.join(','))).filter(el => {
+      if(!el || !el.isConnected) return false;
+      if(el.closest('#officeLayoutEditorBtn') || el.closest('#officeLayoutResetBtn')) return false;
+      if(el.id === 'officeLayoutEditorBtn' || el.id === 'officeLayoutResetBtn') return false;
+      if(el.classList.contains('office-section-edit-btn') || el.classList.contains('office-card-delete-btn')) return false;
+      return true;
+    });
+  }
+
+  function applyPosition(el){
+    const key = el.dataset.layoutKey;
+    const item = key ? getLayoutStore()[key] : null;
+    const x = item && Number.isFinite(Number(item.x)) ? Number(item.x) : 0;
+    const y = item && Number.isFinite(Number(item.y)) ? Number(item.y) : 0;
+    el.style.setProperty('--office-layout-x', x + 'px');
+    el.style.setProperty('--office-layout-y', y + 'px');
+  }
+
+  function refreshLayoutTargets(){
+    getCandidates().forEach((el, index) => {
+      if(!el.dataset.layoutKey) el.dataset.layoutKey = makeKey(el, index);
+      el.classList.add('office-layout-draggable');
+      applyPosition(el);
+    });
+  }
+
+  function setLayoutEditMode(on){
+    layoutEditMode = !!on;
+    document.body.classList.toggle('layout-edit-active', layoutEditMode);
+    const btn = document.getElementById('officeLayoutEditorBtn');
+    if(btn) btn.textContent = layoutEditMode ? '✅ Рух увімкнено' : '🧲 Рухати елементи';
+    refreshLayoutTargets();
+    showLayoutBadge(layoutEditMode ? 'Тягни кнопки, картки та блоки мишкою' : 'Режим руху вимкнено');
+  }
+
+  function startDrag(e){
+    if(!layoutEditMode || !document.body.classList.contains('office-active')) return;
+    const el = e.target.closest('.office-layout-draggable');
+    if(!el || el.id === 'officeLayoutEditorBtn' || el.id === 'officeLayoutResetBtn') return;
+    if(e.target.closest('input, textarea, select, option')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    refreshLayoutTargets();
+    const key = el.dataset.layoutKey;
+    const current = getLayoutStore()[key] || {x:0,y:0};
+    dragState = {
+      el, key,
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: Number(current.x) || 0,
+      baseY: Number(current.y) || 0,
+      moved:false
+    };
+    el.classList.add('office-layout-dragging');
+    try{ el.setPointerCapture(e.pointerId); }catch(_e){}
+  }
+
+  function moveDrag(e){
+    if(!dragState) return;
+    e.preventDefault();
+    const dx = e.clientX - dragState.startX;
+    const dy = e.clientY - dragState.startY;
+    if(Math.abs(dx) > 3 || Math.abs(dy) > 3) dragState.moved = true;
+    const x = Math.round(dragState.baseX + dx);
+    const y = Math.round(dragState.baseY + dy);
+    dragState.el.style.setProperty('--office-layout-x', x + 'px');
+    dragState.el.style.setProperty('--office-layout-y', y + 'px');
+    const store = getLayoutStore();
+    store[dragState.key] = {x,y};
+  }
+
+  function endDrag(e){
+    if(!dragState) return;
+    const wasMoved = dragState.moved;
+    dragState.el.classList.remove('office-layout-dragging');
+    if(wasMoved){
+      dragState.el.dataset.preventOfficeClick = '1';
+      setTimeout(() => { if(dragState && dragState.el) dragState.el.dataset.preventOfficeClick = ''; }, 0);
+      persistLayoutSoon();
+    }
+    dragState = null;
+    if(e){ e.preventDefault(); e.stopPropagation(); }
+  }
+
+  function resetLayout(){
+    if(!confirm('Скинути всі пересування елементів?')) return;
+    if(typeof officeContent !== 'undefined' && officeContent) officeContent[LAYOUT_KEY] = {};
+    document.querySelectorAll('.office-layout-draggable').forEach(el => {
+      el.style.setProperty('--office-layout-x','0px');
+      el.style.setProperty('--office-layout-y','0px');
+    });
+    persistLayoutSoon();
+  }
+
+  function addButtons(){
+    if(!document.getElementById('officeLayoutEditorBtn')){
+      const btn = document.createElement('button');
+      btn.id = 'officeLayoutEditorBtn';
+      btn.type = 'button';
+      btn.textContent = '🧲 Рухати елементи';
+      btn.addEventListener('click', () => setLayoutEditMode(!layoutEditMode));
+      document.body.appendChild(btn);
+    }
+    if(!document.getElementById('officeLayoutResetBtn')){
+      const btn = document.createElement('button');
+      btn.id = 'officeLayoutResetBtn';
+      btn.type = 'button';
+      btn.textContent = '↩️ Скинути позиції';
+      btn.addEventListener('click', resetLayout);
+      document.body.appendChild(btn);
+    }
+  }
+
+  function initLayoutEditor(){
+    if(initialized) return;
+    initialized = true;
+    addButtons();
+    // ВАЖЛИВО: не скануємо і не чіпаємо всі елементи під час стартового завантаження,
+    // бо на слабкому інтернеті/телефоні це могло залишати сайт на loader.
+    document.addEventListener('pointerdown', startDrag, true);
+    document.addEventListener('pointermove', moveDrag, true);
+    document.addEventListener('pointerup', endDrag, true);
+    document.addEventListener('pointercancel', endDrag, true);
+    document.addEventListener('click', function(e){
+      if(layoutEditMode && e.target.closest('.office-layout-draggable')){
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+  }
+
+  const oldApplyOfficeContent = window.applyOfficeContent;
+  if(typeof oldApplyOfficeContent === 'function'){
+    window.applyOfficeContent = function(){
+      const result = oldApplyOfficeContent.apply(this, arguments);
+      setTimeout(refreshLayoutTargets, 0);
+      return result;
+    };
+  }
+  const oldSetOfficeEditMode = window.setOfficeEditMode;
+  if(typeof oldSetOfficeEditMode === 'function'){
+    window.setOfficeEditMode = function(on){
+      const result = oldSetOfficeEditMode.apply(this, arguments);
+      if(!on) setLayoutEditMode(false);
+      setTimeout(initLayoutEditor, 0);
+      return result;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', initLayoutEditor);
+  window.addEventListener('load', () => setTimeout(initLayoutEditor, 300));
+  window.refreshOfficeLayoutTargets = refreshLayoutTargets;
+})();
+/* OFFICE LAYOUT DRAG EDITOR END */
+</script>
+
+
+<script>
+/* LOADER FAILSAFE FIX START */
+(function(){
+  function forceHideLoader(){
+    try{
+      var loader=document.getElementById('loader');
+      if(loader) loader.classList.add('hide');
+    }catch(e){}
+  }
+  window.addEventListener('error', function(){ setTimeout(forceHideLoader, 300); });
+  window.addEventListener('unhandledrejection', function(){ setTimeout(forceHideLoader, 300); });
+  setTimeout(forceHideLoader, 9000);
+})();
+/* LOADER FAILSAFE FIX END */
+</script>
 </body>
 
 </html>
+<!-- FINAL FILTER PANEL CUT/OFF FIX 2026-05-27 START -->
+<style>
+@media (min-width:701px){
+  /* Фінальний фікс: чорний блок каталогу завжди має запас під відкриті фільтри */
+  #catalogSection.catalog-shell{
+    min-height:620px !important;
+    padding-bottom:34px !important;
+    overflow:visible !important;
+  }
+
+  /* Панель фільтрів не повинна виходити нижче чорного блоку — список скролиться всередині */
+  #filtersPanel.filter-panel{
+    max-height:440px !important;
+    overflow:visible !important;
+  }
+
+  #filtersPanel .filter-main-list{
+    max-height:420px !important;
+    overflow-y:auto !important;
+    overflow-x:visible !important;
+  }
+
+  #filtersPanel .filter-sub-panel{
+    max-height:330px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+
+  #products.products{
+    min-height:360px !important;
+  }
+
+  .filter-no-products{
+    min-height:170px !important;
+  }
+}
+</style>
+<!-- FINAL FILTER PANEL CUT/OFF FIX 2026-05-27 END -->
