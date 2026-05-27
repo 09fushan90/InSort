@@ -978,7 +978,7 @@ header.site-header{
 .hero-primary{padding:14px 22px;font-size:16px;font-weight:800;}
 .hero-secondary{padding:14px 22px;font-size:16px;font-weight:800;background:#111;color:#fff;border:1px solid rgba(107,255,42,.22);}
 .hero-features{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;}
-.hero-feature{padding:10px 14px;border-radius:14px;background:#111;border:1px solid rgba(107,255,42,.1);color:#dbe8db;font-size:14px;}
+
 .hero-visual{
   min-height:360px;border-radius:24px;position:relative;overflow:hidden;
   background:radial-gradient(circle at 20% 10%, rgba(107,255,42,.18), transparent 25%), linear-gradient(180deg,#171717 0%,#0c0c0c 100%);
@@ -2257,6 +2257,36 @@ body::before{
 }
 /* OFFICE LAYOUT DRAG EDITOR END */
 
+
+
+/* MOBILE FULL PAGE SCROLL FIX */
+@media (max-width:700px){
+  html,
+  body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch;
+    touch-action:auto !important;
+  }
+
+  body{
+    position:relative !important;
+  }
+
+  .hero,
+  .container,
+  .catalog-shell,
+  .overview-grid,
+  .ads-section{
+    overflow:visible !important;
+  }
+
+  #sideMenu{
+    overscroll-behavior:contain;
+  }
+}
+
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -3422,6 +3452,9 @@ const db = firebase.database();
 // один вузол catalog замість трьох окремих читань і без analytics/storage.
 const CATALOG_CACHE_KEY = 'inst_asortiments_catalog_cache_v1';
 const CATALOG_CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 годин кешу для покупців, адмін оновлює напряму
+// Глобальний кеш у Firebase: перший покупець за 6 годин створює snapshot, інші покупці беруть його.
+// Так ми не підписуємо 100 людей на live catalog і не читаємо важкий каталог кожному окремо.
+const PUBLIC_CATALOG_CACHE_REF = 'publicCatalogCache/current';
 
 function getCatalogPayload(){
   const payload = {
@@ -3471,6 +3504,47 @@ function getCatalogFromCache(maxAge = CATALOG_CACHE_MAX_AGE){
     return parsed.data;
   }catch(error){
     return null;
+  }
+}
+
+
+function normalizeCatalogPayload(payload){
+  payload = payload || {};
+  return {
+    products: Array.isArray(payload.products) ? payload.products : [],
+    categories: Array.isArray(payload.categories) ? payload.categories : [],
+    categoryImages: (typeof payload.categoryImages === 'object' && payload.categoryImages) ? payload.categoryImages : {},
+    mainCategories: Array.isArray(payload.mainCategories) ? payload.mainCategories : [],
+    categoryMainLinks: (typeof payload.categoryMainLinks === 'object' && payload.categoryMainLinks) ? payload.categoryMainLinks : {},
+    productSections: Array.isArray(payload.productSections) ? payload.productSections : [],
+    ads: Array.isArray(payload.ads) ? payload.ads : [],
+    updatedAt: payload.updatedAt || Date.now()
+  };
+}
+
+async function getCatalogFromPublicCache(){
+  try{
+    const snap = await db.ref(PUBLIC_CATALOG_CACHE_REF).get();
+    if(!snap.exists()) return null;
+    const cached = snap.val() || {};
+    if(!cached.data || !cached.expiresAt || Date.now() > Number(cached.expiresAt)) return null;
+    return normalizeCatalogPayload(cached.data);
+  }catch(error){
+    console.warn('Не вдалося прочитати глобальний кеш каталогу', error);
+    return null;
+  }
+}
+
+async function saveCatalogToPublicCache(payload){
+  try{
+    const safePayload = normalizeCatalogPayload(payload);
+    await db.ref(PUBLIC_CATALOG_CACHE_REF).set({
+      savedAt: Date.now(),
+      expiresAt: Date.now() + CATALOG_CACHE_MAX_AGE,
+      data: safePayload
+    });
+  }catch(error){
+    console.warn('Не вдалося зберегти глобальний кеш каталогу', error);
   }
 }
 
@@ -3637,29 +3711,46 @@ function isAdminUser(){
   return false;
 }
 
-// Економне завантаження каталогу: показуємо кеш одразу, але завжди перевіряємо базу.
+// Економне завантаження каталогу.
+// Для покупців:
+// 1) спочатку локальний кеш браузера 6 годин;
+// 2) якщо його немає — глобальний 6-годинний snapshot у Firebase;
+// 3) тільки якщо глобального кешу немає або він протух — один покупець створює новий snapshot з catalog.
+// Для адміна: база оновлюється завжди напряму.
 async function loadData(forceRefresh = false){
-  const cachedCatalog = (!forceRefresh && !isAdminUser()) ? getCatalogFromCache() : null;
+  const admin = isAdminUser();
+  const cachedCatalog = (!forceRefresh && !admin) ? getCatalogFromCache() : null;
 
   if(cachedCatalog){
     applyCatalogData(cachedCatalog);
     renderCatalogUI();
+    return; // Покупець 6 годин бачить кеш свого браузера без читання важкого catalog.
   }
 
   try{
+    if(!admin && !forceRefresh){
+      const publicCachedCatalog = await Promise.race([
+        getCatalogFromPublicCache(),
+        new Promise((resolve) => setTimeout(() => resolve(null), 2500))
+      ]);
+      if(publicCachedCatalog){
+        applyCatalogData(publicCachedCatalog);
+        saveCatalogToCache(publicCachedCatalog);
+        renderCatalogUI();
+        return; // Інші покупці беруть один загальний snapshot, а не важкий live catalog.
+      }
+    }
+
     const freshCatalog = await Promise.race([
       fetchCatalogFromDatabase(),
       new Promise((_, reject) => setTimeout(() => reject(new Error('catalog_load_timeout')), 8000))
     ]);
     applyCatalogData(freshCatalog);
     saveCatalogToCache(freshCatalog);
+    if(!admin) saveCatalogToPublicCache(freshCatalog);
     renderCatalogUI();
   }catch(error){
     console.error('Помилка завантаження каталогу', error);
-
-    if(cachedCatalog){
-      return;
-    }
 
     const fallbackCatalog = getCatalogFromCache(Number.MAX_SAFE_INTEGER);
     if(fallbackCatalog){
@@ -3671,6 +3762,7 @@ async function loadData(forceRefresh = false){
     products = [];
     categories = [];
     categoryImages = {};
+    window.categoryImages = categoryImages;
     mainCategories = [];
     categoryMainLinks = {};
     window.categoryMainLinks = categoryMainLinks;
@@ -3689,6 +3781,7 @@ function saveToDatabase(){
 
 let catalogRealtimeStarted = false;
 function startCatalogRealtimeSync(){
+  if(!isAdminUser()) return; // автооновлення з бази тільки для адміна, покупці працюють з 6-годинним кешем
   if(catalogRealtimeStarted) return;
   catalogRealtimeStarted = true;
   try{
@@ -3698,6 +3791,7 @@ function startCatalogRealtimeSync(){
       const payload = {
         products: Array.isArray(catalog.products) ? catalog.products : [],
         categories: Array.isArray(catalog.categories) ? catalog.categories : [],
+        categoryImages: (typeof catalog.categoryImages === 'object' && catalog.categoryImages) ? catalog.categoryImages : {},
         mainCategories: Array.isArray(catalog.mainCategories) ? catalog.mainCategories : [],
         categoryMainLinks: (typeof catalog.categoryMainLinks === 'object' && catalog.categoryMainLinks) ? catalog.categoryMainLinks : {},
         productSections: Array.isArray(catalog.productSections) ? catalog.productSections : [],
@@ -3717,7 +3811,7 @@ function hideLoader(){
 }
 
 window.addEventListener('online', () => {
-  if(!getCatalogFromCache()) loadData(isAdminUser());
+  if(isAdminUser() || !getCatalogFromCache()) loadData(isAdminUser());
 });
 
 // Категорії
@@ -10014,6 +10108,276 @@ document.addEventListener('keydown', function(e){
 })();
 /* LOADER FAILSAFE FIX END */
 </script>
+
+<!-- INSORT MOBILE SCROLL + CATEGORY PHOTO + 6H CACHE PATCH START -->
+<style>
+/* Телефон: сторінка завжди нормально листається, якщо не відкрите реальне модальне вікно */
+@media (max-width:700px){
+  html, body{
+    min-height:100%;
+    height:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
+  }
+  body:not(.no-scroll){
+    overflow-y:auto !important;
+    position:relative !important;
+  }
+  .container,
+  .catalog-shell,
+  .products{
+    overflow:visible !important;
+  }
+  .modal[style*="display: none"],
+  .modal:not([style*="display: flex"]){
+    pointer-events:none;
+  }
+}
+</style>
+<script>
+(function(){
+  const CACHE_KEY = 'inst_asortiments_catalog_cache_v1';
+  const ADMIN_EMAIL = '09fushan90@gmail.com';
+
+  function patchIsAdmin(){
+    try{
+      if(typeof getRegisteredUser === 'function'){
+        const u = getRegisteredUser();
+        return !!(u && u.email && String(u.email).toLowerCase() === ADMIN_EMAIL);
+      }
+    }catch(e){}
+    return false;
+  }
+
+  function anyModalOpen(){
+    return Array.from(document.querySelectorAll('.modal, #fullscreenViewer')).some(el => {
+      const st = getComputedStyle(el);
+      return st.display !== 'none' && st.visibility !== 'hidden' && st.opacity !== '0';
+    });
+  }
+
+  function fixScrollLock(){
+    const menuOpen = !!document.querySelector('#sideMenu.open');
+    const lockNeeded = anyModalOpen() || menuOpen;
+    document.documentElement.classList.toggle('no-scroll', lockNeeded);
+    document.body.classList.toggle('no-scroll', lockNeeded);
+    if(!lockNeeded){
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.position = '';
+      document.body.style.touchAction = '';
+    }
+  }
+
+  document.addEventListener('click', () => setTimeout(fixScrollLock, 80), true);
+  document.addEventListener('touchend', () => setTimeout(fixScrollLock, 120), true);
+  window.addEventListener('pageshow', fixScrollLock);
+  window.addEventListener('resize', fixScrollLock);
+  setInterval(fixScrollLock, 1200);
+
+  // Додатковий захист: фото підкатегорій завжди входять у payload і кеш.
+  const oldGetCatalogPayload = window.getCatalogPayload;
+  if(typeof oldGetCatalogPayload === 'function'){
+    window.getCatalogPayload = function(){
+      const payload = oldGetCatalogPayload.apply(this, arguments) || {};
+      payload.categoryImages = (typeof window.categoryImages === 'object' && window.categoryImages) ? window.categoryImages : (typeof categoryImages === 'object' && categoryImages ? categoryImages : {});
+      payload.updatedAt = Date.now();
+      return payload;
+    };
+  }
+
+  const oldApplyCatalogData = window.applyCatalogData;
+  if(typeof oldApplyCatalogData === 'function'){
+    window.applyCatalogData = function(payload){
+      payload = payload || {};
+      payload.categoryImages = (typeof payload.categoryImages === 'object' && payload.categoryImages) ? payload.categoryImages : {};
+      oldApplyCatalogData.call(this, payload);
+      window.categoryImages = payload.categoryImages || {};
+      try{ categoryImages = window.categoryImages; }catch(e){}
+    };
+  }
+
+  const oldSaveToDatabase = window.saveToDatabase;
+  if(typeof oldSaveToDatabase === 'function'){
+    window.saveToDatabase = function(){
+      const result = oldSaveToDatabase.apply(this, arguments);
+      try{
+        const raw = localStorage.getItem(CACHE_KEY);
+        if(raw){
+          const parsed = JSON.parse(raw);
+          if(parsed && parsed.data){
+            parsed.data.categoryImages = (typeof window.categoryImages === 'object' && window.categoryImages) ? window.categoryImages : {};
+            parsed.data.updatedAt = Date.now();
+            parsed.savedAt = Date.now();
+            localStorage.setItem(CACHE_KEY, JSON.stringify(parsed));
+          }
+        }
+      }catch(e){}
+      return result;
+    };
+  }
+
+  // Якщо покупець уже має кеш до 6 годин — відключаємо live-оновлення, щоб не було зайвих запитів.
+  const oldStartRealtime = window.startCatalogRealtimeSync;
+  if(typeof oldStartRealtime === 'function'){
+    window.startCatalogRealtimeSync = function(){
+      if(!patchIsAdmin()) return;
+      return oldStartRealtime.apply(this, arguments);
+    };
+  }
+})();
+</script>
+<!-- INSORT MOBILE SCROLL + CATEGORY PHOTO + 6H CACHE PATCH END -->
+
+
+
+<!-- MOBILE SECOND SWIPE SCROLL HARD FIX 2026-05-27 START -->
+<style>
+@media (max-width:700px){
+  html,
+  body{
+    height:auto !important;
+    min-height:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    touch-action:pan-y !important;
+    overscroll-behavior-y:auto !important;
+  }
+
+  html.no-scroll:not(.real-mobile-lock),
+  body.no-scroll:not(.real-mobile-lock){
+    height:auto !important;
+    overflow-y:auto !important;
+    position:relative !important;
+    touch-action:pan-y !important;
+    overscroll-behavior-y:auto !important;
+  }
+
+  body.real-mobile-lock,
+  html.real-mobile-lock{
+    overflow:hidden !important;
+    height:100dvh !important;
+    touch-action:none !important;
+  }
+
+  body:not(.layout-edit-active) .office-layout-draggable{
+    touch-action:pan-y !important;
+  }
+
+  body.layout-edit-active.office-active .office-layout-draggable{
+    touch-action:none !important;
+  }
+
+  .container,
+  .hero,
+  .hero-card,
+  .overview-grid,
+  .ads-section,
+  .catalog-shell,
+  #products,
+  .products{
+    overflow:visible !important;
+  }
+
+  .modal:not(.real-open-modal),
+  #menuOverlay:not(.show){
+    pointer-events:none !important;
+  }
+}
+</style>
+<script>
+(function fixSecondMobileSwipeLock(){
+  'use strict';
+
+  function isVisible(el){
+    if(!el) return false;
+    var st = window.getComputedStyle(el);
+    var r = el.getBoundingClientRect();
+    return st.display !== 'none' && st.visibility !== 'hidden' && st.opacity !== '0' && (r.width > 0 || r.height > 0);
+  }
+
+  function realModalOpen(){
+    var opened = false;
+    document.querySelectorAll('.modal, #fullscreenViewer').forEach(function(el){
+      var open = isVisible(el);
+      el.classList.toggle('real-open-modal', open);
+      if(open) opened = true;
+    });
+    return opened;
+  }
+
+  function unlockPageScroll(){
+    document.documentElement.classList.remove('no-scroll','real-mobile-lock','modal-open-safe','menu-open-safe');
+    document.body.classList.remove('no-scroll','real-mobile-lock','scroll-fixed-by-modal','card-style-modal-open','modal-open-safe','menu-open-safe');
+
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.overflowY = '';
+    document.documentElement.style.height = '';
+    document.documentElement.style.position = '';
+
+    document.body.style.overflow = '';
+    document.body.style.overflowY = '';
+    document.body.style.height = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.touchAction = '';
+  }
+
+  function syncLock(){
+    if(window.innerWidth > 700) return;
+    var modal = realModalOpen();
+    if(modal){
+      document.documentElement.classList.add('real-mobile-lock');
+      document.body.classList.add('real-mobile-lock');
+      return;
+    }
+    unlockPageScroll();
+  }
+
+  /* Старий глобальний блокувальник інколи лишав touchmove заблокованим після першого свайпу. */
+  try{
+    if(typeof hardBlockWhenOverlayOpen === 'function'){
+      document.removeEventListener('touchmove', hardBlockWhenOverlayOpen, {passive:false});
+      document.removeEventListener('wheel', hardBlockWhenOverlayOpen, {passive:false});
+    }
+  }catch(e){}
+
+  document.addEventListener('touchstart', function(){
+    if(window.innerWidth <= 700 && !realModalOpen()) unlockPageScroll();
+  }, true);
+
+  document.addEventListener('touchmove', function(){
+    if(window.innerWidth <= 700 && !realModalOpen()) unlockPageScroll();
+  }, {capture:true, passive:true});
+
+  ['touchend','pointerup','click','keyup'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      setTimeout(syncLock, 0);
+      setTimeout(syncLock, 160);
+    }, true);
+  });
+
+  window.addEventListener('pageshow', syncLock);
+  window.addEventListener('resize', syncLock);
+  document.addEventListener('DOMContentLoaded', syncLock);
+  window.addEventListener('load', function(){
+    syncLock();
+    setTimeout(syncLock, 300);
+    setTimeout(syncLock, 1200);
+  });
+
+  setInterval(syncLock, 500);
+})();
+</script>
+<!-- MOBILE SECOND SWIPE SCROLL HARD FIX 2026-05-27 END -->
 </body>
 
 </html>
@@ -10055,3 +10419,124 @@ document.addEventListener('keydown', function(e){
 }
 </style>
 <!-- FINAL FILTER PANEL CUT/OFF FIX 2026-05-27 END -->
+
+
+<!-- MOBILE SCROLL + HOME SOCIAL RETURN FIX 2026-05-27 START -->
+<style>
+/* Соцкнопки мають бути тільки на головному екрані і не пропадати після повернення з каталогу */
+body:not(.catalog-open) #homeSocialLinks{
+  display:flex !important;
+}
+body.catalog-open #homeSocialLinks{
+  display:none !important;
+}
+
+/* Мобільний скрол не повинен залипати, якщо no-scroll випадково залишився після закриття вікон */
+@media (max-width:700px){
+  html:not(.modal-open-safe):not(.menu-open-safe),
+  body:not(.modal-open-safe):not(.menu-open-safe){
+    touch-action:auto;
+    overscroll-behavior:auto;
+  }
+}
+</style>
+<script>
+(function mobileScrollAndSocialFinalFix(){
+  'use strict';
+
+  function visible(el){
+    if(!el) return false;
+    var st = window.getComputedStyle(el);
+    return st.display !== 'none' && st.visibility !== 'hidden' && st.opacity !== '0';
+  }
+
+  function hasOpenOverlay(){
+    var modalOpen = Array.from(document.querySelectorAll('.modal, #fullscreenViewer')).some(function(el){
+      return visible(el);
+    });
+    var menuOpen = !!(document.getElementById('sideMenu') && document.getElementById('sideMenu').classList.contains('open'));
+    var overlayOpen = !!(document.getElementById('menuOverlay') && document.getElementById('menuOverlay').classList.contains('show'));
+    return modalOpen || menuOpen || overlayOpen;
+  }
+
+  function repairMobileScroll(){
+    var overlayOpen = hasOpenOverlay();
+    document.documentElement.classList.toggle('modal-open-safe', overlayOpen);
+    document.body.classList.toggle('modal-open-safe', overlayOpen);
+    document.documentElement.classList.toggle('menu-open-safe', overlayOpen);
+    document.body.classList.toggle('menu-open-safe', overlayOpen);
+
+    if(overlayOpen) return;
+
+    /* головний ремонт: прибираємо застряглий lock після закриття карток/меню/каталогу */
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll', 'scroll-fixed-by-modal', 'card-style-modal-open');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  }
+
+  function catalogIsOpen(){
+    var catalog = document.querySelector('.container');
+    return !!(catalog && !catalog.classList.contains('catalog-hidden'));
+  }
+
+  function syncHomeSocialButtons(){
+    var social = document.getElementById('homeSocialLinks');
+    if(!social && typeof ensureHomeBlocks === 'function'){
+      try{ ensureHomeBlocks(); }catch(e){}
+      social = document.getElementById('homeSocialLinks');
+    }
+    var open = catalogIsOpen();
+    document.body.classList.toggle('catalog-open', open);
+    if(social) social.style.display = open ? 'none' : 'flex';
+  }
+
+  function afterUiChange(){
+    setTimeout(function(){
+      repairMobileScroll();
+      syncHomeSocialButtons();
+    }, 0);
+    setTimeout(function(){
+      repairMobileScroll();
+      syncHomeSocialButtons();
+    }, 180);
+  }
+
+  var oldToggleCatalogView = window.toggleCatalogView;
+  if(typeof oldToggleCatalogView === 'function'){
+    window.toggleCatalogView = function(){
+      var result = oldToggleCatalogView.apply(this, arguments);
+      afterUiChange();
+      return result;
+    };
+  }
+
+  var oldGoToHomeScreen = window.goToHomeScreen;
+  if(typeof oldGoToHomeScreen === 'function'){
+    window.goToHomeScreen = function(){
+      var result = oldGoToHomeScreen.apply(this, arguments);
+      afterUiChange();
+      return result;
+    };
+  }
+
+  ['click','touchend','keyup'].forEach(function(evt){
+    document.addEventListener(evt, afterUiChange, true);
+  });
+  window.addEventListener('pageshow', afterUiChange);
+  window.addEventListener('resize', afterUiChange);
+  document.addEventListener('DOMContentLoaded', afterUiChange);
+  window.addEventListener('load', afterUiChange);
+
+  /* страховка саме для телефона: якщо no-scroll залип без відкритого вікна — скрол одразу повертається */
+  setInterval(function(){
+    if(window.innerWidth <= 700) repairMobileScroll();
+  }, 900);
+})();
+</script>
+<!-- MOBILE SCROLL + HOME SOCIAL RETURN FIX 2026-05-27 END -->
