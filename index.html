@@ -11051,3 +11051,181 @@ body.catalog-open #homeSocialLinks{
   window.addEventListener('load', function(){ setTimeout(refreshCategoryFix, 500); });
 })();
 </script>
+
+<!-- FIX 2026-05-29: кнопки Фото / Без фото в основних категоріях -->
+<script>
+(function(){
+  'use strict';
+
+  function esc(v){
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function(m){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+  }
+
+  function ensureImageMaps(){
+    window.categoryImages = window.categoryImages || (typeof categoryImages !== 'undefined' && categoryImages ? categoryImages : {});
+    window.mainCategoryImages = window.mainCategoryImages || (typeof mainCategoryImages !== 'undefined' && mainCategoryImages ? mainCategoryImages : {});
+    try{ categoryImages = window.categoryImages; }catch(e){}
+    try{ mainCategoryImages = window.mainCategoryImages; }catch(e){}
+  }
+
+  function getMainCategories(){
+    if(Array.isArray(window.mainCategories)) return window.mainCategories;
+    try{ if(Array.isArray(mainCategories)) return mainCategories; }catch(e){}
+    return [];
+  }
+
+  function getCategories(){
+    if(Array.isArray(window.categories)) return window.categories;
+    try{ if(Array.isArray(categories)) return categories; }catch(e){}
+    return [];
+  }
+
+  function saveAndRefreshMainCats(){
+    ensureImageMaps();
+    try{ if(typeof saveToDatabase === 'function') saveToDatabase(); }catch(e){}
+    try{ if(typeof populateMainCategoryList === 'function') populateMainCategoryList(); }catch(e){}
+    try{ if(typeof renderFiltersPanel === 'function') renderFiltersPanel(); }catch(e){}
+    try{ if(typeof window.syncCategoryOptionsForMain === 'function') window.syncCategoryOptionsForMain(); }catch(e){}
+    try{ if(typeof window.openCategoryChooseModal === 'function' && document.getElementById('categoryChooseModal')?.style.display === 'flex') window.openCategoryChooseModal(); }catch(e){}
+  }
+
+  function fileToDataUrl(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(){ cb(reader.result); };
+    reader.readAsDataURL(file);
+  }
+
+  window.changeCategoryPhoto = function(type, cat){
+    if(typeof isAdminUser === 'function' && !isAdminUser()) return;
+    if(!cat) return;
+    ensureImageMaps();
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = function(){
+      var file = input.files && input.files[0];
+      if(!file){ input.remove(); return; }
+      fileToDataUrl(file, function(src){
+        ensureImageMaps();
+        if(type === 'main') window.mainCategoryImages[cat] = src;
+        else window.categoryImages[cat] = src;
+        input.remove();
+        saveAndRefreshMainCats();
+        try{ if(typeof populateCategoryList === 'function') populateCategoryList(); }catch(e){}
+      });
+    };
+    input.click();
+  };
+
+  window.clearCategoryPhoto = function(type, cat){
+    if(typeof isAdminUser === 'function' && !isAdminUser()) return;
+    if(!cat) return;
+    ensureImageMaps();
+    if(type === 'main') delete window.mainCategoryImages[cat];
+    else delete window.categoryImages[cat];
+    saveAndRefreshMainCats();
+    try{ if(typeof populateCategoryList === 'function') populateCategoryList(); }catch(e){}
+  };
+
+  var previousPopulateMain = window.populateMainCategoryList;
+  window.populateMainCategoryList = function(){
+    ensureImageMaps();
+    var list = document.getElementById('mainCategoryList');
+    if(!list){
+      if(typeof previousPopulateMain === 'function') return previousPopulateMain.apply(this, arguments);
+      return;
+    }
+    list.innerHTML = '';
+    var mains = getMainCategories();
+    if(!mains.length){
+      list.innerHTML = '<div style="color:#b8efb8;margin:10px 0;">Основних категорій ще немає.</div>';
+      return;
+    }
+    mains.forEach(function(cat){
+      cat = String(cat || '').trim();
+      if(!cat) return;
+      var row = document.createElement('div');
+      row.className = 'category-editor-row';
+      var img = (window.mainCategoryImages && window.mainCategoryImages[cat]) || 'logo.png.jpg';
+      var linkedCount = 0;
+      try{
+        var links = window.categoryMainLinks || (typeof categoryMainLinks !== 'undefined' ? categoryMainLinks : {});
+        linkedCount = Array.isArray(links[cat]) ? links[cat].length : 0;
+      }catch(e){}
+      row.innerHTML = '<img class="category-editor-thumb" src="'+esc(img)+'" alt="">' +
+        '<div><div class="category-editor-name">'+esc(cat)+' <small style="color:#90ee90;">('+linkedCount+' підкат.)</small></div>' +
+        '<div class="category-editor-actions">' +
+        '<button type="button" data-act="link" class="link-subs-btn">Підкатегорії</button>' +
+        '<button type="button" data-act="rename">Назва</button>' +
+        '<button type="button" data-act="photo">Фото</button>' +
+        '<button type="button" data-act="clear">Без фото</button>' +
+        '<button type="button" class="danger" data-act="delete">Видалити</button>' +
+        '</div></div>';
+
+      var linkBtn = row.querySelector('[data-act="link"]');
+      if(linkBtn) linkBtn.onclick = function(){ if(typeof openSubCategoryLinkModal === 'function') openSubCategoryLinkModal(cat); };
+
+      var renameBtn = row.querySelector('[data-act="rename"]');
+      if(renameBtn) renameBtn.onclick = function(){
+        if(typeof isAdminUser === 'function' && !isAdminUser()) return;
+        var name = prompt('Нова назва:', cat);
+        if(!name) return;
+        var newName = String(name).trim();
+        if(!newName || newName === cat) return;
+        try{
+          var arr = getMainCategories().map(function(c){ return c === cat ? newName : c; });
+          window.mainCategories = arr;
+          try{ mainCategories = arr; }catch(e){}
+          var links = window.categoryMainLinks || (typeof categoryMainLinks !== 'undefined' ? categoryMainLinks : {});
+          if(links[cat]){ links[newName] = links[cat]; delete links[cat]; }
+          window.categoryMainLinks = links;
+          try{ categoryMainLinks = links; }catch(e){}
+          if(window.mainCategoryImages[cat]){ window.mainCategoryImages[newName] = window.mainCategoryImages[cat]; delete window.mainCategoryImages[cat]; }
+          var productsArr = window.products || (typeof products !== 'undefined' ? products : []);
+          if(Array.isArray(productsArr)) productsArr.forEach(function(p){ if(p && p.mainCategory === cat) p.mainCategory = newName; });
+        }catch(e){}
+        saveAndRefreshMainCats();
+      };
+
+      var photoBtn = row.querySelector('[data-act="photo"]');
+      if(photoBtn) photoBtn.onclick = function(){ window.changeCategoryPhoto('main', cat); };
+
+      var clearBtn = row.querySelector('[data-act="clear"]');
+      if(clearBtn) clearBtn.onclick = function(){ window.clearCategoryPhoto('main', cat); };
+
+      var deleteBtn = row.querySelector('[data-act="delete"]');
+      if(deleteBtn) deleteBtn.onclick = function(){ if(typeof removeMainCategory === 'function') removeMainCategory(cat); };
+
+      list.appendChild(row);
+    });
+  };
+
+  var previousPayload = window.getCatalogPayload;
+  window.getCatalogPayload = function(){
+    var payload = typeof previousPayload === 'function' ? previousPayload.apply(this, arguments) : {};
+    ensureImageMaps();
+    payload.categoryImages = window.categoryImages || {};
+    payload.mainCategoryImages = window.mainCategoryImages || {};
+    return payload;
+  };
+
+  var previousApply = window.applyCatalogData;
+  window.applyCatalogData = function(payload){
+    if(typeof previousApply === 'function') previousApply.apply(this, arguments);
+    ensureImageMaps();
+    if(payload && payload.categoryImages) window.categoryImages = payload.categoryImages;
+    if(payload && payload.mainCategoryImages) window.mainCategoryImages = payload.mainCategoryImages;
+    ensureImageMaps();
+  };
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(window.populateMainCategoryList, 120); });
+  }else{
+    setTimeout(window.populateMainCategoryList, 120);
+  }
+})();
+</script>
