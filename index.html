@@ -4336,7 +4336,7 @@ function openEditModal(id){
   editingId = id;
   document.getElementById("editTitleText").innerText = "Редагувати товар";
   document.getElementById("editTitle").value = p.title || "";
-  document.getElementById("editPrice").value = p.price || "";
+  document.getElementById("editPrice").value = (p.hasDiscount && (p.originalPrice || p.oldPrice || p.priceBeforeDiscount)) ? (p.originalPrice || p.oldPrice || p.priceBeforeDiscount) : (p.price || "");
   document.getElementById("editDesc").value = p.desc || "";
   document.getElementById("editCategory").value = p.category || "";
   if(document.getElementById("editMainCategory")) document.getElementById("editMainCategory").value = p.mainCategory || "";
@@ -11338,8 +11338,8 @@ body.catalog-open #homeSocialLinks{
   <div class="modal-content" onclick="event.stopPropagation()">
     <h3 style="margin-top:0;">Знижка товару</h3>
     <input id="discountPercentInput" type="number" min="0" max="99" placeholder="Знижка у відсотках, наприклад 10">
-    <input id="discountCustomInput" type="text" placeholder="Знижка текстом, наприклад -200 грн або Акція">
-    <p style="font-size:13px;color:#b8efb8;line-height:1.35;">Якщо вказати відсоток, сайт сам порахує нову ціну. Стара ціна буде перекреслена, а нова стане червоною.</p>
+    <input id="discountCustomInput" type="number" min="0" step="1" placeholder="Точна ціна зі знижкою, наприклад 1200">
+    <p style="font-size:13px;color:#b8efb8;line-height:1.35;">Перше поле рахує ціну по відсотку. Друге поле — це точна нова ціна товару, не мінус. Якщо очистити знижку, товар повернеться до звичайної ціни.</p>
     <button type="button" onclick="saveDiscountModal()">Застосувати</button>
     <button type="button" style="background:#444;color:#fff;" onclick="clearDiscountModal()">Прибрати знижку</button>
     <button type="button" style="background:#222;color:#fff;" onclick="closeDiscountModal()">Закрити</button>
@@ -11378,7 +11378,7 @@ body.catalog-open #homeSocialLinks{
   function discountText(p){
     if(!p) return '';
     if(p.discountPercent) return '-' + p.discountPercent + '%';
-    if(p.discountCustom) return p.discountCustom;
+    if(p.discountCustom) return 'ціна зі знижкою';
     return 'Знижка';
   }
   function priceHtml(p){
@@ -11476,6 +11476,12 @@ body.catalog-open #homeSocialLinks{
     var b = document.getElementById('discountCustomInput');
     if(a) a.value = '';
     if(b) b.value = '';
+    try{
+      var p = editingId ? getProductById(editingId) : null;
+      var old = p && (p.originalPrice || p.oldPrice || p.priceBeforeDiscount);
+      var editPrice = document.getElementById('editPrice');
+      if(old && editPrice) editPrice.value = money(old);
+    }catch(e){}
     try{ showSiteNotice('Знижку прибрано. Натисни “Зберегти” у товарі.'); }catch(e){}
   };
 
@@ -11484,28 +11490,41 @@ body.catalog-open #homeSocialLinks{
     var percent = String(pendingDiscountPercent || '').trim();
     var custom = String(pendingDiscountCustom || '').trim();
 
+    var savedOld = p.originalPrice || p.oldPrice || p.priceBeforeDiscount || '';
+
     if(pendingDiscountCleared || (!percent && !custom)){
-      if(pendingDiscountCleared && p.originalPrice) p.price = p.originalPrice;
+      if(savedOld) p.price = money(savedOld);
+      else p.price = money(typedPrice || p.price);
       delete p.discountPercent;
       delete p.discountCustom;
       delete p.originalPrice;
+      delete p.oldPrice;
+      delete p.priceBeforeDiscount;
       p.hasDiscount = false;
       return;
     }
 
-    var base = numberPrice(p.originalPrice || typedPrice || p.price);
+    var base = numberPrice(savedOld || typedPrice || p.price);
     if(!base) base = numberPrice(p.price);
     p.originalPrice = money(base);
-    p.discountPercent = percent;
-    p.discountCustom = custom;
+    p.discountPercent = '';
+    p.discountCustom = '';
     p.hasDiscount = true;
 
     var pct = numberPrice(percent);
+    var exactPrice = numberPrice(custom);
     if(pct > 0){
       if(pct > 99) pct = 99;
       p.discountPercent = String(pct);
       p.price = money(base - (base * pct / 100));
+    }else if(exactPrice > 0){
+      p.discountCustom = money(exactPrice);
+      p.price = money(exactPrice);
     }else{
+      delete p.discountPercent;
+      delete p.discountCustom;
+      delete p.originalPrice;
+      p.hasDiscount = false;
       p.price = money(typedPrice || p.price);
     }
   }
@@ -11642,49 +11661,5 @@ body.catalog-open #homeSocialLinks{
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(initDiscountFix, 100); });
   else setTimeout(initDiscountFix, 100);
   window.addEventListener('load', function(){ setTimeout(initDiscountFix, 300); });
-})();
-</script>
-
-<!-- FIX 2026-05-30: повністю прибрані фото саме з основних категорій в Офісі -->
-<style>
-#mainCategoryList .category-editor-thumb,
-#mainCategoryList [data-act="photo"],
-#mainCategoryList [data-act="clear"]{
-  display:none !important;
-}
-</style>
-<script>
-(function(){
-  'use strict';
-  function removeMainCategoryPhotos(){
-    try{
-      window.mainCategoryImages = {};
-      if(typeof mainCategoryImages !== 'undefined') mainCategoryImages = window.mainCategoryImages;
-    }catch(e){}
-  }
-  var oldPayload = window.getCatalogPayload;
-  window.getCatalogPayload = function(){
-    var payload = typeof oldPayload === 'function' ? oldPayload.apply(this, arguments) : {};
-    payload.mainCategoryImages = {};
-    return payload;
-  };
-  var oldApply = window.applyCatalogData;
-  window.applyCatalogData = function(payload){
-    if(typeof oldApply === 'function') oldApply.apply(this, arguments);
-    removeMainCategoryPhotos();
-  };
-  var oldPopulate = window.populateMainCategoryList;
-  window.populateMainCategoryList = function(){
-    removeMainCategoryPhotos();
-    if(typeof oldPopulate === 'function') oldPopulate.apply(this, arguments);
-    try{
-      var list = document.getElementById('mainCategoryList');
-      if(list){
-        list.querySelectorAll('.category-editor-thumb,[data-act="photo"],[data-act="clear"]').forEach(function(el){ el.style.display = 'none'; });
-      }
-    }catch(e){}
-  };
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(removeMainCategoryPhotos, 80); });
-  else setTimeout(removeMainCategoryPhotos, 80);
 })();
 </script>
