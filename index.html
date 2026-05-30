@@ -11229,3 +11229,462 @@ body.catalog-open #homeSocialLinks{
   }
 })();
 </script>
+
+<!-- FIX 2026-05-30: основні категорії без фото + товари зі знижкою -->
+<style>
+/* У основних категорій фото більше не показуються для покупців */
+.category-choose-main-wrap > .category-choose-item img,
+.category-choose-main-wrap > button img,
+.category-choose-item[data-main-category="true"] img,
+.filter-main-item img,
+.top-main-category-btn img{
+  display:none !important;
+}
+.category-choose-main-wrap > .category-choose-item,
+.category-choose-main-wrap > button{
+  justify-content:center !important;
+}
+
+/* Кнопка товарів зі знижкою біля "показати весь каталог" */
+.catalog-discount-link{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:210px !important;
+  height:42px !important;
+  min-height:42px !important;
+  padding:9px 18px !important;
+  margin:0 0 0 8px !important;
+  background:#2b2b2b !important;
+  color:#ffffff !important;
+  border:1px solid #ffffff !important;
+  border-radius:0 !important;
+  font-size:16px !important;
+  font-weight:900 !important;
+  line-height:1.1 !important;
+  text-decoration:underline !important;
+  white-space:nowrap !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+}
+.catalog-discount-link.active{
+  background:#ff3b30 !important;
+  color:#fff !important;
+  border-color:#ff3b30 !important;
+}
+@media(max-width:700px){
+  #catalogShowAllWrap.catalog-show-all-wrap{gap:6px !important;flex-wrap:wrap !important;}
+  .catalog-discount-link{min-width:180px !important;height:40px !important;min-height:40px !important;font-size:14px !important;margin-left:0 !important;}
+}
+
+/* Вигляд ціни зі знижкою */
+.product-price-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  margin:0 0 8px;
+}
+.product-old-price,
+.modal-old-price{
+  color:#777 !important;
+  text-decoration:line-through;
+  font-size:14px !important;
+  font-weight:800 !important;
+  line-height:1.1;
+}
+.product-new-price,
+.modal-new-price{
+  color:#ff3b30 !important;
+  font-size:22px !important;
+  font-weight:1000 !important;
+  line-height:1.1;
+}
+.product-discount-badge,
+.modal-discount-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:4px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#ff3b30;
+  color:#fff;
+  font-size:12px;
+  font-weight:1000;
+}
+#discountModal .modal-content{
+  max-width:420px;
+  border-radius:24px;
+  background:#101010;
+  color:#fff;
+  border:1px solid rgba(107,255,42,.25);
+}
+#discountModal input{
+  border-radius:14px;
+  padding:12px;
+  margin:8px 0;
+  background:#f5f5f5;
+  color:#111;
+}
+#openDiscountEditBtn{
+  background:#ff3b30 !important;
+  color:#fff !important;
+  border-radius:14px !important;
+}
+</style>
+
+<div class="modal" id="discountModal" onclick="closeDiscountModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3 style="margin-top:0;">Знижка товару</h3>
+    <input id="discountPercentInput" type="number" min="0" max="99" placeholder="Знижка у відсотках, наприклад 10">
+    <input id="discountCustomInput" type="text" placeholder="Знижка текстом, наприклад -200 грн або Акція">
+    <p style="font-size:13px;color:#b8efb8;line-height:1.35;">Якщо вказати відсоток, сайт сам порахує нову ціну. Стара ціна буде перекреслена, а нова стане червоною.</p>
+    <button type="button" onclick="saveDiscountModal()">Застосувати</button>
+    <button type="button" style="background:#444;color:#fff;" onclick="clearDiscountModal()">Прибрати знижку</button>
+    <button type="button" style="background:#222;color:#fff;" onclick="closeDiscountModal()">Закрити</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var discountOnlyMode = false;
+  var pendingDiscountPercent = '';
+  var pendingDiscountCustom = '';
+  var pendingDiscountCleared = false;
+
+  function esc(v){
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function(m){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+  }
+  function money(v){
+    var n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
+    if(!isFinite(n)) return String(v || '');
+    return (Math.round(n * 100) / 100).toString().replace('.', ',');
+  }
+  function numberPrice(v){
+    var n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
+    return isFinite(n) ? n : 0;
+  }
+  function isDiscounted(p){
+    return !!(p && (p.hasDiscount === true || p.discountPercent || p.discountCustom));
+  }
+  function originalPrice(p){
+    return p && (p.originalPrice || p.oldPrice || p.priceBeforeDiscount || p.price);
+  }
+  function discountText(p){
+    if(!p) return '';
+    if(p.discountPercent) return '-' + p.discountPercent + '%';
+    if(p.discountCustom) return p.discountCustom;
+    return 'Знижка';
+  }
+  function priceHtml(p){
+    if(p && p.unavailable === true) return '<p class="product-unavailable-price">немає</p>';
+    if(isDiscounted(p)){
+      return '<div class="product-price-wrap">' +
+        '<div class="product-old-price">' + esc(money(originalPrice(p))) + ' грн</div>' +
+        '<div class="product-new-price">' + esc(money(p.price)) + ' грн</div>' +
+        '<div class="product-discount-badge">' + esc(discountText(p)) + '</div>' +
+      '</div>';
+    }
+    return '<p>' + esc(p && p.price) + ' грн</p>';
+  }
+
+  function getProductById(id){
+    try{ return (products || []).find(function(p){ return String(p.id) === String(id); }); }catch(e){ return null; }
+  }
+
+  function ensureDiscountButtonInEdit(){
+    var modal = document.getElementById('editModal');
+    if(!modal || document.getElementById('openDiscountEditBtn')) return;
+    var section = document.getElementById('editProductSection');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'openDiscountEditBtn';
+    btn.textContent = 'Знижки';
+    btn.onclick = function(){ openDiscountModal(); };
+    if(section && section.parentNode) section.insertAdjacentElement('afterend', btn);
+  }
+
+  function ensureDiscountCatalogButton(){
+    var wrap = document.getElementById('catalogShowAllWrap');
+    if(!wrap) return;
+    if(document.getElementById('catalogDiscountBtn')) return;
+    var btn = document.createElement('span');
+    btn.id = 'catalogDiscountBtn';
+    btn.className = 'catalog-discount-link';
+    btn.setAttribute('role','button');
+    btn.setAttribute('tabindex','0');
+    btn.textContent = 'товар зі знижкою';
+    btn.onclick = function(){ toggleDiscountProducts(); };
+    btn.onkeydown = function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleDiscountProducts(); } };
+    wrap.appendChild(btn);
+    updateDiscountButtonState();
+  }
+
+  function updateDiscountButtonState(){
+    var btn = document.getElementById('catalogDiscountBtn');
+    if(!btn) return;
+    btn.classList.toggle('active', discountOnlyMode);
+    btn.textContent = discountOnlyMode ? 'показати всі товари' : 'товар зі знижкою';
+  }
+
+  window.toggleDiscountProducts = function(){
+    discountOnlyMode = !discountOnlyMode;
+    updateDiscountButtonState();
+    try{ if(typeof applyAllFilters === 'function') applyAllFilters(); else if(typeof renderProducts === 'function') renderProducts(); }catch(e){}
+  };
+
+  window.openDiscountModal = function(){
+    ensureDiscountButtonInEdit();
+    var p = editingId ? getProductById(editingId) : null;
+    var percentInput = document.getElementById('discountPercentInput');
+    var customInput = document.getElementById('discountCustomInput');
+    if(percentInput) percentInput.value = pendingDiscountCleared ? '' : (pendingDiscountPercent || (p && p.discountPercent) || '');
+    if(customInput) customInput.value = pendingDiscountCleared ? '' : (pendingDiscountCustom || (p && p.discountCustom) || '');
+    var modal = document.getElementById('discountModal');
+    if(modal) modal.style.display = 'flex';
+    try{ openOverlayLock(); }catch(e){ document.documentElement.classList.add('no-scroll'); document.body.classList.add('no-scroll'); }
+  };
+
+  window.closeDiscountModal = function(event){
+    if(event && event.target && event.target.id !== 'discountModal') return;
+    var modal = document.getElementById('discountModal');
+    if(modal) modal.style.display = 'none';
+    var editOpen = document.getElementById('editModal') && document.getElementById('editModal').style.display === 'flex';
+    if(!editOpen){
+      try{ closeOverlayLock(); }catch(e){ document.documentElement.classList.remove('no-scroll'); document.body.classList.remove('no-scroll'); }
+    }
+  };
+
+  window.saveDiscountModal = function(){
+    pendingDiscountPercent = (document.getElementById('discountPercentInput')?.value || '').trim();
+    pendingDiscountCustom = (document.getElementById('discountCustomInput')?.value || '').trim();
+    pendingDiscountCleared = false;
+    closeDiscountModal();
+    try{ showSiteNotice('Знижку додано. Натисни “Зберегти” у товарі.'); }catch(e){}
+  };
+
+  window.clearDiscountModal = function(){
+    pendingDiscountPercent = '';
+    pendingDiscountCustom = '';
+    pendingDiscountCleared = true;
+    var a = document.getElementById('discountPercentInput');
+    var b = document.getElementById('discountCustomInput');
+    if(a) a.value = '';
+    if(b) b.value = '';
+    try{ showSiteNotice('Знижку прибрано. Натисни “Зберегти” у товарі.'); }catch(e){}
+  };
+
+  function applyDiscountToProduct(p, typedPrice){
+    if(!p) return;
+    var percent = String(pendingDiscountPercent || '').trim();
+    var custom = String(pendingDiscountCustom || '').trim();
+
+    if(pendingDiscountCleared || (!percent && !custom)){
+      if(pendingDiscountCleared && p.originalPrice) p.price = p.originalPrice;
+      delete p.discountPercent;
+      delete p.discountCustom;
+      delete p.originalPrice;
+      p.hasDiscount = false;
+      return;
+    }
+
+    var base = numberPrice(p.originalPrice || typedPrice || p.price);
+    if(!base) base = numberPrice(p.price);
+    p.originalPrice = money(base);
+    p.discountPercent = percent;
+    p.discountCustom = custom;
+    p.hasDiscount = true;
+
+    var pct = numberPrice(percent);
+    if(pct > 0){
+      if(pct > 99) pct = 99;
+      p.discountPercent = String(pct);
+      p.price = money(base - (base * pct / 100));
+    }else{
+      p.price = money(typedPrice || p.price);
+    }
+  }
+
+  var previousOpenAddModal = window.openAddModal;
+  window.openAddModal = function(){
+    pendingDiscountPercent = '';
+    pendingDiscountCustom = '';
+    pendingDiscountCleared = false;
+    ensureDiscountButtonInEdit();
+    if(typeof previousOpenAddModal === 'function') previousOpenAddModal.apply(this, arguments);
+    ensureDiscountButtonInEdit();
+  };
+
+  var previousOpenEditModal = window.openEditModal;
+  window.openEditModal = function(id){
+    pendingDiscountPercent = '';
+    pendingDiscountCustom = '';
+    pendingDiscountCleared = false;
+    if(typeof previousOpenEditModal === 'function') previousOpenEditModal.apply(this, arguments);
+    ensureDiscountButtonInEdit();
+    var p = getProductById(id);
+    pendingDiscountPercent = p && p.discountPercent ? String(p.discountPercent) : '';
+    pendingDiscountCustom = p && p.discountCustom ? String(p.discountCustom) : '';
+  };
+
+  window.saveProductData = function(title, price, desc, category, mainCategory, section, images){
+    var normalizedImages = Array.isArray(images) ? images.filter(Boolean) : [images].filter(Boolean);
+    var savedProduct = null;
+
+    if(editingId){
+      savedProduct = getProductById(editingId);
+      if(!savedProduct) return;
+      savedProduct.title = title;
+      savedProduct.price = price;
+      savedProduct.desc = desc;
+      savedProduct.category = category;
+      savedProduct.mainCategory = mainCategory || '';
+      savedProduct.section = section || '';
+      savedProduct.image = normalizedImages;
+    }else{
+      savedProduct = {
+        id: Date.now(),
+        title: title,
+        price: price,
+        desc: desc,
+        category: category,
+        mainCategory: mainCategory || '',
+        section: section || '',
+        image: normalizedImages
+      };
+      products.push(savedProduct);
+    }
+
+    applyDiscountToProduct(savedProduct, price);
+    pendingDiscountPercent = '';
+    pendingDiscountCustom = '';
+    pendingDiscountCleared = false;
+
+    saveToDatabase();
+    closeEditModal();
+    applyAllFilters();
+  };
+
+  var previousRenderProducts = window.renderProducts;
+  window.renderProducts = function(list){
+    var finalList = Array.isArray(list) ? list : (typeof products !== 'undefined' ? products : []);
+    if(discountOnlyMode) finalList = finalList.filter(isDiscounted);
+    var result = typeof previousRenderProducts === 'function' ? previousRenderProducts.call(this, finalList) : undefined;
+
+    try{
+      finalList.forEach(function(p){
+        var card = document.querySelector('.product[data-id="'+ String(p.id).replace(/"/g,'\\"') +'"]');
+        if(!card) return;
+        var priceNode = card.querySelector('p, .product-price-wrap');
+        if(priceNode){
+          var holder = document.createElement('div');
+          holder.innerHTML = priceHtml(p);
+          priceNode.replaceWith(holder.firstElementChild);
+        }
+      });
+    }catch(e){}
+
+    ensureDiscountCatalogButton();
+    if(discountOnlyMode){
+      var box = document.getElementById('products');
+      if(box && !box.querySelector('.product')){
+        box.innerHTML = '<div class="filter-no-products">Товарів зі знижкою поки немає.</div>';
+      }
+    }
+    return result;
+  };
+
+  var previousOpenViewModal = window.openViewModal;
+  window.openViewModal = function(id){
+    if(typeof previousOpenViewModal === 'function') previousOpenViewModal.apply(this, arguments);
+    var p = getProductById(id);
+    var priceBox = document.getElementById('modalPrice');
+    if(!p || !priceBox) return;
+    if(p.unavailable === true){
+      priceBox.innerHTML = 'немає';
+      priceBox.classList.add('product-unavailable-price');
+    }else if(isDiscounted(p)){
+      priceBox.classList.remove('product-unavailable-price');
+      priceBox.innerHTML = '<span class="modal-old-price">' + esc(money(originalPrice(p))) + ' грн</span><br>' +
+        '<span class="modal-new-price">' + esc(money(p.price)) + ' грн</span><br>' +
+        '<span class="modal-discount-badge">' + esc(discountText(p)) + '</span>';
+    }
+  };
+
+  var previousQuickOrder = window.quickOrderProduct;
+  window.quickOrderProduct = function(title, price){
+    try{
+      var p = (products || []).find(function(x){ return x && x.title === title; });
+      if(p && isDiscounted(p)) price = p.price;
+    }catch(e){}
+    if(typeof previousQuickOrder === 'function') return previousQuickOrder.call(this, title, price);
+  };
+
+  var previousApplyCatalogData = window.applyCatalogData;
+  window.applyCatalogData = function(payload){
+    if(typeof previousApplyCatalogData === 'function') previousApplyCatalogData.apply(this, arguments);
+    try{
+      (products || []).forEach(function(p){
+        if(p && (p.discountPercent || p.discountCustom)) p.hasDiscount = true;
+      });
+    }catch(e){}
+  };
+
+  function initDiscountFix(){
+    ensureDiscountButtonInEdit();
+    ensureDiscountCatalogButton();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(initDiscountFix, 100); });
+  else setTimeout(initDiscountFix, 100);
+  window.addEventListener('load', function(){ setTimeout(initDiscountFix, 300); });
+})();
+</script>
+
+<!-- FIX 2026-05-30: повністю прибрані фото саме з основних категорій в Офісі -->
+<style>
+#mainCategoryList .category-editor-thumb,
+#mainCategoryList [data-act="photo"],
+#mainCategoryList [data-act="clear"]{
+  display:none !important;
+}
+</style>
+<script>
+(function(){
+  'use strict';
+  function removeMainCategoryPhotos(){
+    try{
+      window.mainCategoryImages = {};
+      if(typeof mainCategoryImages !== 'undefined') mainCategoryImages = window.mainCategoryImages;
+    }catch(e){}
+  }
+  var oldPayload = window.getCatalogPayload;
+  window.getCatalogPayload = function(){
+    var payload = typeof oldPayload === 'function' ? oldPayload.apply(this, arguments) : {};
+    payload.mainCategoryImages = {};
+    return payload;
+  };
+  var oldApply = window.applyCatalogData;
+  window.applyCatalogData = function(payload){
+    if(typeof oldApply === 'function') oldApply.apply(this, arguments);
+    removeMainCategoryPhotos();
+  };
+  var oldPopulate = window.populateMainCategoryList;
+  window.populateMainCategoryList = function(){
+    removeMainCategoryPhotos();
+    if(typeof oldPopulate === 'function') oldPopulate.apply(this, arguments);
+    try{
+      var list = document.getElementById('mainCategoryList');
+      if(list){
+        list.querySelectorAll('.category-editor-thumb,[data-act="photo"],[data-act="clear"]').forEach(function(el){ el.style.display = 'none'; });
+      }
+    }catch(e){}
+  };
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(removeMainCategoryPhotos, 80); });
+  else setTimeout(removeMainCategoryPhotos, 80);
+})();
+</script>
