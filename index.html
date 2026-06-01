@@ -1013,7 +1013,16 @@ header.site-header{
 .search-wrapper select{top:50%;right:8px;background:#fff;border:1px solid #d9e6d9;width:138px;padding:11px 12px;border-radius:14px;}
 #subCategoryBackWrap{margin-top:12px !important;}
 #subCategoryBackBtn,#backToHomeBtn{background:#111 !important;color:var(--accent) !important;border:1px solid rgba(107,255,42,.18) !important;box-shadow:var(--shadow);}
-#backToHomeBtn{top:104px;left:18px;}
+:root{
+  --home-btn-top:104px;
+  --home-btn-left:18px;
+  --discount-btn-top:0px;
+  --discount-btn-left:0px;
+}
+#backToHomeBtn{
+  top:var(--home-btn-top);
+  left:var(--home-btn-left);
+}
 .products{padding:6px 0 0;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr));}
 @media (min-width:900px){.products{grid-template-columns:repeat(4,minmax(0,1fr));}}
 .product{
@@ -1753,6 +1762,10 @@ body::before{
   color:#000000 !important;
   border:1px solid rgba(107,255,42,.35) !important;
   font-weight:900;
+
+  position:relative;
+  top:var(--discount-btn-top);
+  left:var(--discount-btn-left);
 }
 @media(max-width:700px){
   .catalog-subtitle-row{align-items:flex-start;}
@@ -2533,6 +2546,154 @@ body::before{
   .product-v5-tab{width:62px;min-width:62px;min-height:54px;}
 }
 /* PRODUCT VIEW MODAL VARIANT 5 END */
+</style>
+
+
+<style id="catalog-row-fix">
+#catalogShowAllWrap{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  flex-wrap:nowrap !important;
+}
+#catalogReturnBtn,
+#discountProductsBtn,
+.product-v5-back{
+  position:static !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 !important;
+}
+</style>
+
+
+
+<!-- BUTTON MOVE SYSTEM START: змінюй тільки цифри тут, щоб рухати кнопки -->
+<style id="buttonMoveSystem">
+:root{
+  /* Верхні кнопки */
+  --move-menuBtn-x:0px;              --move-menuBtn-y:0px;
+  --move-orderSelectedBtn-x:0px;     --move-orderSelectedBtn-y:0px;
+  --move-cardStyleOfficeBtn-x:0px;   --move-cardStyleOfficeBtn-y:0px;
+
+  /* Кнопки каталогу */
+  --move-catalogToggleBtn-x:0px;     --move-catalogToggleBtn-y:0px;
+  --move-catalogShowAllBtn-x:0px;    --move-catalogShowAllBtn-y:0px;
+  --move-catalogReturnBtn-x:0px;     --move-catalogReturnBtn-y:0px;
+  --move-catalogHomeReturnBtn-x:0px; --move-catalogHomeReturnBtn-y:0px;
+  --move-catalogDiscountBtn-x:0px;   --move-catalogDiscountBtn-y:0px;
+  --move-subCategoryBackBtn-x:0px;   --move-subCategoryBackBtn-y:0px;
+  --move-backToHomeBtn-x:0px;        --move-backToHomeBtn-y:0px;
+
+  /* Кнопки меню */
+  --move-registerMenuBtn-x:0px;      --move-registerMenuBtn-y:0px;
+  --move-loginMenuBtn-x:0px;         --move-loginMenuBtn-y:0px;
+  --move-menuCartBtn-x:0px;          --move-menuCartBtn-y:0px;
+  --move-favoritesMenuBtn-x:0px;     --move-favoritesMenuBtn-y:0px;
+  --move-statsMenuBtn-x:0px;         --move-statsMenuBtn-y:0px;
+  --move-officeMenuBtn-x:0px;        --move-officeMenuBtn-y:0px;
+
+  /* Кнопки офісу / редагування */
+  --move-addProductBtn-x:0px;        --move-addProductBtn-y:0px;
+  --move-editProductBtn-x:0px;       --move-editProductBtn-y:0px;
+  --move-deleteBtn-x:0px;            --move-deleteBtn-y:0px;
+  --move-manageCategoriesBtn-x:0px;  --move-manageCategoriesBtn-y:0px;
+  --move-manageMainCategoriesBtn-x:0px; --move-manageMainCategoriesBtn-y:0px;
+  --move-manageProductSectionsBtn-x:0px; --move-manageProductSectionsBtn-y:0px;
+  --move-manageUnavailableBtn-x:0px; --move-manageUnavailableBtn-y:0px;
+  --move-manageBestSellersBtn-x:0px; --move-manageBestSellersBtn-y:0px;
+  --move-addOverviewCardBtn-x:0px;   --move-addOverviewCardBtn-y:0px;
+
+  /* Кнопки реклами */
+  --move-addImageBtn-x:0px;          --move-addImageBtn-y:0px;
+  --move-deleteAdBtn-x:0px;          --move-deleteAdBtn-y:0px;
+
+  /* Якщо кнопка без id або створюється через JS — додай їй у html:
+     style="--btn-move-x:20px; --btn-move-y:10px;"
+     20px вправо, 10px вниз. Мінус рухає вліво/вгору. */
+}
+
+button,
+a.menu-link-btn,
+a.owner-telegram-btn,
+.menu-copy-btn,
+.menu-location-btn,
+.menu-register-btn,
+.owner-contact-btn,
+.submenu-toggle,
+.category-choose-open-btn,
+.category-choose-item,
+.category-choose-close,
+.top-main-category-btn,
+.filter-all-btn,
+.filter-main-btn,
+.filter-sub-btn,
+.office-section-edit-btn,
+.office-add-card-btn,
+.office-card-delete-btn,
+.ads-add-btn,
+.ads-arrow,
+.ad-edit-btn,
+.ad-bind-btn,
+.ad-delete-btn,
+.best-seller-edit-btn{
+  translate:var(--btn-move-x, 0px) var(--btn-move-y, 0px);
+}
+
+/* Підключення змінних до конкретних кнопок */
+#menuBtn{--btn-move-x:var(--move-menuBtn-x);--btn-move-y:var(--move-menuBtn-y);}
+#orderSelectedBtn{--btn-move-x:var(--move-orderSelectedBtn-x);--btn-move-y:var(--move-orderSelectedBtn-y);}
+#cardStyleOfficeBtn{--btn-move-x:var(--move-cardStyleOfficeBtn-x);--btn-move-y:var(--move-cardStyleOfficeBtn-y);}
+#catalogToggleBtn{--btn-move-x:var(--move-catalogToggleBtn-x);--btn-move-y:var(--move-catalogToggleBtn-y);}
+#catalogShowAllBtn{--btn-move-x:var(--move-catalogShowAllBtn-x);--btn-move-y:var(--move-catalogShowAllBtn-y);}
+#catalogReturnBtn{--btn-move-x:var(--move-catalogReturnBtn-x);--btn-move-y:var(--move-catalogReturnBtn-y);}
+#catalogHomeReturnBtn{--btn-move-x:var(--move-catalogHomeReturnBtn-x);--btn-move-y:var(--move-catalogHomeReturnBtn-y);}
+#catalogDiscountBtn{--btn-move-x:var(--move-catalogDiscountBtn-x);--btn-move-y:var(--move-catalogDiscountBtn-y);}
+#subCategoryBackBtn{--btn-move-x:var(--move-subCategoryBackBtn-x);--btn-move-y:var(--move-subCategoryBackBtn-y);}
+#backToHomeBtn{--btn-move-x:var(--move-backToHomeBtn-x);--btn-move-y:var(--move-backToHomeBtn-y);}
+#registerMenuBtn{--btn-move-x:var(--move-registerMenuBtn-x);--btn-move-y:var(--move-registerMenuBtn-y);}
+#loginMenuBtn{--btn-move-x:var(--move-loginMenuBtn-x);--btn-move-y:var(--move-loginMenuBtn-y);}
+#menuCartBtn{--btn-move-x:var(--move-menuCartBtn-x);--btn-move-y:var(--move-menuCartBtn-y);}
+#favoritesMenuBtn{--btn-move-x:var(--move-favoritesMenuBtn-x);--btn-move-y:var(--move-favoritesMenuBtn-y);}
+#statsMenuBtn{--btn-move-x:var(--move-statsMenuBtn-x);--btn-move-y:var(--move-statsMenuBtn-y);}
+#officeMenuBtn{--btn-move-x:var(--move-officeMenuBtn-x);--btn-move-y:var(--move-officeMenuBtn-y);}
+#addProductBtn{--btn-move-x:var(--move-addProductBtn-x);--btn-move-y:var(--move-addProductBtn-y);}
+#editProductBtn{--btn-move-x:var(--move-editProductBtn-x);--btn-move-y:var(--move-editProductBtn-y);}
+#deleteBtn{--btn-move-x:var(--move-deleteBtn-x);--btn-move-y:var(--move-deleteBtn-y);}
+#manageCategoriesBtn{--btn-move-x:var(--move-manageCategoriesBtn-x);--btn-move-y:var(--move-manageCategoriesBtn-y);}
+#manageMainCategoriesBtn{--btn-move-x:var(--move-manageMainCategoriesBtn-x);--btn-move-y:var(--move-manageMainCategoriesBtn-y);}
+#manageProductSectionsBtn{--btn-move-x:var(--move-manageProductSectionsBtn-x);--btn-move-y:var(--move-manageProductSectionsBtn-y);}
+#manageUnavailableBtn{--btn-move-x:var(--move-manageUnavailableBtn-x);--btn-move-y:var(--move-manageUnavailableBtn-y);}
+#manageBestSellersBtn{--btn-move-x:var(--move-manageBestSellersBtn-x);--btn-move-y:var(--move-manageBestSellersBtn-y);}
+#addOverviewCardBtn{--btn-move-x:var(--move-addOverviewCardBtn-x);--btn-move-y:var(--move-addOverviewCardBtn-y);}
+#addImageBtn{--btn-move-x:var(--move-addImageBtn-x);--btn-move-y:var(--move-addImageBtn-y);}
+#deleteAdBtn{--btn-move-x:var(--move-deleteAdBtn-x);--btn-move-y:var(--move-deleteAdBtn-y);}
+
+/* Приклад: щоб посунути меню вправо на 40px і вниз на 10px:
+:root{ --move-menuBtn-x:40px; --move-menuBtn-y:10px; }
+*/
+</style>
+<!-- BUTTON MOVE SYSTEM END -->
+
+
+<style id="insort-button-move-fix">
+:root{
+  --catalog-home-top:0px;
+  --catalog-home-left:0px;
+  --catalog-discount-top:0px;
+  --catalog-discount-left:0px;
+}
+#catalogHomeReturnBtn{
+  position:relative !important;
+  top:var(--catalog-home-top) !important;
+  left:var(--catalog-home-left) !important;
+}
+#catalogDiscountBtn{
+  position:relative !important;
+  top:var(--catalog-discount-top) !important;
+  left:var(--catalog-discount-left) !important;
+}
 </style>
 
 </head>
@@ -8260,9 +8421,9 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
-<!-- PROCRAFT STYLE FILTERS + WHITE SCREEN FIX START -->
+
 <style>
-/* Фільтри як на Procraft: кнопка зліва від пошуку, випадаюче меню, підкатегорії тільки для вибраної основної категорії */
+
 @media (min-width:701px){
   .search-box{
     display:flex!important;
@@ -8440,7 +8601,7 @@ img,video,canvas,svg{max-width:100%;}
   }
 }
 
-/* Телефон: залишаємо тільки кнопку Категорії */
+
 @media (max-width:700px){
   #filtersWrap,.filters-wrap,.filter-panel,.filter-open-btn{display:none!important;}
   .catalog-inline-filters{display:flex!important;}
@@ -8581,11 +8742,10 @@ img,video,canvas,svg{max-width:100%;}
   }, true);
 })();
 </script>
-<!-- PROCRAFT STYLE FILTERS + WHITE SCREEN FIX END -->
 
 
 
-<!-- FILTER WHITE AREA + PROCRAFT BEHAVIOR HOTFIX START -->
+
 <style>
 @media (min-width:701px){
   .catalog-shell,.container,.search-box{overflow:visible!important;}
@@ -8637,8 +8797,7 @@ img,video,canvas,svg{max-width:100%;}
       const pc=getText(p && p.category);
       if(pc && (!main || pm === main)) found.push(pc);
     });
-    // Якщо товари ще не прив'язані до основної категорії — не показуємо всі підкатегорії в кожній основній.
-    // Для таких основних категорій показуємо підказку, а не білий екран.
+        
     return unique(found);
   }
   function safeHtml(value){
@@ -8740,7 +8899,6 @@ img,video,canvas,svg{max-width:100%;}
   window.addEventListener('load', ()=>setTimeout(()=>{try{renderFiltersPanel();}catch(e){}},600));
 })();
 </script>
-<!-- FILTER WHITE AREA + PROCRAFT BEHAVIOR HOTFIX END -->
 
 
 <script>
@@ -8752,7 +8910,6 @@ document.addEventListener('DOMContentLoaded', () => {
     current.textContent = '';
   }
 
-  // примусовий рендер товарів якщо каталог порожній
   setTimeout(() => {
     const productsContainer =
       document.getElementById('products') ||
@@ -10621,7 +10778,500 @@ document.addEventListener('keydown', function(e){
 </script>
 <!-- /USER FIX 2026-05-29 -->
 
+
+
+<!-- FIX 2026-06-01: каталог стартовий екран без заголовка, без білого блоку, робоча кнопка -->
+<style>
+  #catalogIntroV2 .catalog-intro-title,
+  #catalogIntroV2 .catalog-intro-sub{display:none!important;}
+  #catalogIntroV2 .catalog-hit-section{
+    background:transparent!important;
+    border:none!important;
+    box-shadow:none!important;
+    padding:0!important;
+    border-radius:0!important;
+    margin-top:18px!important;
+  }
+  #catalogIntroV2 .catalog-hit-head{margin:0 0 12px!important;}
+  #catalogIntroV2 .catalog-hit-title{
+    color:#111!important;
+    font-size:30px!important;
+    font-weight:1000!important;
+  }
+  #catalogIntroV2 .catalog-hit-empty{
+    background:transparent!important;
+    color:#111!important;
+    border:none!important;
+    padding:10px 0!important;
+    text-align:left!important;
+  }
+  body.catalog-full-v2 #catalogIntroV2{display:none!important;}
+  body.catalog-full-v2 #catalogSection > .search-box,
+  body.catalog-full-v2 #products,
+  body.catalog-full-v2 #topMainCategories,
+  body.catalog-full-v2 #catalogShowAllWrap,
+  body.catalog-full-v2 #catalogDiscountBtn,
+  body.catalog-full-v2 .catalog-inline-filters{display:revert!important;}
+</style>
+<script>
+(function(){
+  function forceShowFullCatalog(){
+    document.body.classList.remove('catalog-preview-v2');
+    document.body.classList.add('catalog-full-v2');
+    var intro=document.getElementById('catalogIntroV2');
+    if(intro) intro.style.display='none';
+    ['products','topMainCategories','catalogShowAllWrap','catalogDiscountBtn'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.style.removeProperty('display');
+    });
+    document.querySelectorAll('#catalogSection > .search-box, .catalog-inline-filters').forEach(function(el){el.style.removeProperty('display');});
+    try{ if(typeof applyAllFilters==='function') applyAllFilters(); else if(typeof renderProducts==='function') renderProducts(); }catch(e){}
+    setTimeout(function(){
+      document.body.classList.remove('catalog-preview-v2');
+      document.body.classList.add('catalog-full-v2');
+      var intro2=document.getElementById('catalogIntroV2');
+      if(intro2) intro2.style.display='none';
+    },80);
+  }
+  window.showFullCatalogV2=forceShowFullCatalog;
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest && e.target.closest('.catalog-show-full-v2 button');
+    if(btn){ e.preventDefault(); e.stopPropagation(); forceShowFullCatalog(); }
+  },true);
+})();
+</script>
+
+
+
+<!-- FIX 2026-06-01: каталог-старт без білого блоку + робоча кнопка "Показати весь каталог" -->
+<style>
+  /* Прибираємо зайвий заголовок "Каталог InSort" та підпис */
+  #catalogIntroV2 .catalog-intro-title,
+  #catalogIntroV2 .catalog-intro-sub{
+    display:none !important;
+  }
+
+  /* Хіт продажів без білого вікна */
+  #catalogIntroV2 .catalog-hit-section{
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+    padding:0 !important;
+    margin-top:18px !important;
+  }
+
+  #catalogIntroV2 .catalog-hit-head{
+    justify-content:flex-start !important;
+    margin:0 0 14px 0 !important;
+  }
+
+  #catalogIntroV2 .catalog-hit-title{
+    color:#ffffff !important;
+    font-size:28px !important;
+    font-weight:1000 !important;
+    text-shadow:0 0 10px rgba(107,255,42,.25) !important;
+  }
+
+  #catalogIntroV2 .catalog-hit-empty{
+    background:transparent !important;
+    color:#ffffff !important;
+    border:1px dashed rgba(107,255,42,.35) !important;
+    border-radius:16px !important;
+  }
+
+  #catalogIntroV2 .catalog-show-full-v2{
+    margin:18px 0 0 !important;
+  }
+
+  #catalogIntroV2 .catalog-show-full-v2 button{
+    cursor:pointer !important;
+    pointer-events:auto !important;
+  }
+
+  body.catalog-full-v2 #catalogIntroV2{
+    display:none !important;
+  }
+
+  body.catalog-full-v2 #catalogSection > .search-box,
+  body.catalog-full-v2 #products,
+  body.catalog-full-v2 .catalog-inline-filters{
+    display:block !important;
+  }
+
+  body.catalog-full-v2 #products{
+    display:grid !important;
+  }
+</style>
+<script>
+(function(){
+  function showAllCatalogNow(){
+    var body=document.body;
+    body.classList.remove('catalog-preview-v2');
+    body.classList.add('catalog-full-v2');
+
+    var intro=document.getElementById('catalogIntroV2');
+    if(intro) intro.style.display='none';
+
+    var catalog=document.querySelector('.container');
+    if(catalog){
+      catalog.classList.remove('catalog-hidden');
+      catalog.style.display='';
+    }
+
+    var products=document.getElementById('products');
+    if(products) products.style.display='grid';
+
+    var search=document.querySelector('#catalogSection > .search-box');
+    if(search) search.style.display='block';
+
+    var filters=document.querySelector('.catalog-inline-filters');
+    if(filters) filters.style.display='flex';
+
+    var topCats=document.getElementById('topMainCategories');
+    if(topCats){
+      topCats.classList.remove('catalog-hidden');
+      topCats.style.display='';
+    }
+
+    var discountBtn=document.getElementById('catalogDiscountBtn');
+    if(discountBtn) discountBtn.style.display='inline-flex';
+
+    if(typeof applyAllFilters==='function'){
+      try{ applyAllFilters(); }catch(e){}
+    }else if(typeof renderProducts==='function'){
+      try{ renderProducts(); }catch(e){}
+    }
+
+    setTimeout(function(){
+      var target=document.getElementById('catalogSection');
+      if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+    },50);
+  }
+
+  window.showFullCatalogV2=showAllCatalogNow;
+
+  document.addEventListener('click',function(e){
+    var btn=e.target && e.target.closest && e.target.closest('.catalog-show-full-v2 button');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    showAllCatalogNow();
+  },true);
+
+  document.addEventListener('DOMContentLoaded',function(){
+    var oldApply=window.applyCatalogPreviewState;
+    window.applyCatalogPreviewState=function(){
+      if(document.body.classList.contains('catalog-full-v2')){
+        showAllCatalogNow();
+        return;
+      }
+      if(typeof oldApply==='function') return oldApply.apply(this,arguments);
+    };
+  });
+})();
+</script>
+
+
+
+<!-- FIX 2026-06-01: прибрано дубльовану нижню кнопку каталогу + стабільна зелена кнопка -->
+<style>
+  /* Стара текстова кнопка "показати весь каталог" більше не показується */
+  #catalogShowAllBtn.catalog-show-all-link,
+  #catalogShowAllBtn{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    width:0 !important;
+    min-width:0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+  }
+
+  /* На старті каталогу старий контейнер не займає місце */
+  body.catalog-preview-v2 #catalogShowAllWrap{
+    display:none !important;
+    visibility:hidden !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  }
+
+  /* Якщо каталог уже відкритий, можна показувати контейнер для кнопки "товари зі знижкою", але без старої кнопки */
+  body.catalog-full-v2 #catalogShowAllWrap{
+    display:flex !important;
+  }
+</style>
+<script>
+(function(){
+  function openFullCatalogFixed(){
+    document.body.classList.remove('catalog-preview-v2');
+    document.body.classList.add('catalog-full-v2');
+
+    var intro=document.getElementById('catalogIntroV2');
+    if(intro) intro.style.display='none';
+
+    var ids=['products','topMainCategories','catalogShowAllWrap','catalogDiscountBtn'];
+    ids.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el){
+        el.style.removeProperty('display');
+        el.style.removeProperty('visibility');
+        el.style.removeProperty('height');
+        el.style.removeProperty('min-height');
+      }
+    });
+
+    var search=document.querySelector('#catalogSection > .search-box, .container > .search-box, .search-box');
+    if(search) search.style.removeProperty('display');
+
+    var oldBtn=document.getElementById('catalogShowAllBtn');
+    if(oldBtn){
+      oldBtn.style.display='none';
+      oldBtn.style.visibility='hidden';
+      oldBtn.style.pointerEvents='none';
+    }
+
+    try{
+      if(typeof window.ensureDiscountCatalogButton==='function') window.ensureDiscountCatalogButton();
+      if(typeof window.applyAllFilters==='function') window.applyAllFilters();
+    }catch(e){}
+
+    setTimeout(function(){
+      var target=document.getElementById('catalogDiscountBtn') || document.querySelector('#products');
+      if(target && target.scrollIntoView) target.scrollIntoView({behavior:'smooth',block:'start'});
+    },80);
+  }
+
+  window.showFullCatalogV2=openFullCatalogFixed;
+  window.openFullCatalogFixed=openFullCatalogFixed;
+
+  document.addEventListener('click',function(e){
+    var btn=e.target && e.target.closest && e.target.closest('.catalog-show-full-v2 button');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openFullCatalogFixed();
+  },true);
+
+  document.addEventListener('DOMContentLoaded',function(){
+    var oldBtn=document.getElementById('catalogShowAllBtn');
+    if(oldBtn){
+      oldBtn.style.display='none';
+      oldBtn.style.visibility='hidden';
+      oldBtn.style.pointerEvents='none';
+      oldBtn.textContent='';
+    }
+  });
+})();
+</script>
+
+
+<!-- FIX 2026-06-01: кнопка "Повернутися на головну" між фільтрами і категоріями -->
+<style>
+  #catalogHomeReturnBtn.catalog-home-return-link{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:52px;
+    padding:0 22px !important;
+    margin:0 !important;
+    border-radius:18px !important;
+    background:#ffffff !important;
+    color:#101010 !important;
+    border:2px solid rgba(107,255,42,.36) !important;
+    font-weight:1000 !important;
+    font-size:16px !important;
+    line-height:1.15;
+    cursor:pointer;
+    text-decoration:none;
+    box-shadow:0 8px 20px rgba(0,0,0,.14);
+    white-space:nowrap;
+    user-select:none;
+  }
+  #catalogHomeReturnBtn.catalog-home-return-link:hover{
+    background:#90ee90 !important;
+    color:#061006 !important;
+  }
+
+  body.catalog-preview-v2 #catalogHomeReturnBtn{
+    display:none !important;
+  }
+
+  body.catalog-full-v2 #catalogHomeReturnBtn{
+    display:inline-flex !important;
+  }
+
+  @media(max-width:700px){
+    #catalogHomeReturnBtn.catalog-home-return-link{
+      width:100%;
+      min-height:50px;
+      font-size:15px !important;
+      order:2;
+    }
+    .catalog-filter-line{
+      flex-wrap:wrap;
+    }
+    .catalog-filter-line .filters-wrap{
+      flex:1 1 calc(50% - 5px);
+    }
+    .catalog-filter-line .filters-wrap .filter-open-btn{
+      width:100%;
+    }
+    .catalog-filter-line .search-wrapper{
+      flex:1 1 100%;
+      order:4;
+    }
+  }
+</style>
+
+<script>
+(function(){
+  'use strict';
+
+  function hideElement(el){
+    if(!el) return;
+    el.style.setProperty('display','none','important');
+  }
+
+  function showElement(el, display){
+    if(!el) return;
+    el.style.removeProperty('display');
+    el.style.removeProperty('visibility');
+    el.style.removeProperty('height');
+    el.style.removeProperty('min-height');
+    el.style.removeProperty('opacity');
+    if(display) el.style.setProperty('display', display, 'important');
+  }
+
+  function returnToCatalogStart(){
+    document.body.classList.remove('catalog-full-v2');
+    document.body.classList.add('catalog-preview-v2');
+
+    var intro=document.getElementById('catalogIntroV2');
+    showElement(intro, 'block');
+
+    hideElement(document.getElementById('products'));
+    hideElement(document.getElementById('topMainCategories'));
+    hideElement(document.getElementById('catalogShowAllWrap'));
+    hideElement(document.getElementById('catalogDiscountBtn'));
+
+    document.querySelectorAll('#catalogSection > .search-box, .catalog-filter-line, .catalog-inline-filters').forEach(function(el){
+      hideElement(el);
+    });
+
+    var btn=document.getElementById('catalogHomeReturnBtn');
+    hideElement(btn);
+
+    try{
+      if(typeof resetSubCategoryFilter === 'function') resetSubCategoryFilter();
+    }catch(e){}
+
+    setTimeout(function(){
+      var target=document.getElementById('catalogIntroV2') || document.getElementById('catalogSection');
+      if(target && target.scrollIntoView) target.scrollIntoView({behavior:'smooth', block:'start'});
+    },40);
+  }
+
+  function ensureCatalogHomeReturnButton(){
+    var btn=document.getElementById('catalogHomeReturnBtn');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.id='catalogHomeReturnBtn';
+      btn.className='catalog-home-return-link';
+      btn.type='button';
+      btn.textContent='Повернутися на головну';
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        returnToCatalogStart();
+      }, true);
+    }
+
+    var filterLine=document.querySelector('.catalog-filter-line');
+    var filtersWrap=document.getElementById('filtersWrap');
+    var categoryBtn=document.querySelector('.category-choose-open-btn');
+
+    /* Основне місце: одразу після кнопки "Фільтри" у тому самому рядку */
+    if(filterLine && filtersWrap){
+      if(btn.parentElement !== filterLine || btn.previousElementSibling !== filtersWrap){
+        filtersWrap.insertAdjacentElement('afterend', btn);
+      }
+    }
+    /* Якщо рядок фільтрів ще не створився — ставимо перед "Обрати категорію" */
+    else if(categoryBtn && categoryBtn.parentElement){
+      if(btn.parentElement !== categoryBtn.parentElement || btn.nextElementSibling !== categoryBtn){
+        categoryBtn.insertAdjacentElement('beforebegin', btn);
+      }
+    }
+
+    if(document.body.classList.contains('catalog-full-v2')){
+      showElement(btn, 'inline-flex');
+    }else{
+      hideElement(btn);
+    }
+  }
+
+  window.returnToCatalogStartV2 = returnToCatalogStart;
+  window.ensureCatalogHomeReturnButton = ensureCatalogHomeReturnButton;
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureCatalogHomeReturnButton();
+    setTimeout(ensureCatalogHomeReturnButton, 400);
+    setTimeout(ensureCatalogHomeReturnButton, 1200);
+  });
+
+  document.addEventListener('click', function(e){
+    var openBtn=e.target && e.target.closest && e.target.closest('.catalog-show-full-v2 button');
+    if(openBtn){
+      setTimeout(ensureCatalogHomeReturnButton, 120);
+      setTimeout(function(){
+        var btn=document.getElementById('catalogHomeReturnBtn');
+        if(document.body.classList.contains('catalog-full-v2')) showElement(btn, 'inline-flex');
+      },250);
+    }
+  }, true);
+
+  var observer=new MutationObserver(function(){
+    ensureCatalogHomeReturnButton();
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    observer.observe(document.body, {childList:true, subtree:true});
+  });
+})();
+</script>
+
+
+<style>
+#catalogShowAllWrap{
+ display:flex!important;
+ align-items:center!important;
+ gap:12px!important;
+ flex-wrap:wrap!important;
+}
+#catalogReturnBtn{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ order:-1!important;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var wrap=document.getElementById('catalogShowAllWrap');
+  var btn=document.getElementById('catalogReturnBtn');
+  if(wrap && btn){ wrap.insertBefore(btn, wrap.firstChild); }
+});
+</script>
 </body>
+
 
 </html>
 <!-- FINAL FILTER PANEL CUT/OFF FIX 2026-05-27 START -->
@@ -11661,5 +12311,629 @@ body.catalog-open #homeSocialLinks{
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(initDiscountFix, 100); });
   else setTimeout(initDiscountFix, 100);
   window.addEventListener('load', function(){ setTimeout(initDiscountFix, 300); });
+})();
+</script>
+
+<!-- UPDATE 2026-06-01: каталог-лендінг, обране, хіти, статистика, лічильник акції -->
+<style>
+#catalogIntroV2{display:none;margin:0 0 18px;}
+body.catalog-preview-v2 #catalogIntroV2{display:block;}
+body.catalog-preview-v2 #catalogSection > .search-box,
+body.catalog-preview-v2 #products,
+body.catalog-preview-v2 #topMainCategories{display:none !important;}
+body.catalog-preview-v2 #catalogShowAllWrap{display:none !important;}
+body.catalog-preview-v2 #catalogDiscountBtn{display:none !important;}
+body.catalog-preview-v2 .catalog-inline-filters{display:none !important;}
+.catalog-intro-title{font-size:34px;font-weight:1000;color:#111;margin:0 0 8px;}
+.catalog-intro-sub{font-size:15px;color:#333;margin:0 0 14px;}
+.catalog-hit-section{margin-top:18px;background:#fff;border:1px solid #d9e6d9;border-radius:24px;padding:18px;box-shadow:0 12px 28px rgba(0,0,0,.08);}
+.catalog-hit-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.catalog-hit-title{font-size:28px;font-weight:1000;color:#111;}
+.catalog-hit-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.catalog-hit-empty{grid-column:1/-1;background:#f4f4f4;color:#111;border-radius:18px;padding:18px;text-align:center;font-weight:800;}
+.catalog-hit-card{position:relative;background:#101010;border:1px solid rgba(107,255,42,.22);border-radius:20px;padding:12px;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.16);cursor:pointer;overflow:hidden;}
+.catalog-hit-card img{width:100%;height:170px;object-fit:contain;background:#fff;border-radius:16px;padding:10px;}
+.catalog-hit-card h4{color:#fff;font-size:16px;min-height:40px;margin:10px 0 6px;}
+.catalog-hit-price{color:#90ee90;font-size:20px;font-weight:1000;}
+.hit-badge,.favorite-card-badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;font-size:12px;font-weight:1000;padding:5px 8px;color:#fff;}
+.hit-badge{background:#ff7a00;}
+.favorite-card-badge{background:#ff2d55;}
+.catalog-show-full-v2{display:flex;justify-content:center;margin:18px 0 0;}
+.catalog-show-full-v2 button{padding:15px 30px !important;border-radius:18px !important;font-size:18px !important;font-weight:1000 !important;background:linear-gradient(135deg,#90ee90,#49d71c) !important;color:#071007 !important;}
+.favorite-heart-btn{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50% !important;display:flex;align-items:center;justify-content:center;margin:0 !important;padding:0 !important;background:rgba(0,0,0,.72) !important;color:#fff !important;border:1px solid rgba(255,255,255,.22) !important;font-size:22px !important;z-index:7;box-shadow:0 8px 20px rgba(0,0,0,.22);}
+.favorite-heart-btn.active{background:#ff2d55 !important;color:#fff !important;border-color:#ff2d55 !important;}
+.favorite-heart-btn.heart-pop{animation:heartPopV2 .42s ease;}
+@keyframes heartPopV2{0%{transform:scale(1)}45%{transform:scale(1.45)}100%{transform:scale(1)}}
+.favorite-fly-heart{position:fixed;z-index:15000;pointer-events:none;color:#ff2d55;font-size:28px;animation:flyHeartV2 .7s ease forwards;text-shadow:0 4px 14px rgba(0,0,0,.25)}
+@keyframes flyHeartV2{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-55px) scale(1.8)}}
+#favoritesModal .modal-content,#statsModal .modal-content{max-width:900px;border-radius:28px;background:#101010;color:#fff;border:1px solid rgba(107,255,42,.24);}
+.favorite-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-height:62vh;overflow-y:auto;padding:4px;}
+.favorite-item{position:relative;background:#151515;border:1px solid rgba(107,255,42,.18);border-radius:18px;padding:10px;text-align:center;cursor:pointer;}
+.favorite-item img{width:100%;height:150px;object-fit:contain;background:#fff;border-radius:14px;padding:8px;}
+.favorite-item-title{font-weight:900;color:#fff;margin:8px 0;min-height:38px;}
+.favorite-item-price{font-weight:1000;color:#90ee90;font-size:18px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0;}
+.stats-card{background:#171717;border:1px solid rgba(107,255,42,.14);border-radius:16px;padding:14px;text-align:center;}
+.stats-number{font-size:28px;font-weight:1000;color:#90ee90;}
+.stats-label{font-size:13px;color:#b8efb8;margin-top:4px;}
+.stats-table{width:100%;border-collapse:collapse;margin-top:12px;background:#111;border-radius:16px;overflow:hidden;}
+.stats-table th,.stats-table td{padding:10px;border-bottom:1px solid rgba(107,255,42,.12);text-align:left;color:#fff;}
+.stats-table th{color:#90ee90;background:#171717;}
+.sale-countdown{display:inline-flex;align-items:center;justify-content:center;margin-top:6px;padding:6px 8px;border-radius:999px;background:#ff3b30;color:#fff;font-size:12px;font-weight:1000;}
+#saleTimerInput{border-radius:14px;padding:12px;margin:8px 0;background:#f5f5f5;color:#111;}
+.best-seller-edit-btn{background:#ff7a00 !important;color:#fff !important;border-radius:14px !important;}
+.product.best-seller-product{box-shadow:0 0 0 2px rgba(255,122,0,.75),0 14px 28px rgba(0,0,0,.18) !important;}
+@media(max-width:900px){.catalog-hit-list{grid-template-columns:repeat(2,minmax(0,1fr));}.favorite-list{grid-template-columns:repeat(2,minmax(0,1fr));}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px){.catalog-intro-title{font-size:26px}.catalog-hit-section{padding:14px;border-radius:20px}.catalog-hit-title{font-size:22px}.catalog-hit-card img{height:135px}.favorite-list{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr}.favorite-heart-btn{width:36px;height:36px;font-size:19px}.catalog-show-full-v2 button{width:100%;}}
+</style>
+
+<div class="modal" id="favoritesModal" onclick="closeFavoritesModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h2 style="margin-top:0;">❤️ Обране</h2>
+    <div class="favorite-list" id="favoritesList"></div>
+    <button onclick="closeFavoritesModal()" type="button">Закрити</button>
+  </div>
+</div>
+
+<div class="modal" id="statsModal" onclick="closeStatsModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h2 style="margin-top:0;">📊 Статистика / рейтинг</h2>
+    <div class="stats-grid" id="statsSummary"></div>
+    <h3>🔥 Рейтинг товарів по замовленнях</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px;">
+      <button type="button" onclick="renderStatsModal('day')">День</button>
+      <button type="button" onclick="renderStatsModal('week')">Тиждень</button>
+      <button type="button" onclick="renderStatsModal('month')">Місяць</button>
+      <button type="button" onclick="renderStatsModal('all')">Весь час</button>
+    </div>
+    <div id="statsProducts"></div>
+    <button onclick="closeStatsModal()" type="button">Закрити</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var CATALOG_PREVIEW_KEY='insort_catalog_preview_v2_opened';
+  var FAVORITE_GUEST_KEY='insort_favorites_guest_v2';
+  var STATS_KEY='insort_stats_v2';
+  var catalogFullOpened=false;
+  var currentStatsPeriod='week';
+
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];});}
+  function money(v){var n=Number(String(v||'').replace(/[^0-9.]/g,'')); return n ? Math.round(n).toString() : String(v||'');}
+  function isAdmin(){try{return typeof isAdminUser==='function' && isAdminUser();}catch(e){return false;}}
+  function productById(id){try{return (products||[]).find(function(p){return String(p.id)===String(id);});}catch(e){return null;}}
+  function productImg(p){return Array.isArray(p&&p.image)?p.image[0]:(p&&p.image)||'';}
+  function isDiscountedProduct(p){return !!(p && (p.hasDiscount===true || p.discountPercent || p.discountCustom));}
+  function discountEndMs(p){var raw=p && (p.discountEndsAt || p.saleEndsAt || p.discountEndAt); var t=raw?Number(raw):0; if(!t && raw) t=Date.parse(raw); return t||0;}
+  function countdownText(ms){var diff=ms-Date.now(); if(diff<=0) return 'акція закінчилась'; var d=Math.floor(diff/86400000); diff%=86400000; var h=Math.floor(diff/3600000); diff%=3600000; var m=Math.floor(diff/60000); if(d>0) return '⏳ '+d+' дн. '+h+' год.'; if(h>0) return '⏳ '+h+' год. '+m+' хв.'; return '⏳ '+m+' хв.';}
+
+  function getUserKey(){try{ if(typeof currentFirebaseUser!=='undefined' && currentFirebaseUser && currentFirebaseUser.uid) return 'user_'+currentFirebaseUser.uid; }catch(e){} return 'guest';}
+  function favKey(){var k=getUserKey(); return k==='guest'?FAVORITE_GUEST_KEY:'insort_favorites_'+k+'_v2';}
+  function loadFavs(){try{return new Set(JSON.parse(localStorage.getItem(favKey())||'[]').map(String));}catch(e){return new Set();}}
+  function saveFavs(set){try{localStorage.setItem(favKey(),JSON.stringify(Array.from(set)));}catch(e){} syncFavoritesToFirebase(set);}
+  async function syncFavoritesToFirebase(set){try{if(typeof db!=='undefined' && typeof currentFirebaseUser!=='undefined' && currentFirebaseUser) await db.ref('users/'+currentFirebaseUser.uid+'/favorites').set(Array.from(set));}catch(e){}}
+  async function loadFavoritesFromFirebase(){try{if(typeof db==='undefined' || typeof currentFirebaseUser==='undefined' || !currentFirebaseUser) return; var s=await db.ref('users/'+currentFirebaseUser.uid+'/favorites').get(); if(s.exists()){localStorage.setItem(favKey(),JSON.stringify(s.val()||[])); refreshFavoritesUI();}}catch(e){}}
+
+  window.toggleFavoriteProduct=function(id,btn){
+    var set=loadFavs(); var key=String(id); var add=!set.has(key);
+    if(add) set.add(key); else set.delete(key);
+    saveFavs(set);
+    if(btn){btn.classList.toggle('active',add);btn.textContent=add?'❤️':'♡';btn.classList.remove('heart-pop');void btn.offsetWidth;btn.classList.add('heart-pop');makeFlyHeart(btn);} 
+    refreshFavoritesUI();
+    try{showSiteNotice(add?'Додано в обране':'Прибрано з обраного');}catch(e){}
+  };
+  function makeFlyHeart(btn){try{var r=btn.getBoundingClientRect();var h=document.createElement('div');h.className='favorite-fly-heart';h.textContent='❤️';h.style.left=(r.left+r.width/2-14)+'px';h.style.top=(r.top-4)+'px';document.body.appendChild(h);setTimeout(function(){h.remove();},800);}catch(e){}}
+  function injectFavoriteButtons(){var set=loadFavs(); document.querySelectorAll('.product[data-id]').forEach(function(card){ if(card.querySelector('.favorite-heart-btn')) return; card.style.position='relative'; var id=card.dataset.id; var btn=document.createElement('button'); btn.type='button'; btn.className='favorite-heart-btn'+(set.has(String(id))?' active':''); btn.textContent=set.has(String(id))?'❤️':'♡'; btn.title='Обране'; btn.onclick=function(e){e.preventDefault();e.stopPropagation();toggleFavoriteProduct(id,btn);}; card.insertBefore(btn,card.firstChild); var p=productById(id); if(p && p.bestSeller===true){card.classList.add('best-seller-product'); if(!card.querySelector('.hit-badge')){var b=document.createElement('div');b.className='hit-badge';b.textContent='🔥 Хіт';b.style.position='absolute';b.style.left='10px';b.style.top='10px';b.style.zIndex='6';card.appendChild(b);}} if(p && isDiscountedProduct(p)){var end=discountEndMs(p); if(end && !card.querySelector('.sale-countdown')){var cd=document.createElement('div');cd.className='sale-countdown';cd.dataset.saleEnd=end;cd.textContent=countdownText(end); var price=card.querySelector('.product-price-wrap,p'); if(price) price.insertAdjacentElement('afterend',cd); else card.appendChild(cd);}} }); }
+  function refreshFavoritesUI(){injectFavoriteButtons(); var set=loadFavs(); document.querySelectorAll('.favorite-heart-btn').forEach(function(btn){var card=btn.closest('.product'); var active=card && set.has(String(card.dataset.id)); btn.classList.toggle('active',!!active); btn.textContent=active?'❤️':'♡';}); updateFavoritesMenuCount();}
+  function updateFavoritesMenuCount(){var btn=document.getElementById('favoritesMenuBtn'); if(btn) btn.textContent='❤️ Обране ('+loadFavs().size+')';}
+  function ensureFavoriteMenu(){var side=document.getElementById('sideMenu'); if(!side || document.getElementById('favoritesMenuBtn')) return; var b=document.createElement('button'); b.id='favoritesMenuBtn'; b.className='menu-register-btn'; b.type='button'; b.onclick=function(){openFavoritesModal();}; var history=Array.from(side.querySelectorAll('button')).find(function(x){return /Історія/.test(x.textContent||'');}); side.insertBefore(b,history||document.getElementById('officeMenuBtn')||side.lastChild); updateFavoritesMenuCount();}
+  window.openFavoritesModal=function(){renderFavoritesModal(); var m=document.getElementById('favoritesModal'); if(m) m.style.display='flex'; try{openOverlayLock();}catch(e){}};
+  window.closeFavoritesModal=function(event){if(event && event.target && event.target.id!=='favoritesModal') return; var m=document.getElementById('favoritesModal'); if(m)m.style.display='none'; try{closeOverlayLock();}catch(e){}};
+  function renderFavoritesModal(){var list=document.getElementById('favoritesList'); if(!list)return; var set=loadFavs(); var arr=(products||[]).filter(function(p){return set.has(String(p.id));}); if(!arr.length){list.innerHTML='<div class="catalog-hit-empty">В обраному поки немає товарів.</div>';return;} list.innerHTML=''; arr.forEach(function(p){var d=document.createElement('div');d.className='favorite-item';d.innerHTML='<button class="favorite-heart-btn active" type="button" style="top:8px;right:8px;">❤️</button><img src="'+esc(productImg(p))+'"><div class="favorite-item-title">'+esc(p.title)+'</div><div class="favorite-item-price">'+(p.unavailable?'немає':esc(p.price)+' грн')+'</div>'; d.onclick=function(){closeFavoritesModal(); if(typeof openViewModal==='function') openViewModal(p.id);}; d.querySelector('button').onclick=function(e){e.stopPropagation();toggleFavoriteProduct(p.id,e.currentTarget);renderFavoritesModal();}; list.appendChild(d);});}
+
+  function ensureCatalogIntro(){var catalog=document.getElementById('catalogSection'); if(!catalog) return null; var intro=document.getElementById('catalogIntroV2'); if(!intro){intro=document.createElement('div');intro.id='catalogIntroV2';intro.innerHTML='<div id="catalogAdsMount"></div><section class="catalog-hit-section"><div class="catalog-hit-head"><div class="catalog-hit-title">🔥 Хіт продажів</div><button id="manageBestSellersBtn" type="button" class="best-seller-edit-btn" onclick="openBestSellerPicker()" style="display:none;">Редагувати хіти</button></div><div class="catalog-hit-list" id="bestSellerList"></div><div class="catalog-show-full-v2"><button type="button" onclick="showFullCatalogV2()">Показати весь каталог</button></div></section>'; var head=catalog.querySelector('.catalog-head'); if(head) head.insertAdjacentElement('afterend',intro); else catalog.insertBefore(intro,catalog.firstChild);} var mount=document.getElementById('catalogAdsMount'); var ads=document.getElementById('adsSection'); if(mount && ads && ads.parentNode!==mount) mount.appendChild(ads); return intro;}
+  window.showFullCatalogV2=function(){catalogFullOpened=true; try{localStorage.setItem(CATALOG_PREVIEW_KEY,'1');}catch(e){} applyCatalogPreviewState(); if(typeof applyAllFilters==='function') applyAllFilters(); else if(typeof renderProducts==='function') renderProducts();};
+  function isCatalogOpen(){var c=document.querySelector('.container'); return !!(c && !c.classList.contains('catalog-hidden') && getComputedStyle(c).display!=='none');}
+  function applyCatalogPreviewState(){ensureCatalogIntro(); var open=isCatalogOpen(); var preview=open && !catalogFullOpened; document.body.classList.toggle('catalog-preview-v2',preview); document.body.classList.toggle('catalog-full-v2',open && catalogFullOpened); var manage=document.getElementById('manageBestSellersBtn'); if(manage) manage.style.display=isAdmin()?'inline-flex':'none'; var ads=document.getElementById('adsSection'); if(ads) ads.style.display=open?'block':'none'; renderBestSellerList();}
+  function renderBestSellerList(){var list=document.getElementById('bestSellerList'); if(!list)return; var hits=(products||[]).filter(function(p){return p.bestSeller===true;}); list.innerHTML=''; if(!hits.length){list.innerHTML='<div class="catalog-hit-empty">Хіти продажів ще не додані. Увімкни Офіс і натисни “Редагувати хіти”.</div>';return;} hits.slice(0,8).forEach(function(p){var d=document.createElement('div');d.className='catalog-hit-card'; var end=discountEndMs(p); d.innerHTML='<span class="hit-badge">🔥 Хіт</span><img src="'+esc(productImg(p))+'"><h4>'+esc(p.title)+'</h4><div class="catalog-hit-price">'+(p.unavailable?'немає':esc(p.price)+' грн')+'</div>'+(end?'<div class="sale-countdown" data-sale-end="'+end+'">'+countdownText(end)+'</div>':''); d.onclick=function(){if(typeof openViewModal==='function')openViewModal(p.id);}; list.appendChild(d);});}
+
+  window.openBestSellerPicker=function(){if(!isAdmin())return; var html='<div class="modal" id="bestSellerModal" onclick="closeBestSellerPicker(event)"><div class="modal-content" onclick="event.stopPropagation()"><h2 style="margin-top:0;">🔥 Хіт продажів</h2><div class="ad-picker-list" id="bestSellerPickerList"></div><button onclick="saveBestSellers()" type="button">Зберегти</button><button onclick="closeBestSellerPicker()" type="button">Закрити</button></div></div>'; if(!document.getElementById('bestSellerModal')) document.body.insertAdjacentHTML('beforeend',html); renderBestSellerPicker(); document.getElementById('bestSellerModal').style.display='flex';};
+  window.closeBestSellerPicker=function(event){if(event && event.target && event.target.id!=='bestSellerModal')return; var m=document.getElementById('bestSellerModal'); if(m)m.style.display='none';};
+  function renderBestSellerPicker(){var list=document.getElementById('bestSellerPickerList'); if(!list)return; list.innerHTML=''; (products||[]).forEach(function(p){var sel=p.bestSeller===true; var it=document.createElement('div');it.className='ad-picker-product'+(sel?' selected':'');it.innerHTML='<img src="'+esc(productImg(p))+'"><div class="ad-picker-product-title">'+esc(p.title)+'</div><div class="ad-picker-product-price">'+esc(p.price)+' грн</div><button type="button">'+(sel?'Прибрати':'Додати в хіт')+'</button>'; it.querySelector('button').onclick=function(){p.bestSeller=!p.bestSeller;renderBestSellerPicker();}; list.appendChild(it);});}
+  window.saveBestSellers=function(){if(!isAdmin())return; if(typeof saveToDatabase==='function')saveToDatabase(); renderBestSellerList(); refreshFavoritesUI(); closeBestSellerPicker(); try{showSiteNotice('Хіти продажів збережено');}catch(e){}};
+
+  function ensureSaleTimerInDiscountModal(){var modal=document.querySelector('#discountModal .modal-content'); if(!modal || document.getElementById('saleTimerInput')) return; var custom=document.getElementById('discountCustomInput'); var inp=document.createElement('input'); inp.id='saleTimerInput'; inp.type='datetime-local'; inp.placeholder='Дата завершення акції'; if(custom) custom.insertAdjacentElement('afterend',inp); else modal.appendChild(inp); var note=document.createElement('p'); note.style.cssText='font-size:13px;color:#b8efb8;line-height:1.35;'; note.textContent='Лічильник акції: якщо вказати дату завершення, на товарі буде показано, скільки часу залишилось.'; inp.insertAdjacentElement('afterend',note);}
+
+  function loadStats(){try{return JSON.parse(localStorage.getItem(STATS_KEY)||'{}')||{};}catch(e){return{};}}
+  function saveStats(s){try{localStorage.setItem(STATS_KEY,JSON.stringify(s));}catch(e){}}
+  function dayKey(d){d=d||new Date(); return d.toISOString().slice(0,10);} 
+  function weekAgo(){return Date.now()-7*86400000;} function monthAgo(){return Date.now()-30*86400000;}
+  function incStat(kind,id){var s=loadStats(); s.events=s.events||[]; s.events.push({kind:kind,id:id?String(id):'',time:Date.now()}); if(s.events.length>5000)s.events=s.events.slice(-5000); saveStats(s); try{if(typeof db!=='undefined') db.ref('siteStats/events').push({kind:kind,id:id?String(id):'',time:Date.now()});}catch(e){} }
+  function recordVisitOnce(){try{var k='insort_visit_session_'+dayKey(); if(sessionStorage.getItem(k))return; sessionStorage.setItem(k,'1'); incStat('visit','site');}catch(e){incStat('visit','site');}}
+  function recordOrderProducts(items){(items||[]).forEach(function(it){var id=it.id; if(!id && it.title){var p=(products||[]).find(function(x){return x.title===it.title;}); if(p)id=p.id;} if(id)incStat('order',id);});}
+  function eventsFor(period){var ev=(loadStats().events||[]); var now=Date.now(); if(period==='day') return ev.filter(function(e){return dayKey(new Date(e.time))===dayKey();}); if(period==='week') return ev.filter(function(e){return e.time>=weekAgo();}); if(period==='month') return ev.filter(function(e){return e.time>=monthAgo();}); return ev;}
+  function ensureStatsButton(){var side=document.getElementById('sideMenu'); if(!side || document.getElementById('statsMenuBtn'))return; var b=document.createElement('button'); b.id='statsMenuBtn'; b.className='menu-register-btn'; b.type='button'; b.textContent='📊 Статистика / рейтинг'; b.onclick=function(){openStatsModal();}; var office=document.getElementById('officeMenuBtn'); side.insertBefore(b,office||side.lastChild); b.style.display=isAdmin()?'block':'none';}
+  window.openStatsModal=function(){if(!isAdmin())return; renderStatsModal(currentStatsPeriod); var m=document.getElementById('statsModal'); if(m)m.style.display='flex';};
+  window.closeStatsModal=function(event){if(event && event.target && event.target.id!=='statsModal')return; var m=document.getElementById('statsModal'); if(m)m.style.display='none';};
+  window.renderStatsModal=function(period){currentStatsPeriod=period||'week'; var summary=document.getElementById('statsSummary'); var list=document.getElementById('statsProducts'); if(!summary||!list)return; var day=eventsFor('day'), week=eventsFor('week'), month=eventsFor('month'), all=eventsFor('all'); function count(ev,k){return ev.filter(function(e){return e.kind===k;}).length;} summary.innerHTML='<div class="stats-card"><div class="stats-number">'+count(day,'visit')+'</div><div class="stats-label">Відвідування сьогодні</div></div><div class="stats-card"><div class="stats-number">'+count(week,'visit')+'</div><div class="stats-label">За 7 днів</div></div><div class="stats-card"><div class="stats-number">'+count(month,'visit')+'</div><div class="stats-label">За 30 днів</div></div><div class="stats-card"><div class="stats-number">'+count(all,'order')+'</div><div class="stats-label">Замовлень всього</div></div>'; var map={}; eventsFor(currentStatsPeriod).filter(function(e){return e.kind==='order'&&e.id;}).forEach(function(e){map[e.id]=(map[e.id]||0)+1;}); var rows=Object.keys(map).sort(function(a,b){return map[b]-map[a];}).map(function(id,i){var p=productById(id)||{}; return '<tr><td>'+(i+1)+'</td><td>'+esc(p.title||('Товар '+id))+'</td><td>'+map[id]+'</td></tr>';}).join(''); list.innerHTML='<table class="stats-table"><thead><tr><th>№</th><th>Товар</th><th>Замовлень</th></tr></thead><tbody>'+(rows||'<tr><td colspan="3">Поки немає замовлень за цей період.</td></tr>')+'</tbody></table>';};
+
+  function wrapExistingFunctions(){
+    if(window.__insortV2Wrapped)return; window.__insortV2Wrapped=true;
+    var oldRender=window.renderProducts; window.renderProducts=function(list){var res=oldRender?oldRender.apply(this,arguments):undefined; setTimeout(function(){injectFavoriteButtons(); applyCatalogPreviewState(); updateCountdowns();},0); return res;};
+    var oldRenderUI=window.renderCatalogUI; if(oldRenderUI) window.renderCatalogUI=function(){var res=oldRenderUI.apply(this,arguments); setTimeout(function(){applyCatalogPreviewState();refreshFavoritesUI();ensureStatsButton();},0); return res;};
+    var oldToggle=window.toggleCatalogView; if(oldToggle) window.toggleCatalogView=function(){catalogFullOpened=false; var r=oldToggle.apply(this,arguments); setTimeout(applyCatalogPreviewState,0); return r;};
+    var oldHome=window.goToHomeScreen; if(oldHome) window.goToHomeScreen=function(){catalogFullOpened=false; var r=oldHome.apply(this,arguments); setTimeout(applyCatalogPreviewState,0); return r;};
+    var oldQuick=window.quickOrderProduct; if(oldQuick) window.quickOrderProduct=function(title,price){try{var p=(products||[]).find(function(x){return x.title===title;}); if(p)recordOrderProducts([p]);}catch(e){} return oldQuick.apply(this,arguments);};
+    var oldSubmit=window.submitOrder; if(oldSubmit) window.submitOrder=function(channel){try{recordOrderProducts(selectedProducts||[]);}catch(e){} return oldSubmit.apply(this,arguments);};
+    var oldOpenDiscount=window.openDiscountModal; if(oldOpenDiscount) window.openDiscountModal=function(){var r=oldOpenDiscount.apply(this,arguments); ensureSaleTimerInDiscountModal(); try{var p=typeof editingId!=='undefined'?productById(editingId):null; var input=document.getElementById('saleTimerInput'); if(input){var end=discountEndMs(p); input.value=end?new Date(end-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16):'';}}catch(e){} return r;};
+    var oldSaveDiscount=window.saveDiscountModal; if(oldSaveDiscount) window.saveDiscountModal=function(){try{var val=document.getElementById('saleTimerInput')?.value||''; window.__pendingSaleEndV2=val?Date.parse(val):0;}catch(e){} return oldSaveDiscount.apply(this,arguments);};
+    var oldSaveProductData=window.saveProductData; if(oldSaveProductData) window.saveProductData=function(){var r=oldSaveProductData.apply(this,arguments); try{var p=(products||[]).find(function(x){return String(x.id)===String(editingId);}) || (products||[])[(products||[]).length-1]; if(p && window.__pendingSaleEndV2){p.discountEndsAt=window.__pendingSaleEndV2; if(typeof saveToDatabase==='function')saveToDatabase();} if(p && !isDiscountedProduct(p)){delete p.discountEndsAt;} window.__pendingSaleEndV2=0;}catch(e){} setTimeout(function(){if(typeof renderProducts==='function')renderProducts();},100); return r;};
+  }
+  function updateCountdowns(){document.querySelectorAll('[data-sale-end]').forEach(function(el){el.textContent=countdownText(Number(el.dataset.saleEnd));});}
+  function init(){ensureFavoriteMenu(); ensureStatsButton(); ensureCatalogIntro(); wrapExistingFunctions(); recordVisitOnce(); applyCatalogPreviewState(); refreshFavoritesUI(); loadFavoritesFromFirebase(); setInterval(updateCountdowns,60000); var sb=document.getElementById('statsMenuBtn'); if(sb)sb.style.display=isAdmin()?'block':'none';}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,100);}); else setTimeout(init,100);
+  window.addEventListener('load',function(){setTimeout(init,400);});
+})();
+</script>
+
+
+<!-- INSORT FINAL STABLE CATALOG FIX 2026-06-01 -->
+<style id="insortFinalStableCatalogCss">
+/* ПК/ноут: фільтри є, кнопки категорій немає */
+@media (min-width:701px){
+  .catalog-inline-filters{display:none !important;visibility:hidden !important;opacity:0 !important;pointer-events:none !important;}
+  #filtersWrap,.filters-wrap{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}
+  #filtersWrap .filter-open-btn,.filters-wrap .filter-open-btn{display:flex !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}
+}
+/* Телефон: кнопка категорій є, фільтрів немає */
+@media (max-width:700px){
+  #filtersWrap,#filtersPanel,.filters-wrap,.filter-panel,.filter-open-btn{display:none !important;visibility:hidden !important;opacity:0 !important;pointer-events:none !important;}
+  .catalog-inline-filters{display:flex !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;width:100% !important;gap:8px !important;flex-wrap:wrap !important;}
+  .catalog-inline-filters .category-choose-open-btn{display:flex !important;align-items:center !important;justify-content:center !important;width:100% !important;min-width:0 !important;}
+  #categoryChooseCurrent,#mainCategoryFilter,#categoryFilter{display:none !important;}
+}
+/* Стани каталогу */
+body.insort-catalog-preview #products,
+body.insort-catalog-preview #topMainCategories,
+body.insort-catalog-preview #catalogShowAllWrap,
+body.insort-catalog-preview #catalogDiscountBtn,
+body.insort-catalog-preview #catalogHomeReturnBtn,
+body.insort-catalog-preview #catalogSection > .search-box,
+body.insort-catalog-preview .catalog-shell > .search-box{display:none !important;}
+body.insort-catalog-preview #catalogIntroV2{display:block !important;}
+body.insort-catalog-full #catalogIntroV2{display:none !important;}
+body.insort-catalog-full #products{display:grid !important;}
+body.insort-catalog-full #topMainCategories{display:flex !important;}
+body.insort-catalog-full #catalogSection > .search-box,
+body.insort-catalog-full .catalog-shell > .search-box{display:block !important;}
+body.insort-catalog-full #catalogShowAllWrap{display:flex !important;}
+/* Прибираємо старі дублікати/кнопки */
+#catalogShowAllBtn,#catalogReturnBtn{display:none !important;visibility:hidden !important;pointer-events:none !important;height:0 !important;padding:0 !important;margin:0 !important;border:0 !important;overflow:hidden !important;}
+/* Однаковий вигляд: товар зі знижкою та повернутися на головну */
+#catalogDiscountBtn.insort-catalog-action-btn,
+#catalogHomeReturnBtn.insort-catalog-action-btn{
+  display:inline-flex !important;align-items:center !important;justify-content:center !important;
+  min-width:210px !important;height:42px !important;min-height:42px !important;
+  padding:9px 18px !important;margin:0 8px 0 0 !important;
+  background:#2b2b2b !important;color:#fff !important;border:1px solid #fff !important;border-radius:0 !important;
+  font-size:16px !important;font-weight:900 !important;line-height:1.1 !important;box-shadow:none !important;
+  white-space:nowrap !important;text-decoration:none !important;cursor:pointer !important;user-select:none !important;
+}
+#catalogDiscountBtn.insort-catalog-action-btn:hover,
+#catalogHomeReturnBtn.insort-catalog-action-btn:hover,
+#catalogDiscountBtn.insort-catalog-action-btn.active{
+  background:#90ee90 !important;color:#000 !important;border-color:#90ee90 !important;
+}
+body.insort-catalog-preview #catalogHomeReturnBtn.insort-catalog-action-btn,
+body.insort-catalog-preview #catalogDiscountBtn.insort-catalog-action-btn{display:none !important;}
+@media (max-width:700px){
+  body.insort-catalog-full #catalogDiscountBtn.insort-catalog-action-btn,
+  body.insort-catalog-full #catalogHomeReturnBtn.insort-catalog-action-btn{width:100% !important;min-width:0 !important;margin:8px 0 0 0 !important;}
+}
+</style>
+<script id="insortFinalStableCatalogJs">
+(function(){
+  'use strict';
+  var discountMode = false;
+  var renderingDiscount = false;
+
+  function qs(s){return document.querySelector(s);} 
+  function byId(id){return document.getElementById(id);} 
+  function productList(){try{return Array.isArray(window.products)?window.products:(typeof products!=='undefined'&&Array.isArray(products)?products:[]);}catch(e){return [];}}
+  function isDiscounted(p){
+    if(!p) return false;
+    return p.hasDiscount===true || !!p.discountPercent || !!p.discountCustom || !!p.discountPrice || !!p.oldPrice || !!p.originalPrice || !!p.priceBeforeDiscount || !!p.discountEndsAt || !!p.saleEndsAt;
+  }
+  function discountedProducts(){return productList().filter(isDiscounted);} 
+
+  function ensureIntro(){
+    var catalog=byId('catalogSection') || qs('.catalog-shell') || qs('.container');
+    if(!catalog) return null;
+    var intro=byId('catalogIntroV2');
+    if(!intro){
+      intro=document.createElement('div');
+      intro.id='catalogIntroV2';
+      intro.innerHTML='<div id="catalogAdsMount"></div><section class="catalog-hit-section"><div class="catalog-hit-head"><div class="catalog-hit-title">🔥 Хіт продажів</div><button id="manageBestSellersBtn" type="button" class="best-seller-edit-btn" onclick="openBestSellerPicker()" style="display:none;">Редагувати хіти</button></div><div class="catalog-hit-list" id="bestSellerList"></div><div class="catalog-show-full-v2"><button type="button">Показати весь каталог</button></div></section>';
+      var head=catalog.querySelector('.catalog-head');
+      if(head) head.insertAdjacentElement('afterend',intro); else catalog.insertBefore(intro,catalog.firstChild);
+    }
+    var mount=byId('catalogAdsMount'), ads=byId('adsSection');
+    if(mount && ads && ads.parentNode!==mount) mount.appendChild(ads);
+    return intro;
+  }
+
+  function showHomeSections(show){
+    ['topHeaderSection','heroSection'].forEach(function(id){var el=byId(id); if(el) el.style.display=show?'':'none';});
+    var overview=byId('overviewSection'); if(overview) overview.style.display=show?'none':'none';
+    var btn=byId('catalogToggleBtn'); if(btn) btn.textContent=show?'Переглянути каталог':'Повернутися';
+  }
+
+  function openCatalogShell(){
+    var catalog=qs('.container'); if(catalog){catalog.classList.remove('catalog-hidden'); catalog.style.removeProperty('display');}
+    showHomeSections(false);
+    var ads=byId('adsSection'); if(ads) ads.style.display='';
+    document.body.classList.add('catalog-open');
+  }
+
+  function forcePreview(){
+    discountMode=false;
+    openCatalogShell();
+    ensureIntro();
+    document.body.classList.remove('insort-catalog-full','catalog-full-v2');
+    document.body.classList.add('insort-catalog-preview','catalog-preview-v2');
+    var p=byId('products'); if(p) p.style.setProperty('display','none','important');
+    var cats=byId('topMainCategories'); if(cats) cats.style.setProperty('display','none','important');
+    var search=qs('#catalogSection > .search-box') || qs('.catalog-shell > .search-box') || qs('.search-box'); if(search) search.style.setProperty('display','none','important');
+    updateActionButtons();
+    try{ if(typeof renderBestSellerList==='function') renderBestSellerList(); }catch(e){}
+  }
+
+  function forceFull(){
+    openCatalogShell();
+    ensureIntro();
+    document.body.classList.remove('insort-catalog-preview','catalog-preview-v2');
+    document.body.classList.add('insort-catalog-full','catalog-full-v2');
+    var intro=byId('catalogIntroV2'); if(intro) intro.style.setProperty('display','none','important');
+    var p=byId('products'); if(p) p.style.setProperty('display','grid','important');
+    var cats=byId('topMainCategories'); if(cats) cats.style.setProperty('display','flex','important');
+    var search=qs('#catalogSection > .search-box') || qs('.catalog-shell > .search-box') || qs('.search-box'); if(search) search.style.setProperty('display','block','important');
+    updateActionButtons();
+    applyResponsiveControls();
+  }
+
+  function closeCatalogToHome(){
+    discountMode=false;
+    document.body.classList.remove('insort-catalog-preview','insort-catalog-full','catalog-preview-v2','catalog-full-v2','catalog-open');
+    var catalog=qs('.container'); if(catalog) catalog.classList.add('catalog-hidden');
+    var cats=byId('topMainCategories'); if(cats) cats.classList.add('catalog-hidden');
+    showHomeSections(true);
+    var ads=byId('adsSection'); if(ads) ads.style.display='';
+    updateActionButtons();
+    try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);} 
+  }
+
+  function renderNormalProducts(){
+    discountMode=false;
+    forceFull();
+    try{ if(typeof window.applyAllFilters==='function') window.applyAllFilters(); else if(typeof window.renderProducts==='function') window.renderProducts(productList()); }catch(e){}
+    setTimeout(function(){forceFull(); updateActionButtons();},60);
+  }
+
+  function renderDiscountProducts(){
+    discountMode=true;
+    forceFull();
+    var list=discountedProducts();
+    renderingDiscount=true;
+    try{ if(typeof window.renderProducts==='function') window.renderProducts(list); }catch(e){}
+    renderingDiscount=false;
+    setTimeout(function(){
+      forceFull();
+      var box=byId('products');
+      if(box && list.length===0){
+        box.innerHTML='<div class="filter-no-products" style="grid-column:1/-1;background:#101010;color:#90ee90;border:1px solid rgba(107,255,42,.25);border-radius:20px;padding:24px;text-align:center;font-size:17px;font-weight:900;">Товарів зі знижкою поки немає.</div>';
+      }else if(box && list.length>0 && !box.querySelector('.product')){
+        try{ if(typeof window.renderProducts==='function') window.renderProducts(list); }catch(e){}
+      }
+      updateActionButtons();
+    },80);
+  }
+
+  function ensureButtons(){
+    var wrap=byId('catalogShowAllWrap');
+    var search=qs('#catalogSection > .search-box') || qs('.catalog-shell > .search-box') || qs('.search-box');
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.id='catalogShowAllWrap';
+      wrap.className='catalog-show-all-wrap';
+      if(search) search.appendChild(wrap);
+    }
+    var discount=byId('catalogDiscountBtn');
+    if(!discount){discount=document.createElement('button'); discount.id='catalogDiscountBtn'; discount.type='button'; wrap.appendChild(discount);} 
+    var home=byId('catalogHomeReturnBtn');
+    if(!home){home=document.createElement('button'); home.id='catalogHomeReturnBtn'; home.type='button';}
+    home.textContent='Повернутися на головну';
+    home.className='insort-catalog-action-btn';
+    discount.className='insort-catalog-action-btn' + (discountMode?' active':'');
+    discount.textContent=discountMode?'показати всі товари':'товар зі знижкою';
+    discount.onclick=function(e){if(e){e.preventDefault();e.stopPropagation();} if(discountMode) renderNormalProducts(); else renderDiscountProducts(); return false;};
+    home.onclick=function(e){if(e){e.preventDefault();e.stopPropagation();} forcePreview(); try{(byId('catalogSection')||qs('.container')).scrollIntoView({behavior:'smooth',block:'start'});}catch(x){} return false;};
+    if(wrap && discount.parentElement!==wrap) wrap.appendChild(discount);
+    if(wrap && home.parentElement!==wrap) wrap.insertBefore(home, discount);
+  }
+
+  function updateActionButtons(){
+    ensureButtons();
+    var full=document.body.classList.contains('insort-catalog-full') || document.body.classList.contains('catalog-full-v2');
+    var home=byId('catalogHomeReturnBtn'), discount=byId('catalogDiscountBtn');
+    if(home) home.style.display=full?'inline-flex':'none';
+    if(discount){
+      discount.style.display=full?'inline-flex':'none';
+      discount.className='insort-catalog-action-btn' + (discountMode?' active':'');
+      discount.textContent=discountMode?'показати всі товари':'товар зі знижкою';
+    }
+  }
+
+  function applyResponsiveControls(){
+    var mobile=window.matchMedia && window.matchMedia('(max-width:700px)').matches;
+    var filters=byId('filtersWrap') || qs('.filters-wrap');
+    var inline=qs('.catalog-inline-filters');
+    if(mobile){
+      if(filters) filters.style.setProperty('display','none','important');
+      if(inline) inline.style.setProperty('display','flex','important');
+    }else{
+      if(inline) inline.style.setProperty('display','none','important');
+      if(filters) filters.style.setProperty('display','block','important');
+    }
+  }
+
+  window.showFullCatalogV2=function(){renderNormalProducts(); try{(byId('catalogSection')||qs('.container')).scrollIntoView({behavior:'smooth',block:'start'});}catch(e){} };
+  window.openFullCatalogFixed=window.showFullCatalogV2;
+  window.forceShowFullCatalog=window.showFullCatalogV2;
+  window.toggleDiscountProducts=function(e){if(e){e.preventDefault();e.stopPropagation();} if(discountMode) renderNormalProducts(); else renderDiscountProducts(); return false;};
+  window.goToHomeScreen=function(){closeCatalogToHome();};
+  window.toggleCatalogView=function(){
+    var catalog=qs('.container');
+    var hidden=!catalog || catalog.classList.contains('catalog-hidden') || (!document.body.classList.contains('insort-catalog-preview') && !document.body.classList.contains('insort-catalog-full') && catalog.classList.contains('catalog-hidden'));
+    if(hidden || (!document.body.classList.contains('insort-catalog-preview') && !document.body.classList.contains('insort-catalog-full') && catalog && catalog.classList.contains('catalog-hidden'))){
+      forcePreview();
+      try{(byId('catalogSection')||qs('.container')).scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}
+    }else{
+      closeCatalogToHome();
+    }
+  };
+  window.applyCatalogPreviewState=function(){ if(document.body.classList.contains('insort-catalog-full')) forceFull(); else if(document.body.classList.contains('insort-catalog-preview')) forcePreview(); };
+
+  document.addEventListener('click',function(e){
+    var d=e.target && e.target.closest ? e.target.closest('#catalogDiscountBtn') : null;
+    if(d){ e.preventDefault(); e.stopPropagation(); setTimeout(function(){ if(discountMode) renderNormalProducts(); else renderDiscountProducts(); },0); return false; }
+    var h=e.target && e.target.closest ? e.target.closest('#catalogHomeReturnBtn') : null;
+    if(h){ e.preventDefault(); e.stopPropagation(); setTimeout(forcePreview,0); return false; }
+    var s=e.target && e.target.closest ? e.target.closest('#catalogIntroV2 .catalog-show-full-v2 button') : null;
+    if(s){ e.preventDefault(); e.stopPropagation(); setTimeout(window.showFullCatalogV2,0); return false; }
+  },true);
+
+  function initFinal(){
+    ensureIntro(); ensureButtons(); applyResponsiveControls();
+    var catalog=qs('.container');
+    if(catalog && !catalog.classList.contains('catalog-hidden') && !document.body.classList.contains('insort-catalog-full')) forcePreview();
+    updateActionButtons();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(initFinal,250);setTimeout(initFinal,1200);});
+  else {setTimeout(initFinal,250);setTimeout(initFinal,1200);} 
+  window.addEventListener('load',function(){setTimeout(initFinal,500);setTimeout(initFinal,1600);});
+  window.addEventListener('resize',function(){clearTimeout(window.__insortFinalStableResize); window.__insortFinalStableResize=setTimeout(function(){applyResponsiveControls();updateActionButtons();},120);});
+})();
+</script>
+
+
+<!-- INSORT FINAL PATCH 66: stable buttons, responsive filters/category, discount view fix -->
+<style id="insortPatch66Css">
+/* ПК/ноут: тільки фільтри */
+@media (min-width:701px){
+  #catalogSection .catalog-inline-filters{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+  #filtersWrap,.filters-wrap{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;}
+  #filtersWrap .filter-open-btn,.filters-wrap .filter-open-btn{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;}
+}
+/* Телефон: тільки кнопка категорії */
+@media (max-width:700px){
+  #filtersWrap,#filtersPanel,.filters-wrap,.filter-panel,.filter-open-btn{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
+  #catalogSection .catalog-inline-filters{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:100%!important;gap:8px!important;}
+  #catalogSection .catalog-inline-filters .category-choose-open-btn{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;}
+  #mainCategoryFilter,#categoryFilter,#categoryChooseCurrent{display:none!important;}
+}
+/* Рядок кнопок має стояти там, де раніше була кнопка "показати весь каталог" */
+#catalogSection > #catalogShowAllWrap.catalog-show-all-wrap,
+#catalogShowAllWrap.catalog-show-all-wrap{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:8px!important;
+  width:100%!important;
+  flex:0 0 100%!important;
+  margin:-6px 0 -1px 0!important;
+  padding:0!important;
+  position:relative!important;
+  z-index:60!important;
+  order:0!important;
+}
+#catalogShowAllBtn,#catalogReturnBtn{display:none!important;visibility:hidden!important;pointer-events:none!important;height:0!important;width:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;}
+#catalogHomeReturnBtn.insort-catalog-action-btn,
+#catalogDiscountBtn.insort-catalog-action-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:210px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:9px 18px!important;
+  margin:0!important;
+  background:#2b2b2b!important;
+  color:#fff!important;
+  border:1px solid #fff!important;
+  border-radius:0!important;
+  font-size:16px!important;
+  font-weight:900!important;
+  line-height:1.1!important;
+  text-decoration:underline!important;
+  white-space:nowrap!important;
+  box-shadow:none!important;
+  cursor:pointer!important;
+}
+#catalogHomeReturnBtn.insort-catalog-action-btn:hover,
+#catalogDiscountBtn.insort-catalog-action-btn:hover,
+#catalogDiscountBtn.insort-catalog-action-btn.active{
+  background:#90ee90!important;
+  color:#000!important;
+  border-color:#90ee90!important;
+}
+body.insort-catalog-preview #catalogHomeReturnBtn,
+body.insort-catalog-preview #catalogDiscountBtn,
+body.catalog-preview-v2 #catalogHomeReturnBtn,
+body.catalog-preview-v2 #catalogDiscountBtn{display:none!important;}
+body.insort-catalog-full #catalogHomeReturnBtn.insort-catalog-action-btn,
+body.insort-catalog-full #catalogDiscountBtn.insort-catalog-action-btn,
+body.catalog-full-v2 #catalogHomeReturnBtn.insort-catalog-action-btn,
+body.catalog-full-v2 #catalogDiscountBtn.insort-catalog-action-btn{display:inline-flex!important;}
+@media(max-width:700px){
+  #catalogShowAllWrap.catalog-show-all-wrap{gap:6px!important;flex-wrap:wrap!important;margin:-4px 0 -1px 0!important;}
+  #catalogHomeReturnBtn.insort-catalog-action-btn,
+  #catalogDiscountBtn.insort-catalog-action-btn{width:100%!important;min-width:0!important;height:40px!important;min-height:40px!important;font-size:14px!important;}
+}
+</style>
+<script id="insortPatch66Js">
+(function(){
+  'use strict';
+  var patchDiscountMode=false;
+  function byId(id){return document.getElementById(id);} 
+  function qs(s){return document.querySelector(s);} 
+  function productsArr(){try{return Array.isArray(window.products)?window.products:(typeof products!=='undefined'&&Array.isArray(products)?products:[]);}catch(e){return [];}}
+  function isDiscounted(p){return !!(p && (p.hasDiscount===true || p.discountPercent || p.discountCustom || p.discountPrice || p.oldPrice || p.originalPrice || p.priceBeforeDiscount || p.discountEndsAt || p.saleEndsAt));}
+  function discounted(){return productsArr().filter(isDiscounted);} 
+  function show(el,display){if(!el)return; el.style.removeProperty('visibility'); el.style.removeProperty('opacity'); el.style.removeProperty('height'); el.style.removeProperty('width'); el.style.removeProperty('pointer-events'); el.style.setProperty('display',display||'block','important');}
+  function hide(el){if(!el)return; el.style.setProperty('display','none','important');}
+  function applyResponsive(){
+    var mobile=window.matchMedia && window.matchMedia('(max-width:700px)').matches;
+    var filters=byId('filtersWrap') || qs('.filters-wrap');
+    var inline=qs('#catalogSection .catalog-inline-filters') || qs('.catalog-inline-filters');
+    if(mobile){hide(filters); show(inline,'flex');}
+    else{hide(inline); show(filters,'block');}
+  }
+  function ensureIntro(){
+    var catalog=byId('catalogSection') || qs('.catalog-shell') || qs('.container');
+    if(!catalog) return null;
+    var intro=byId('catalogIntroV2');
+    if(!intro){
+      intro=document.createElement('div'); intro.id='catalogIntroV2';
+      intro.innerHTML='<div id="catalogAdsMount"></div><section class="catalog-hit-section"><div class="catalog-hit-head"><div class="catalog-hit-title">🔥 Хіт продажів</div><button id="manageBestSellersBtn" type="button" class="best-seller-edit-btn" onclick="openBestSellerPicker()" style="display:none;">Редагувати хіти</button></div><div class="catalog-hit-list" id="bestSellerList"></div><div class="catalog-show-full-v2"><button type="button">Показати весь каталог</button></div></section>';
+      var head=catalog.querySelector('.catalog-head');
+      if(head) head.insertAdjacentElement('afterend',intro); else catalog.insertBefore(intro,catalog.firstChild);
+    }
+    var mount=byId('catalogAdsMount'), ads=byId('adsSection');
+    if(mount && ads && ads.parentNode!==mount) mount.appendChild(ads);
+    return intro;
+  }
+  function openShell(){
+    var container=qs('.container'); if(container){container.classList.remove('catalog-hidden'); container.style.removeProperty('display');}
+    ['topHeaderSection','heroSection'].forEach(function(id){hide(byId(id));});
+    var overview=byId('overviewSection'); if(overview) hide(overview);
+    var btn=byId('catalogToggleBtn'); if(btn) btn.textContent='Повернутися';
+    document.body.classList.add('catalog-open');
+  }
+  function updateButtons(){
+    ensureButtons();
+    var full=document.body.classList.contains('insort-catalog-full') || document.body.classList.contains('catalog-full-v2');
+    var home=byId('catalogHomeReturnBtn'), disc=byId('catalogDiscountBtn');
+    if(home){home.textContent='Повернутися на головну'; home.className='insort-catalog-action-btn'; home.style.setProperty('display',full?'inline-flex':'none','important');}
+    if(disc){disc.textContent=patchDiscountMode?'показати всі товари':'товар зі знижкою'; disc.className='insort-catalog-action-btn'+(patchDiscountMode?' active':''); disc.style.setProperty('display',full?'inline-flex':'none','important');}
+  }
+  function ensureButtons(){
+    var catalog=byId('catalogSection') || qs('.catalog-shell');
+    if(!catalog) return;
+    var search=catalog.querySelector(':scope > .search-box') || catalog.querySelector('.search-box');
+    var wrap=byId('catalogShowAllWrap');
+    if(!wrap){wrap=document.createElement('div'); wrap.id='catalogShowAllWrap'; wrap.className='catalog-show-all-wrap';}
+    if(search && (wrap.parentElement!==catalog || wrap.nextElementSibling!==search)) catalog.insertBefore(wrap,search);
+    var old=byId('catalogShowAllBtn'); if(old) hide(old);
+    var home=byId('catalogHomeReturnBtn');
+    if(!home){home=document.createElement('button'); home.id='catalogHomeReturnBtn'; home.type='button';}
+    home.textContent='Повернутися на головну'; home.className='insort-catalog-action-btn';
+    var disc=byId('catalogDiscountBtn');
+    if(!disc){disc=document.createElement('button'); disc.id='catalogDiscountBtn'; disc.type='button';}
+    disc.className='insort-catalog-action-btn'+(patchDiscountMode?' active':''); disc.textContent=patchDiscountMode?'показати всі товари':'товар зі знижкою';
+    if(home.parentElement!==wrap) wrap.appendChild(home);
+    if(disc.parentElement!==wrap) wrap.appendChild(disc);
+    if(wrap.firstElementChild!==home) wrap.insertBefore(home,wrap.firstChild);
+    if(home.nextElementSibling!==disc) wrap.insertBefore(disc,home.nextSibling);
+    home.onclick=function(e){if(e){e.preventDefault();e.stopPropagation();} previewCatalog(); return false;};
+    disc.onclick=function(e){if(e){e.preventDefault();e.stopPropagation();} if(patchDiscountMode) normalCatalog(); else discountCatalog(); return false;};
+  }
+  function fullCatalog(){
+    openShell(); ensureIntro(); ensureButtons();
+    document.body.classList.remove('insort-catalog-preview','catalog-preview-v2');
+    document.body.classList.add('insort-catalog-full','catalog-full-v2');
+    hide(byId('catalogIntroV2'));
+    show(byId('products'),'grid');
+    show(byId('topMainCategories'),'flex');
+    show(qs('#catalogSection > .search-box') || qs('.catalog-shell > .search-box') || qs('.search-box'),'block');
+    show(byId('catalogShowAllWrap'),'flex');
+    applyResponsive(); updateButtons();
+  }
+  function previewCatalog(){
+    patchDiscountMode=false;
+    openShell(); ensureIntro(); ensureButtons();
+    document.body.classList.remove('insort-catalog-full','catalog-full-v2');
+    document.body.classList.add('insort-catalog-preview','catalog-preview-v2');
+    show(byId('catalogIntroV2'),'block');
+    hide(byId('products')); hide(byId('topMainCategories')); hide(qs('#catalogSection > .search-box') || qs('.catalog-shell > .search-box') || qs('.search-box')); hide(byId('catalogShowAllWrap'));
+    try{if(typeof renderBestSellerList==='function')renderBestSellerList();}catch(e){}
+    updateButtons();
+    setTimeout(function(){var t=byId('catalogIntroV2')||byId('catalogSection'); try{if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},30);
+  }
+  function normalCatalog(){
+    patchDiscountMode=false; fullCatalog();
+    try{ if(typeof window.applyAllFilters==='function') window.applyAllFilters(); else if(typeof window.renderProducts==='function') window.renderProducts(productsArr()); }catch(e){}
+    setTimeout(function(){fullCatalog(); updateButtons();},80);
+  }
+  function discountCatalog(){
+    patchDiscountMode=true; fullCatalog();
+    var list=discounted();
+    try{ if(typeof window.renderProducts==='function') window.renderProducts(list); }catch(e){}
+    setTimeout(function(){
+      fullCatalog();
+      var box=byId('products');
+      if(box && list.length===0){box.innerHTML='<div class="filter-no-products" style="grid-column:1/-1;background:#101010;color:#90ee90;border:1px solid rgba(107,255,42,.25);border-radius:20px;padding:24px;text-align:center;font-size:17px;font-weight:900;">Товарів зі знижкою поки немає.</div>';}
+      updateButtons();
+    },100);
+  }
+  function homeSite(){
+    patchDiscountMode=false;
+    document.body.classList.remove('insort-catalog-preview','insort-catalog-full','catalog-preview-v2','catalog-full-v2','catalog-open');
+    var container=qs('.container'); if(container) container.classList.add('catalog-hidden');
+    ['topHeaderSection','heroSection'].forEach(function(id){show(byId(id),'');});
+    var overview=byId('overviewSection'); if(overview) hide(overview);
+    var btn=byId('catalogToggleBtn'); if(btn) btn.textContent='Переглянути каталог';
+    updateButtons();
+  }
+  window.showFullCatalogV2=normalCatalog;
+  window.openFullCatalogFixed=normalCatalog;
+  window.forceShowFullCatalog=normalCatalog;
+  window.toggleDiscountProducts=function(e){if(e){e.preventDefault();e.stopPropagation();} if(patchDiscountMode) normalCatalog(); else discountCatalog(); return false;};
+  window.returnToCatalogStartV2=previewCatalog;
+  window.goToHomeScreen=homeSite;
+  window.toggleCatalogView=function(){var container=qs('.container'); var hidden=!container || container.classList.contains('catalog-hidden') || (!document.body.classList.contains('insort-catalog-preview') && !document.body.classList.contains('insort-catalog-full')); if(hidden) previewCatalog(); else homeSite();};
+  document.addEventListener('click',function(e){
+    var d=e.target && e.target.closest ? e.target.closest('#catalogDiscountBtn') : null;
+    if(d){setTimeout(function(){ if(patchDiscountMode) normalCatalog(); else discountCatalog(); },20); setTimeout(updateButtons,180); return;}
+    var h=e.target && e.target.closest ? e.target.closest('#catalogHomeReturnBtn') : null;
+    if(h){setTimeout(previewCatalog,20); return;}
+    var s=e.target && e.target.closest ? e.target.closest('#catalogIntroV2 .catalog-show-full-v2 button') : null;
+    if(s){setTimeout(normalCatalog,20); return;}
+  },true);
+  function init(){ensureIntro(); ensureButtons(); applyResponsive(); updateButtons(); var container=qs('.container'); if(container && !container.classList.contains('catalog-hidden') && !document.body.classList.contains('insort-catalog-full')) previewCatalog();}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,100);setTimeout(init,800);}); else {setTimeout(init,100);setTimeout(init,800);} 
+  window.addEventListener('load',function(){setTimeout(init,300);setTimeout(init,1300);});
+  window.addEventListener('resize',function(){clearTimeout(window.__insortPatch66Resize);window.__insortPatch66Resize=setTimeout(function(){applyResponsive();ensureButtons();updateButtons();},120);});
 })();
 </script>
