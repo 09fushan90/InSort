@@ -111,7 +111,7 @@ html.no-scroll, body.no-scroll {
 }
 body {margin:0; font-family:Arial; background:#000; color:#90ee90; position:relative; min-height:100vh; overflow-x:hidden;}
 body::before {content:"Inst asortiments"; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:200px; color:rgba(144,238,144,0.05); font-weight:bold; white-space:nowrap; z-index:0; pointer-events:none;}
-header {background:#; padding:95px 20px 20px; text-align:center; font-size:26px; position:relative; z-index:2;}
+header {background:#000; padding:95px 20px 20px; text-align:center; font-size:26px; position:relative; z-index:2;}
 .container {padding:12px 20px 20px; max-width:1300px; margin:auto; position:relative; z-index:2;}
 .search-box {
 display:flex;
@@ -1877,7 +1877,7 @@ body::before{
 .category-choose-open-btn{
   background:#ffffff !important;
   color:#101010 !important;
-  border:2px solid  rgba(107,255,42,.35) #111;
+  border:2px solid rgba(107,255,42,.35);
   font-weight:900 !important;
   border-radius:18px !important;
 
@@ -11270,6 +11270,212 @@ document.addEventListener('DOMContentLoaded',function(){
   if(wrap && btn){ wrap.insertBefore(btn, wrap.firstChild); }
 });
 </script>
+
+
+<!-- INSORT CLEAN FINAL PATCH: OLD SHOW ALL REMOVED + OFFICE BUTTON MOVE START -->
+<style>
+/* Старий показ усього каталогу повністю вимкнено: залишена тільки нова кнопка всередині catalogIntroV2 */
+#catalogShowAllBtn,
+button#catalogShowAllBtn,
+.catalog-show-all-link:not(.insort-catalog-action-btn){
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+/* Дизайн кнопок не змінюється: у режимі Офісу додається тільки пунктирна рамка для перетягування */
+.office-active.insort-button-move-active .insort-movable-button{
+  outline:2px dashed rgba(107,255,42,.75) !important;
+  outline-offset:4px !important;
+  cursor:grab !important;
+  user-select:none !important;
+  touch-action:none !important;
+}
+.office-active.insort-button-move-active .insort-movable-button.insort-moving-now{
+  cursor:grabbing !important;
+  z-index:16000 !important;
+  opacity:.98 !important;
+}
+#insortButtonMoveBtn,
+#insortButtonMoveResetBtn{
+  display:none;
+  position:fixed;
+  left:18px;
+  z-index:13080;
+  margin:0;
+  padding:12px 16px;
+  border-radius:16px;
+  font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+#insortButtonMoveBtn{bottom:74px;background:linear-gradient(135deg,#90ee90,#49d71c) !important;color:#071007 !important;}
+#insortButtonMoveResetBtn{bottom:128px;background:#181818 !important;color:#fff !important;border:1px solid rgba(107,255,42,.28) !important;}
+.office-active #insortButtonMoveBtn,
+.office-active.insort-button-move-active #insortButtonMoveResetBtn{display:inline-flex !important;align-items:center;gap:8px;}
+.insort-move-notice{
+  display:none;
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:16010;
+  background:#111;
+  color:#90ee90;
+  border:1px solid rgba(107,255,42,.35);
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.35);
+  pointer-events:none;
+}
+.insort-move-notice.show{display:block;}
+@media(max-width:700px){
+  #insortButtonMoveBtn{left:12px;bottom:70px;padding:10px 12px;font-size:12px;}
+  #insortButtonMoveResetBtn{left:12px;bottom:118px;padding:10px 12px;font-size:12px;}
+}
+</style>
+<script>
+(function(){
+  'use strict';
+  var MOVE_KEY='__insort_button_positions_final_v1';
+  var moveMode=false;
+  var drag=null;
+  var saveTimer=null;
+
+  function getOfficeStore(){
+    try{
+      if(typeof officeContent!=='undefined' && officeContent && typeof officeContent==='object'){
+        if(!officeContent[MOVE_KEY] || typeof officeContent[MOVE_KEY] !== 'object') officeContent[MOVE_KEY]={};
+        return officeContent[MOVE_KEY];
+      }
+    }catch(e){}
+    try{return JSON.parse(localStorage.getItem(MOVE_KEY)||'{}')||{};}catch(e){return {};}
+  }
+  function setOfficeStore(store){
+    try{
+      if(typeof officeContent!=='undefined' && officeContent && typeof officeContent==='object') officeContent[MOVE_KEY]=store;
+      localStorage.setItem(MOVE_KEY, JSON.stringify(store||{}));
+    }catch(e){}
+  }
+  function note(text){
+    var el=document.getElementById('insortMoveNotice');
+    if(!el){el=document.createElement('div');el.id='insortMoveNotice';el.className='insort-move-notice';document.body.appendChild(el);}
+    el.textContent=text; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(function(){el.classList.remove('show');},1700);
+  }
+  function saveSoon(){
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(async function(){
+      try{
+        if(typeof saveOfficeContent==='function'){
+          var ok=await saveOfficeContent();
+          note(ok?'Позиції кнопок збережено для всіх':'Позиції кнопок збережено локально');
+        }else note('Позиції кнопок збережено локально');
+      }catch(e){note('Firebase не відповів — збережено локально');}
+    },450);
+  }
+  function cleanKey(s){return String(s||'').trim().replace(/[^a-zA-Z0-9_\-а-яА-ЯіїєґІЇЄҐ]+/g,'_').slice(0,90);}
+  function makeKey(el,i){
+    if(el.id) return 'id_'+cleanKey(el.id);
+    if(el.dataset && el.dataset.officeKey) return 'office_'+cleanKey(el.dataset.officeKey);
+    var txt=(el.textContent||el.getAttribute('aria-label')||el.title||'button').trim().slice(0,32);
+    var cls=Array.from(el.classList||[]).filter(function(c){return !/^insort-|^office-layout/.test(c);}).slice(0,3).join('_');
+    return 'btn_'+cleanKey(el.tagName+'_'+cls+'_'+txt+'_'+i);
+  }
+  function candidates(){
+    return Array.from(document.querySelectorAll('button, a.menu-link-btn, a.owner-telegram-btn, a.owner-contact-btn, a[role="button"], .hero-primary, .hero-secondary, .header-chip')).filter(function(el){
+      if(!el || !el.isConnected) return false;
+      if(el.id==='insortButtonMoveBtn'||el.id==='insortButtonMoveResetBtn'||el.id==='officeLayoutEditorBtn'||el.id==='officeLayoutResetBtn') return false;
+      if(el.closest('#insortButtonMoveBtn,#insortButtonMoveResetBtn,#officeLayoutEditorBtn,#officeLayoutResetBtn')) return false;
+      if(el.closest('.modal') && !document.body.classList.contains('insort-button-move-active')) return false;
+      if(el.id==='catalogShowAllBtn') return false;
+      return true;
+    });
+  }
+  function applyOne(el){
+    if(!el.dataset.insortMoveKey) el.dataset.insortMoveKey=makeKey(el, candidates().indexOf(el));
+    var data=getOfficeStore()[el.dataset.insortMoveKey]||{x:0,y:0};
+    var x=Number(data.x)||0, y=Number(data.y)||0;
+    el.classList.add('insort-movable-button');
+    var existing=el.style.transform||'';
+    if(!el.dataset.originalTransform) el.dataset.originalTransform=existing;
+    var base=el.dataset.originalTransform||'';
+    var t=(base && base!=='none'?base+' ':'')+'translate('+x+'px, '+y+'px)';
+    el.style.setProperty('transform', t, 'important');
+  }
+  function refresh(){candidates().forEach(applyOne);}
+  function setMode(on){
+    moveMode=!!on;
+    document.body.classList.toggle('insort-button-move-active', moveMode);
+    var b=document.getElementById('insortButtonMoveBtn');
+    if(b) b.textContent=moveMode?'✅ Рух кнопок увімкнено':'🧲 Рухати кнопки';
+    refresh();
+    note(moveMode?'Тепер тягни кнопки мишкою або пальцем':'Режим руху кнопок вимкнено');
+  }
+  function start(e){
+    if(!moveMode || !document.body.classList.contains('office-active')) return;
+    var el=e.target.closest && e.target.closest('.insort-movable-button');
+    if(!el || el.id==='catalogShowAllBtn') return;
+    if(e.target.closest('input,textarea,select,option')) return;
+    refresh();
+    var store=getOfficeStore(); var key=el.dataset.insortMoveKey; var item=store[key]||{x:0,y:0};
+    drag={el:el,key:key,sx:e.clientX,sy:e.clientY,bx:Number(item.x)||0,by:Number(item.y)||0,moved:false};
+    el.classList.add('insort-moving-now');
+    try{el.setPointerCapture(e.pointerId);}catch(_e){}
+    e.preventDefault(); e.stopPropagation();
+  }
+  function move(e){
+    if(!drag) return;
+    var x=Math.round(drag.bx + e.clientX - drag.sx), y=Math.round(drag.by + e.clientY - drag.sy);
+    if(Math.abs(x-drag.bx)>2 || Math.abs(y-drag.by)>2) drag.moved=true;
+    var store=getOfficeStore(); store[drag.key]={x:x,y:y}; setOfficeStore(store); applyOne(drag.el);
+    e.preventDefault(); e.stopPropagation();
+  }
+  function end(e){
+    if(!drag) return;
+    drag.el.classList.remove('insort-moving-now');
+    if(drag.moved) saveSoon();
+    drag=null;
+    if(e){e.preventDefault(); e.stopPropagation();}
+  }
+  function reset(){
+    if(!confirm('Скинути всі пересування кнопок?')) return;
+    setOfficeStore({});
+    document.querySelectorAll('.insort-movable-button').forEach(function(el){el.style.transform=el.dataset.originalTransform||''; delete el.dataset.insortMoveKey;});
+    refresh(); saveSoon();
+  }
+  function addControls(){
+    if(!document.getElementById('insortButtonMoveBtn')){
+      var b=document.createElement('button'); b.id='insortButtonMoveBtn'; b.type='button'; b.textContent='🧲 Рухати кнопки'; b.onclick=function(){setMode(!moveMode);}; document.body.appendChild(b);
+    }
+    if(!document.getElementById('insortButtonMoveResetBtn')){
+      var r=document.createElement('button'); r.id='insortButtonMoveResetBtn'; r.type='button'; r.textContent='↩️ Скинути кнопки'; r.onclick=reset; document.body.appendChild(r);
+    }
+  }
+  function removeOldShowAll(){
+    document.querySelectorAll('#catalogShowAllBtn').forEach(function(el){el.remove();});
+    document.querySelectorAll('[onclick*="showAllCatalog"],[onclick*="toggleShowAllCatalog"]').forEach(function(el){
+      el.removeAttribute('onclick');
+      el.style.setProperty('display','none','important');
+    });
+  }
+  function init(){addControls(); removeOldShowAll(); refresh();}
+  window.insortRefreshMovableButtons=refresh;
+  document.addEventListener('pointerdown',start,true);
+  document.addEventListener('pointermove',move,true);
+  document.addEventListener('pointerup',end,true);
+  document.addEventListener('pointercancel',end,true);
+  document.addEventListener('click',function(e){if(moveMode && e.target.closest && e.target.closest('.insort-movable-button')){e.preventDefault();e.stopPropagation();}},true);
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(init,100);setTimeout(init,900);});
+  window.addEventListener('load',function(){setTimeout(init,300);setTimeout(init,1400);});
+
+  var oldApply=window.applyOfficeContent;
+  if(typeof oldApply==='function'){
+    window.applyOfficeContent=function(){var res=oldApply.apply(this,arguments);setTimeout(refresh,0);return res;};
+  }
+})();
+</script>
+<!-- INSORT CLEAN FINAL PATCH: OLD SHOW ALL REMOVED + OFFICE BUTTON MOVE END -->
+
 </body>
 
 
