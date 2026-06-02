@@ -2,7 +2,6 @@
 
 <html lang="uk">
 <head>
-
 <script>
 if (
   location.hostname === "09fushan90.github.io" ||
@@ -11,33 +10,30 @@ if (
   location.replace("https://insort.kyiv.ua" + location.pathname + location.search + location.hash);
 }
 </script>
-
-  
-  <script>
+<script>
 if (location.pathname === '/InSort') {
   location.replace('/InSort/');
 }
 </script>
-
-<link rel="icon" type="image/jpeg" href="logo.png.jpg">
-<meta property="og:site_name" content="InSort.ua">
-<meta name="application-name" content="InSort.ua">
-<meta name="apple-mobile-web-app-title" content="InSort.ua">
+<link href="logo.png.jpg" rel="icon" type="image/jpeg"/>
+<meta content="InSort.ua" property="og:site_name"/>
+<meta content="InSort.ua" name="application-name"/>
+<meta content="InSort.ua" name="apple-mobile-web-app-title"/>
 <base href="https://insort.kyiv.ua/"/>
-<link rel="canonical" href="https://insort.kyiv.ua/">
-<meta charset="utf-8"/>
-<meta name="robots" content="index, follow"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<link href="https://insort.kyiv.ua/" rel="canonical"/>
+<meta charset="utf-8">
+<meta content="index, follow" name="robots">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
 <meta content="R90ZXlLzp037z_5t419ui0wfGpBEPX-HGW7lTw3vT-c" name="google-site-verification"/>
 <meta content="InSort — магазин електроінструментів Procraft в Україні. Шуруповерти, болгарки, пилки, акумулятори, інструмент для дому та саду." name="description"/>
 <meta content="InSort" name="author"/>
 <meta content="index, follow" name="robots"/>
-<meta name="keywords" content="InSort, інструменти, електроінструмент, Procraft, шуруповерт, болгарка, пила, купити інструмент, магазин інструментів Україна"/>
-<meta property="og:title" content="InSort - Магазин інструментів"/>
-<meta property="og:description" content="Електроінструмент Procraft, шуруповерти, болгарки, пилки, акумулятори та інструменти для дому та саду."/>
-<meta property="og:url" content="https://insort.kyiv.ua/"/>
-<meta property="og:type" content="website"/>
-<meta name="twitter:card" content="summary_large_image"/>
+<meta content="InSort, інструменти, електроінструмент, Procraft, шуруповерт, болгарка, пила, купити інструмент, магазин інструментів Україна" name="keywords"/>
+<meta content="InSort - Магазин інструментів" property="og:title"/>
+<meta content="Електроінструмент Procraft, шуруповерти, болгарки, пилки, акумулятори та інструменти для дому та саду." property="og:description"/>
+<meta content="https://insort.kyiv.ua/" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="summary_large_image" name="twitter:card"/>
 <title>InSort</title>
 <style>
 #loader{
@@ -2300,6 +2296,15 @@ body::before{
   }
 }
 
+
+/* USER BUTTON POSITIONS */
+#catalogReturnBtn{
+transform: translate(200px, 0px) !important;
+}
+#backToHomeBtn{
+transform: translate(-130px, -41px) !important;
+}
+
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -2307,7 +2312,6 @@ body::before{
 <span class="selected-count" id="selectedCount">0</span>
 </button>
 <button id="cardStyleOfficeBtn" onclick="openCardStyleModal()" type="button">🎨 Змінити вигляд картки</button>
-
 <style>
 /* Вертикальна відстань між віконцями як у прикладі */
 .overview-grid{
@@ -2547,8 +2551,6 @@ body::before{
 }
 /* PRODUCT VIEW MODAL VARIANT 5 END */
 </style>
-
-
 <style id="catalog-row-fix">
 #catalogShowAllWrap{
   display:flex !important;
@@ -2566,9 +2568,6 @@ body::before{
   margin:0 !important;
 }
 </style>
-
-
-
 <!-- BUTTON MOVE SYSTEM START: змінюй тільки цифри тут, щоб рухати кнопки -->
 <style id="buttonMoveSystem">
 :root{
@@ -2675,8 +2674,6 @@ a.owner-telegram-btn,
 */
 </style>
 <!-- BUTTON MOVE SYSTEM END -->
-
-
 <style id="insort-button-move-fix">
 :root{
   --catalog-home-top:0px;
@@ -2695,8 +2692,7 @@ a.owner-telegram-btn,
   left:var(--catalog-discount-left) !important;
 }
 </style>
-
-</head>
+</meta></meta></meta></head>
 <body>
 <button id="menuBtn" onclick="toggleMenu()">☰</button>
 <div id="sideMenu">
@@ -2758,7 +2754,7 @@ a.owner-telegram-btn,
 </div>
 </div>
 </header>
-<section id="heroSection" class="hero" data-office-editable="block" data-office-key="hero_section">
+<section class="hero" data-office-editable="block" data-office-key="hero_section" id="heroSection">
 <button class="office-section-edit-btn" data-office-section-edit-btn="" onclick="toggleOfficeSectionEdit('hero_section')" type="button">✏️ Редагувати</button>
 <div class="hero-card">
 <div class="hero-copy">
@@ -2783,7 +2779,7 @@ a.owner-telegram-btn,
 </div>
 </div>
 </section>
-<section id="overviewSection" class="overview-grid" data-office-editable="block" data-office-key="overview_section">
+<section class="overview-grid" data-office-editable="block" data-office-key="overview_section" id="overviewSection">
 <button class="office-add-card-btn" id="addOverviewCardBtn" onclick="addOfficeOverviewCard()" type="button">➕ Додати вікно</button>
 <div class="overview-card" data-office-editable="block" data-office-key="overview_card_1">
 <button class="office-section-edit-btn" data-office-section-edit-btn="" onclick="openOfficeCardTextModal('overview_card_1')" type="button">✏️ Редагувати</button>
@@ -2806,43 +2802,40 @@ a.owner-telegram-btn,
 <div class="overview-card-text" data-office-editable="text" data-office-key="overview_text_4">Новий вигляд акуратно підлаштовується під мобільний екран.</div>
 </div>
 </section>
-
 <section class="ads-section" id="adsSection">
-  <div class="ads-toolbar">
-    <button class="ads-add-btn" onclick="openAdEditModal()" type="button">➕ Додати рекламне фото</button>
-  </div>
-  <div class="ads-slider">
-    <button class="ads-arrow ads-arrow-left" onclick="prevAdSlide()" type="button" aria-label="Попередня реклама">‹</button>
-    <div class="ads-viewport">
-      <div class="ads-track" id="adsList"></div>
-    </div>
-    <button class="ads-arrow ads-arrow-right" onclick="nextAdSlide()" type="button" aria-label="Наступна реклама">›</button>
-  </div>
-  <div class="ads-dots" id="adsDots"></div>
+<div class="ads-toolbar">
+<button class="ads-add-btn" onclick="openAdEditModal()" type="button">➕ Додати рекламне фото</button>
+</div>
+<div class="ads-slider">
+<button aria-label="Попередня реклама" class="ads-arrow ads-arrow-left" onclick="prevAdSlide()" type="button">‹</button>
+<div class="ads-viewport">
+<div class="ads-track" id="adsList"></div>
+</div>
+<button aria-label="Наступна реклама" class="ads-arrow ads-arrow-right" onclick="nextAdSlide()" type="button">›</button>
+</div>
+<div class="ads-dots" id="adsDots"></div>
 </section>
-
 <div class="top-main-categories catalog-hidden" id="topMainCategories" style="display:none !important;"></div>
 <div class="container">
 <div class="catalog-shell" id="catalogSection">
 <div class="catalog-head">
 <div>
-<h2 class="catalog-title"><button type="button" class="catalog-brand-home" onclick="goToHomeScreen()">InSort</button></h2>
+<h2 class="catalog-title"><button class="catalog-brand-home" onclick="goToHomeScreen()" type="button">InSort</button></h2>
 <div class="catalog-subtitle-row">
-  <div class="catalog-subtitle" data-office-editable="text" data-office-key="catalog_subtitle">Знайди потрібний інструмент через пошук або категорії.</div>
-  <div class="catalog-inline-filters">
-    <button class="category-choose-open-btn" onclick="openCategoryChooseModal()" type="button">Обрати категорію</button>
-    <span class="category-choose-current" id="categoryChooseCurrent" style="display:none;"></span>
-    <select id="mainCategoryFilter" onchange="filterMainCategory()" style="display:none;">
-      <option value="">Основні категорії</option>
-    </select>
-    <select id="categoryFilter" onchange="filterCategory()" style="display:none;">
-      <option value="">Категорії</option>
-    </select>
-  </div>
+<div class="catalog-subtitle" data-office-editable="text" data-office-key="catalog_subtitle">Знайди потрібний інструмент через пошук або категорії.</div>
+<div class="catalog-inline-filters">
+<button class="category-choose-open-btn" onclick="openCategoryChooseModal()" type="button">Обрати категорію</button>
+<span class="category-choose-current" id="categoryChooseCurrent" style="display:none;"></span>
+<select id="mainCategoryFilter" onchange="filterMainCategory()" style="display:none;">
+<option value="">Основні категорії</option>
+</select>
+<select id="categoryFilter" onchange="filterCategory()" style="display:none;">
+<option value="">Категорії</option>
+</select>
+</div>
 </div>
 </div>
 <div style="text-align:center;display:flex;gap:8px;flex-wrap:wrap;">
-
 <button id="addProductBtn" onclick="openAddModal()" style="display:none;">Додати товар</button>
 <button id="manageCategoriesBtn" onclick="openCategoryModal()" style="display:none;">Категорії</button>
 <button id="manageMainCategoriesBtn" onclick="openMainCategoryModal()" style="display:none;">Осн. категорії</button>
@@ -2865,39 +2858,31 @@ a.owner-telegram-btn,
 </div>
 <!-- Модали -->
 <div class="modal" id="viewModal">
-  <div class="modal-content product-view-v5" onclick="event.stopPropagation()">
-    <button class="product-v5-close" onclick="closeModal()" aria-label="Закрити">×</button>
-
-    <div class="product-v5-layout">
-      <div class="product-v5-tabs" aria-label="Інформація про товар">
-
-      </div>
-
-      <div class="product-v5-image-zone">
-        <button class="product-v5-arrow product-v5-arrow-left" onclick="prevImage()" type="button">‹</button>
-        <img id="modalImg" onclick="openFullscreen(this.src)" alt="Фото товару" />
-        <button class="product-v5-arrow product-v5-arrow-right" onclick="nextImage()" type="button">›</button>
-      </div>
-
-      <div class="product-v5-info">
-        <div class="product-v5-badge">InSort • Procraft</div>
-        <h3 id="modalTitle"></h3>
-        <p id="modalCategory" class="product-v5-category"></p>
-        <p id="modalPrice" class="product-v5-price"></p>
-        <p id="modalDesc" class="product-v5-desc"></p>
-
-        <div class="product-v5-specs">
-
-        </div>
-
-        <div class="product-v5-actions">
-          <button class="order-btn product-v5-buy" id="modalOrderBtn" onclick="addFromView()">Обрати</button>
-          <button id="editProductBtn" onclick="editFromView()" style="display:none;">Редагувати</button>
-          
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="modal-content product-view-v5" onclick="event.stopPropagation()">
+<button aria-label="Закрити" class="product-v5-close" onclick="closeModal()">×</button>
+<div class="product-v5-layout">
+<div aria-label="Інформація про товар" class="product-v5-tabs">
+</div>
+<div class="product-v5-image-zone">
+<button class="product-v5-arrow product-v5-arrow-left" onclick="prevImage()" type="button">‹</button>
+<img alt="Фото товару" id="modalImg" onclick="openFullscreen(this.src)"/>
+<button class="product-v5-arrow product-v5-arrow-right" onclick="nextImage()" type="button">›</button>
+</div>
+<div class="product-v5-info">
+<div class="product-v5-badge">InSort • Procraft</div>
+<h3 id="modalTitle"></h3>
+<p class="product-v5-category" id="modalCategory"></p>
+<p class="product-v5-price" id="modalPrice"></p>
+<p class="product-v5-desc" id="modalDesc"></p>
+<div class="product-v5-specs">
+</div>
+<div class="product-v5-actions">
+<button class="order-btn product-v5-buy" id="modalOrderBtn" onclick="addFromView()">Обрати</button>
+<button id="editProductBtn" onclick="editFromView()" style="display:none;">Редагувати</button>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="modal" id="editModal">
 <div class="modal-content">
@@ -2929,7 +2914,6 @@ a.owner-telegram-btn,
 <button onclick="closeMainCategoryModal()">Скасувати</button>
 </div>
 </div>
-
 <div class="modal" id="productSectionModal">
 <div class="modal-content">
 <h3>Секції товарів</h3>
@@ -2940,91 +2924,85 @@ a.owner-telegram-btn,
 <button onclick="closeProductSectionModal()">Скасувати</button>
 </div>
 </div>
-
 <div class="modal" id="categoryModal">
 <div class="modal-content category-editor-modal">
 <h3 style="margin-top:0;">Додати підкатегорію</h3>
 <div class="category-editor-note">Назва буде показуватись у фільтрах, а фото — у підкатегоріях при наведенні.</div>
-<div id="categoryList" class="category-editor-list"></div>
+<div class="category-editor-list" id="categoryList"></div>
 <input id="newCategory" placeholder="Назва підкатегорії" type="text"/>
 <label class="category-photo-upload" for="newCategoryImageFile">
-  <img id="newCategoryImagePreview" alt="Фото підкатегорії"/>
-  <span>＋ Додати фото підкатегорії</span>
+<img alt="Фото підкатегорії" id="newCategoryImagePreview"/>
+<span>＋ Додати фото підкатегорії</span>
 </label>
 <input accept="image/*" id="newCategoryImageFile" style="display:none;" type="file"/>
 <textarea id="newCategoryImageUrl" placeholder="Або встав посилання на фото"></textarea>
 <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
-  <button onclick="addCategory()">Додати</button>
-  <button onclick="closeCategoryModal()" style="background:#444;color:#fff;">Скасувати</button>
+<button onclick="addCategory()">Додати</button>
+<button onclick="closeCategoryModal()" style="background:#444;color:#fff;">Скасувати</button>
 </div>
 </div>
 </div>
-
 <div class="modal" id="adEditModal" onclick="handleModalBackdrop(event, 'adEditModal', closeAdEditModal)">
-  <div class="modal-content">
-    <h3 id="adEditTitle" style="margin:0 0 6px;">Рекламне фото</h3>
-    <div style="color:#b8efb8;font-size:14px;">Додай одне фото для рекламного слайду. Наступні реклами будуть гортатися в цьому ж полі.</div>
-    <label class="ad-upload-box" for="adImageFile">
-      <img id="adImagePreview" alt="Превʼю реклами"/>
-      <div class="ad-upload-empty" id="adUploadEmpty">
-        <div class="ad-upload-icon">＋</div>
-        <div class="ad-upload-title">Натисни, щоб додати фото</div>
-        <div class="ad-upload-text">На одну рекламу можна додати тільки одне фото</div>
-      </div>
-    </label>
-    <input accept="image/*" id="adImageFile" type="file"/>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
-      <button onclick="saveAdPhoto()">Зберегти фото</button>
-      <button onclick="closeAdEditModal()" style="background:#444;color:#fff;">Скасувати</button>
-      <button id="deleteAdBtn" onclick="deleteCurrentAd()" style="background:#c62828;color:#fff;display:none;">Видалити</button>
-    </div>
-  </div>
+<div class="modal-content">
+<h3 id="adEditTitle" style="margin:0 0 6px;">Рекламне фото</h3>
+<div style="color:#b8efb8;font-size:14px;">Додай одне фото для рекламного слайду. Наступні реклами будуть гортатися в цьому ж полі.</div>
+<label class="ad-upload-box" for="adImageFile">
+<img alt="Превʼю реклами" id="adImagePreview"/>
+<div class="ad-upload-empty" id="adUploadEmpty">
+<div class="ad-upload-icon">＋</div>
+<div class="ad-upload-title">Натисни, щоб додати фото</div>
+<div class="ad-upload-text">На одну рекламу можна додати тільки одне фото</div>
 </div>
-
+</label>
+<input accept="image/*" id="adImageFile" type="file"/>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+<button onclick="saveAdPhoto()">Зберегти фото</button>
+<button onclick="closeAdEditModal()" style="background:#444;color:#fff;">Скасувати</button>
+<button id="deleteAdBtn" onclick="deleteCurrentAd()" style="background:#c62828;color:#fff;display:none;">Видалити</button>
+</div>
+</div>
+</div>
 <div class="modal" id="adProductPickerModal">
-  <div class="modal-content cart-modal-content">
-    <div class="cart-header">
-      <h3 style="margin:0;">Обрати товари для реклами</h3>
-      <button onclick="closeAdProductPickerModal()" style="margin:0;">✕</button>
-    </div>
-    <p style="font-size:13px;color:#b8efb8;margin:0 0 10px;">Можна вибрати багато товарів. Натисни “Обрати” під кожним потрібним товаром.</p>
-    <input id="adProductPickerSearch" onkeyup="renderAdProductPicker()" placeholder="Пошук товару..." type="text"/>
-    <div class="ad-picker-list" id="adProductPickerList"></div>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
-      <button onclick="saveAdLinkedProduct()">Зберегти</button>
-      <button onclick="closeAdProductPickerModal()" style="background:#444;color:#fff;">Скасувати</button>
-    </div>
-  </div>
+<div class="modal-content cart-modal-content">
+<div class="cart-header">
+<h3 style="margin:0;">Обрати товари для реклами</h3>
+<button onclick="closeAdProductPickerModal()" style="margin:0;">✕</button>
 </div>
-
+<p style="font-size:13px;color:#b8efb8;margin:0 0 10px;">Можна вибрати багато товарів. Натисни “Обрати” під кожним потрібним товаром.</p>
+<input id="adProductPickerSearch" onkeyup="renderAdProductPicker()" placeholder="Пошук товару..." type="text"/>
+<div class="ad-picker-list" id="adProductPickerList"></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+<button onclick="saveAdLinkedProduct()">Зберегти</button>
+<button onclick="closeAdProductPickerModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
+</div>
+</div>
 <div class="modal" id="adDetailModal" onclick="handleModalBackdrop(event, 'adDetailModal', closeAdDetailModal)">
-  <div class="modal-content cart-modal-content">
-    <div class="cart-header">
-      <h3 style="margin:0;">Товари з реклами</h3>
-      <button onclick="closeAdDetailModal()" style="margin:0;">✕</button>
-    </div>
-    <img id="adDetailImage" class="ad-detail-photo" alt="Реклама"/>
-    <div class="ad-detail-products" id="adDetailProducts"></div>
-  </div>
+<div class="modal-content cart-modal-content">
+<div class="cart-header">
+<h3 style="margin:0;">Товари з реклами</h3>
+<button onclick="closeAdDetailModal()" style="margin:0;">✕</button>
 </div>
-
+<img alt="Реклама" class="ad-detail-photo" id="adDetailImage"/>
+<div class="ad-detail-products" id="adDetailProducts"></div>
+</div>
+</div>
 <div class="modal" id="unavailablePickerModal">
-  <div class="modal-content cart-modal-content">
-    <div class="cart-header">
-      <h3 style="margin:0;">Позначити товари, яких немає</h3>
-      <button onclick="closeUnavailablePickerModal()" style="margin:0;">✕</button>
-    </div>
-    <p style="font-size:13px;color:#b8efb8;margin:0 0 10px;">Натискай “Обрати” під товарами. Вибрані товари будуть показувати червоне “немає” замість ціни.</p>
-    <input id="unavailablePickerSearch" onkeyup="renderUnavailablePicker()" placeholder="Пошук товару..." type="text"/>
-    <div class="ad-picker-list" id="unavailablePickerList"></div>
-    <div class="unavailable-save-row">
-      <button onclick="saveUnavailableProducts()">Зберегти</button>
-      <button onclick="clearUnavailableProducts()" style="background:#181818;color:#fff;border:1px solid rgba(107,255,42,.25);">Очистити всі</button>
-      <button onclick="closeUnavailablePickerModal()" style="background:#444;color:#fff;">Скасувати</button>
-    </div>
-  </div>
+<div class="modal-content cart-modal-content">
+<div class="cart-header">
+<h3 style="margin:0;">Позначити товари, яких немає</h3>
+<button onclick="closeUnavailablePickerModal()" style="margin:0;">✕</button>
 </div>
-
+<p style="font-size:13px;color:#b8efb8;margin:0 0 10px;">Натискай “Обрати” під товарами. Вибрані товари будуть показувати червоне “немає” замість ціни.</p>
+<input id="unavailablePickerSearch" onkeyup="renderUnavailablePicker()" placeholder="Пошук товару..." type="text"/>
+<div class="ad-picker-list" id="unavailablePickerList"></div>
+<div class="unavailable-save-row">
+<button onclick="saveUnavailableProducts()">Зберегти</button>
+<button onclick="clearUnavailableProducts()" style="background:#181818;color:#fff;border:1px solid rgba(107,255,42,.25);">Очистити всі</button>
+<button onclick="closeUnavailablePickerModal()" style="background:#444;color:#fff;">Скасувати</button>
+</div>
+</div>
+</div>
 <div class="modal" id="cartModal" onclick="handleModalBackdrop(event, 'cartModal', closeCartModal)">
 <div class="modal-content cart-modal-content">
 <div class="cart-header">
@@ -3106,32 +3084,8 @@ a.owner-telegram-btn,
 </div>
 </div>
 </div>
-<div class="modal" id="registerModal" onclick="handleModalBackdrop(event, 'registerModal', closeRegisterModal)">
-<div class="modal-content">
-<h3 style="margin-top:0;">Реєстрація</h3>
-<input id="registerName" placeholder="Ім'я" type="text"/>
-<input id="registerEmail" placeholder="Електронна пошта" type="email"/>
-<input id="registerPassword" placeholder="Створіть надійний пароль" type="password"/>
-<div class="password-hint">Мінімум 8 символів, велика літера і цифра.</div>
-<div id="registerStatus"></div>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="registerUser()">Зареєструватися</button>
-<button onclick="closeRegisterModal()" style="background:#444;color:#fff;">Скасувати</button>
-</div>
-</div>
-</div>
-<div class="modal" id="loginModal" onclick="handleModalBackdrop(event, 'loginModal', closeLoginModal)">
-<div class="modal-content">
-<h3 style="margin-top:0;">Вхід</h3>
-<input id="loginEmail" placeholder="Електронна пошта" type="email"/>
-<input id="loginPassword" placeholder="Пароль" type="password"/>
-<div id="loginStatus"></div>
-<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-<button class="register-btn" onclick="loginUser()">Увійти</button>
-<button onclick="closeLoginModal()" style="background:#444;color:#fff;">Скасувати</button>
-</div>
-</div>
-</div>
+
+
 <div class="modal" id="profileModal">
 <div class="modal-content">
 <h3 style="margin-top:0;">Профіль</h3>
@@ -3157,57 +3111,51 @@ a.owner-telegram-btn,
 </div>
 </div>
 <!-- Модалка для редагування маленьких вікон з двома строками -->
-
 <div class="modal" id="cardStyleModal" onclick="handleCardStyleBackdrop(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h3 style="margin:0 0 8px;text-align:center;">Змінити вигляд карток товару</h3>
-    <div style="color:#b8efb8;text-align:center;font-size:13px;margin-bottom:12px;">Ці налаштування змінять картки товарів у каталозі для всіх після натискання «Зберегти для всіх».</div>
-
-    <div class="card-style-checks">
-      <label><input id="csShowImage" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Фото</label>
-      <label><input id="csShowTitle" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Назва</label>
-      <label><input id="csShowPrice" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Ціна</label>
-      <label><input id="csShowButtons" type="checkbox" onchange="updateCardStyleFromInputs(true)"> Кнопки</label>
-    </div>
-
-    <div class="card-style-grid">
-      <div class="card-style-field"><label>Колір фону картки</label><input id="csBg" type="color" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Колір контуру</label><input id="csBorder" type="color" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Колір назви</label><input id="csTitle" type="color" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Колір ціни</label><input id="csPrice" type="color" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Колір фону фото</label><input id="csImageBg" type="color" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Округлення картки: <span id="csRadiusVal"></span>px</label><input id="csRadius" type="range" min="0" max="40" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Розмір шрифту: <span id="csFontVal"></span>px</label><input id="csFont" type="range" min="12" max="30" oninput="updateCardStyleFromInputs(true)"></div>
-      <div class="card-style-field"><label>Розмір фото: <span id="csImageVal"></span>px</label><input id="csImage" type="range" min="80" max="360" oninput="updateCardStyleFromInputs(true)"></div>
-    </div>
-
-    <div id="cardStylePreview">
-      <div id="cardStylePreviewBox">
-        <div id="cardStylePreviewPhoto">ФОТО</div>
-        <div id="cardStylePreviewTitle">Назва товару</div>
-        <div id="cardStylePreviewPrice">2499 грн</div>
-      </div>
-      <div style="color:#dcebdc;font-size:13px;line-height:1.45;">Можна прибрати будь-який елемент картки або повернути його назад. «Скинути» повертає стандартний дизайн.</div>
-    </div>
-
-    <div class="card-style-actions">
-      <button onclick="resetCardStyleEditor()" style="background:#444;color:#fff;">Скинути</button>
-      <button onclick="closeCardStyleModal()" style="background:#222;color:#fff;border:1px solid rgba(107,255,42,.25);">Закрити</button>
-      <button onclick="saveCardStyleForAll()">Зберегти для всіх</button>
-    </div>
-  </div>
+<div class="modal-content" onclick="event.stopPropagation()">
+<h3 style="margin:0 0 8px;text-align:center;">Змінити вигляд карток товару</h3>
+<div style="color:#b8efb8;text-align:center;font-size:13px;margin-bottom:12px;">Ці налаштування змінять картки товарів у каталозі для всіх після натискання «Зберегти для всіх».</div>
+<div class="card-style-checks">
+<label><input id="csShowImage" onchange="updateCardStyleFromInputs(true)" type="checkbox"/> Фото</label>
+<label><input id="csShowTitle" onchange="updateCardStyleFromInputs(true)" type="checkbox"/> Назва</label>
+<label><input id="csShowPrice" onchange="updateCardStyleFromInputs(true)" type="checkbox"/> Ціна</label>
+<label><input id="csShowButtons" onchange="updateCardStyleFromInputs(true)" type="checkbox"/> Кнопки</label>
 </div>
-
+<div class="card-style-grid">
+<div class="card-style-field"><label>Колір фону картки</label><input id="csBg" oninput="updateCardStyleFromInputs(true)" type="color"/></div>
+<div class="card-style-field"><label>Колір контуру</label><input id="csBorder" oninput="updateCardStyleFromInputs(true)" type="color"/></div>
+<div class="card-style-field"><label>Колір назви</label><input id="csTitle" oninput="updateCardStyleFromInputs(true)" type="color"/></div>
+<div class="card-style-field"><label>Колір ціни</label><input id="csPrice" oninput="updateCardStyleFromInputs(true)" type="color"/></div>
+<div class="card-style-field"><label>Колір фону фото</label><input id="csImageBg" oninput="updateCardStyleFromInputs(true)" type="color"/></div>
+<div class="card-style-field"><label>Округлення картки: <span id="csRadiusVal"></span>px</label><input id="csRadius" max="40" min="0" oninput="updateCardStyleFromInputs(true)" type="range"/></div>
+<div class="card-style-field"><label>Розмір шрифту: <span id="csFontVal"></span>px</label><input id="csFont" max="30" min="12" oninput="updateCardStyleFromInputs(true)" type="range"/></div>
+<div class="card-style-field"><label>Розмір фото: <span id="csImageVal"></span>px</label><input id="csImage" max="360" min="80" oninput="updateCardStyleFromInputs(true)" type="range"/></div>
+</div>
+<div id="cardStylePreview">
+<div id="cardStylePreviewBox">
+<div id="cardStylePreviewPhoto">ФОТО</div>
+<div id="cardStylePreviewTitle">Назва товару</div>
+<div id="cardStylePreviewPrice">2499 грн</div>
+</div>
+<div style="color:#dcebdc;font-size:13px;line-height:1.45;">Можна прибрати будь-який елемент картки або повернути його назад. «Скинути» повертає стандартний дизайн.</div>
+</div>
+<div class="card-style-actions">
+<button onclick="resetCardStyleEditor()" style="background:#444;color:#fff;">Скинути</button>
+<button onclick="closeCardStyleModal()" style="background:#222;color:#fff;border:1px solid rgba(107,255,42,.25);">Закрити</button>
+<button onclick="saveCardStyleForAll()">Зберегти для всіх</button>
+</div>
+</div>
+</div>
 <div class="modal" id="officeCardTextModal" onclick="handleOfficeCardTextBackdrop(event)">
 <div class="modal-content">
 <h3 style="margin-top:0;">Редагувати вікно</h3>
-<input id="officeCardTitleInput" placeholder="Заголовок" type="text"/>
+<input id="officeCardTitleInput" placeholder="Заголовок" type="text">
 <textarea id="officeCardTextInput" placeholder="Текст"></textarea>
 <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
 <button onclick="saveOfficeCardTextModal()">Зберегти</button>
 <button onclick="closeOfficeCardTextModal()" style="background:#444;color:#fff;">Скасувати</button>
 </div>
-</div>
+</input></div>
 </div>
 <div class="modal" id="officeTextModal" onclick="handleOfficeTextBackdrop(event)">
 <div class="modal-content">
@@ -6098,7 +6046,6 @@ function isUserRegistered(){
 <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
 <div class="fullscreen-image-wrap" id="fullscreenImageWrap">
 <img alt="Збільшене фото товару" class="fullscreen-image" id="fullscreenImg"/>
-
 <div class="fullscreen-zoom-controls">
 <button aria-label="Збільшити" class="fullscreen-zoom-btn" onclick="zoomInImage(event)" type="button">+</button>
 <button aria-label="Зменшити" class="fullscreen-zoom-btn" onclick="zoomOutImage(event)" type="button">−</button>
@@ -6724,7 +6671,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 })();
 </script>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const catalog = document.querySelector('.container');
@@ -6782,15 +6728,14 @@ function toggleCatalogView(){
   }
 }
 </script>
-
 <!-- CATEGORY CHOOSE MODAL START -->
 <div class="modal" id="categoryChooseModal" onclick="closeCategoryChooseModal(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h2 class="category-choose-title">Категорії</h2>
-    <div class="category-choose-subtitle">Оберіть основну або звичайну категорію</div>
-    <div class="category-choose-list" id="categoryChooseList"></div>
-    <button class="category-choose-close" onclick="closeCategoryChooseModal()" type="button">Закрити</button>
-  </div>
+<div class="modal-content" onclick="event.stopPropagation()">
+<h2 class="category-choose-title">Категорії</h2>
+<div class="category-choose-subtitle">Оберіть основну або звичайну категорію</div>
+<div class="category-choose-list" id="categoryChooseList"></div>
+<button class="category-choose-close" onclick="closeCategoryChooseModal()" type="button">Закрити</button>
+</div>
 </div>
 <script>
 function getSafeCategoryText(value){
@@ -6970,8 +6915,6 @@ function chooseCategoryFromWindow(type, value, label){
 }
 </script>
 <!-- CATEGORY CHOOSE MODAL END -->
-
-
 <script>
 (function officeSearchTypingGuard(){
   function init(){
@@ -7000,9 +6943,6 @@ function chooseCategoryFromWindow(type, value, label){
   }
 })();
 </script>
-
-
-
 <script>
 /* AD FIELD FIX PATCH START — стабільна робота рекламного поля */
 (function(){
@@ -7326,9 +7266,6 @@ function chooseCategoryFromWindow(type, value, label){
 })();
 /* AD FIELD FIX PATCH END */
 </script>
-
-
-
 <!-- SCROLL + ORDER BUTTON FIX START -->
 <style>
 /* Надійний червоний стан кнопки замовлення, навіть якщо інші стилі мають !important */
@@ -7475,9 +7412,6 @@ body.scroll-fixed-by-modal{
 })();
 </script>
 <!-- SCROLL + ORDER BUTTON FIX END -->
-
-
-
 <!-- DOUBLE CLICK CARD STYLE + BACKGROUND SCROLL FIX START -->
 <style>
 html, body{
@@ -7562,9 +7496,6 @@ html.no-scroll{
 })();
 </script>
 <!-- DOUBLE CLICK CARD STYLE + BACKGROUND SCROLL FIX END -->
-
-
-
 <!-- INSORT FILTERS + HOME CLEANUP UPDATE START -->
 <style>
 /* головний екран без старих чорних віконець */
@@ -7757,9 +7688,6 @@ html.no-scroll{
 })();
 </script>
 <!-- INSORT FILTERS + HOME CLEANUP UPDATE END -->
-
-
-
 <!-- FINAL FIXES 2026-05-26 START -->
 <style>
 /* 1) Виправлення вікна товару: стара порожня колонка більше не ламає картку */
@@ -7862,9 +7790,6 @@ body.catalog-open #homeSavedLink{display:none!important;}
 })();
 </script>
 <!-- FINAL FIXES 2026-05-26 END -->
-
-
-
 <!-- USER REQUEST FIX 2026-05-26 19-30 START -->
 <style>
 /* Поле тексту/посилання бачать усі, але редагування тільки в Офісі */
@@ -8154,8 +8079,6 @@ body.office-active .home-link-style-editor{
 })();
 </script>
 <!-- USER REQUEST FIX 2026-05-26 19-30 END -->
-
-
 <!-- FINAL MOBILE CATEGORIES + FILTER FIX 2026-05-26 START -->
 <style>
 /* Жорсткий анти-вилаз за екран */
@@ -8418,10 +8341,6 @@ img,video,canvas,svg{max-width:100%;}
 })();
 </script>
 <!-- FINAL MOBILE CATEGORIES + FILTER FIX 2026-05-26 END -->
-
-
-
-
 <style>
 
 @media (min-width:701px){
@@ -8742,10 +8661,6 @@ img,video,canvas,svg{max-width:100%;}
   }, true);
 })();
 </script>
-
-
-
-
 <style>
 @media (min-width:701px){
   .catalog-shell,.container,.search-box{overflow:visible!important;}
@@ -8899,8 +8814,6 @@ img,video,canvas,svg{max-width:100%;}
   window.addEventListener('load', ()=>setTimeout(()=>{try{renderFiltersPanel();}catch(e){}},600));
 })();
 </script>
-
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // прибрати напис "Усі товари"
@@ -8951,8 +8864,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 300);
 });
 </script>
-
-
 <!-- DESKTOP FILTERS / MOBILE CATEGORIES SEPARATION FIX START -->
 <style>
 /* ПК і ноут: показуємо тільки Фільтри біля пошуку */
@@ -9039,7 +8950,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 </style>
-
 <script>
 (function desktopFiltersMobileCategoriesFix(){
   function applyMode(){
@@ -9082,9 +8992,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 <!-- DESKTOP FILTERS / MOBILE CATEGORIES SEPARATION FIX END -->
-
-
-
 <!-- FULL CATEGORY FILTER RELATION FIX 2026-05-26 START -->
 <style>
 /* Чистий фінальний шар для фільтрів: без білих збоїв і зайвих старих підкатегорій */
@@ -9353,9 +9260,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 <!-- FULL CATEGORY FILTER RELATION FIX 2026-05-26 END -->
-
-
-
 <!-- EMPTY CATEGORY FILTER PANEL HEIGHT FIX 2026-05-26 START -->
 <style>
 /* Фікс: коли в категорії немає товарів, каталог більше не стискається і білий блок фільтрів не перекриває область товарів */
@@ -9494,8 +9398,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 <!-- EMPTY CATEGORY FILTER PANEL HEIGHT FIX 2026-05-26 END -->
-
-
 <!-- FILTER DROPDOWN NO WHITE CUT FIX 2026-05-27 START -->
 <style>
 @media (min-width:701px){
@@ -9648,8 +9550,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 <!-- FILTER DROPDOWN NO WHITE CUT FIX 2026-05-27 END -->
-
-
 <script>
 /* FIX 2026-05-27: перемикач "показати весь каталог / показати головний товар" біля початку пошуку */
 document.addEventListener('keydown', function(e){
@@ -9660,8 +9560,6 @@ document.addEventListener('keydown', function(e){
   }
 }, true);
 </script>
-
-
 <style>
 
 /* FIX 2026-05-27: напис показати весь товар праворуч на рівні з пошуком */
@@ -9711,8 +9609,6 @@ document.addEventListener('keydown', function(e){
 }
 
 </style>
-
-
 <!-- FIX 2026-05-27: "показати весь каталог" між назвою та пошуком, по лівому краю пошуку -->
 <style>
 #catalogSection > #catalogShowAllWrap.catalog-show-all-wrap,
@@ -9807,7 +9703,6 @@ document.addEventListener('keydown', function(e){
   });
 })();
 </script>
-
 <!-- MANUAL SUBCATEGORY LINKS START -->
 <style>
 #subCategoryLinkModal .modal-content{max-width:720px;border-radius:26px;background:#101010;color:#fff;border:1px solid rgba(107,255,42,.25);text-align:left;}
@@ -9825,17 +9720,17 @@ document.addEventListener('keydown', function(e){
 @media(max-width:700px){.sub-link-list{grid-template-columns:1fr;}#subCategoryLinkModal .modal-content{padding:18px;}}
 </style>
 <div class="modal" id="subCategoryLinkModal" onclick="closeSubCategoryLinkModal(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="sub-link-head">
-      <h3 class="sub-link-title">Підкатегорії для: <span class="sub-link-main" id="subLinkMainName"></span></h3>
-    </div>
-    <div class="sub-link-note">Постав галочки біля підкатегорій, які мають показуватись всередині цієї основної категорії. Після збереження фільтри будуть брати звʼязок саме звідси.</div>
-    <div id="subLinkList" class="sub-link-list"></div>
-    <div class="sub-link-actions">
-      <button type="button" onclick="saveSubCategoryLinks()">Зберегти</button>
-      <button type="button" style="background:#444;color:#fff;" onclick="closeSubCategoryLinkModal()">Скасувати</button>
-    </div>
-  </div>
+<div class="modal-content" onclick="event.stopPropagation()">
+<div class="sub-link-head">
+<h3 class="sub-link-title">Підкатегорії для: <span class="sub-link-main" id="subLinkMainName"></span></h3>
+</div>
+<div class="sub-link-note">Постав галочки біля підкатегорій, які мають показуватись всередині цієї основної категорії. Після збереження фільтри будуть брати звʼязок саме звідси.</div>
+<div class="sub-link-list" id="subLinkList"></div>
+<div class="sub-link-actions">
+<button onclick="saveSubCategoryLinks()" type="button">Зберегти</button>
+<button onclick="closeSubCategoryLinkModal()" style="background:#444;color:#fff;" type="button">Скасувати</button>
+</div>
+</div>
 </div>
 <script>
 (function manualSubCategoryLinks(){
@@ -9993,9 +9888,6 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 <!-- MANUAL SUBCATEGORY LINKS END -->
-
-
-
 <!-- FILTER PANEL HEIGHT FIX START -->
 <style>
 @media (min-width:701px){
@@ -10046,9 +9938,6 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 <!-- FILTER PANEL HEIGHT FIX END -->
-
-
-
 <script>
 /* OFFICE LAYOUT DRAG EDITOR START */
 (function(){
@@ -10273,8 +10162,6 @@ document.addEventListener('keydown', function(e){
 })();
 /* OFFICE LAYOUT DRAG EDITOR END */
 </script>
-
-
 <script>
 /* LOADER FAILSAFE FIX START */
 (function(){
@@ -10290,7 +10177,6 @@ document.addEventListener('keydown', function(e){
 })();
 /* LOADER FAILSAFE FIX END */
 </script>
-
 <!-- INSORT MOBILE SCROLL + CATEGORY PHOTO + 6H CACHE PATCH START -->
 <style>
 /* Телефон: сторінка завжди нормально листається, якщо не відкрите реальне модальне вікно */
@@ -10413,9 +10299,6 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 <!-- INSORT MOBILE SCROLL + CATEGORY PHOTO + 6H CACHE PATCH END -->
-
-
-
 <!-- MOBILE SECOND SWIPE SCROLL HARD FIX 2026-05-27 START -->
 <style>
 @media (max-width:700px){
@@ -10560,8 +10443,6 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 <!-- MOBILE SECOND SWIPE SCROLL HARD FIX 2026-05-27 END -->
-
-
 <!-- USER FIX 2026-05-29: mobile subcategories + title shift + smaller show catalog -->
 <style>
 /* Кнопка "показати весь каталог" у 2 рази менша */
@@ -10777,9 +10658,6 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 <!-- /USER FIX 2026-05-29 -->
-
-
-
 <!-- FIX 2026-06-01: каталог стартовий екран без заголовка, без білого блоку, робоча кнопка -->
 <style>
   #catalogIntroV2 .catalog-intro-title,
@@ -10840,9 +10718,6 @@ document.addEventListener('keydown', function(e){
   },true);
 })();
 </script>
-
-
-
 <!-- FIX 2026-06-01: каталог-старт без білого блоку + робоча кнопка "Показати весь каталог" -->
 <style>
   /* Прибираємо зайвий заголовок "Каталог InSort" та підпис */
@@ -10971,9 +10846,6 @@ document.addEventListener('keydown', function(e){
   });
 })();
 </script>
-
-
-
 <!-- FIX 2026-06-01: прибрано дубльовану нижню кнопку каталогу + стабільна зелена кнопка -->
 <style>
   /* Стара текстова кнопка "показати весь каталог" більше не показується */
@@ -11072,8 +10944,6 @@ document.addEventListener('keydown', function(e){
   });
 })();
 </script>
-
-
 <!-- FIX 2026-06-01: кнопка "Повернутися на головну" між фільтрами і категоріями -->
 <style>
   #catalogHomeReturnBtn.catalog-home-return-link{
@@ -11131,7 +11001,6 @@ document.addEventListener('keydown', function(e){
     }
   }
 </style>
-
 <script>
 (function(){
   'use strict';
@@ -11247,8 +11116,6 @@ document.addEventListener('keydown', function(e){
   });
 })();
 </script>
-
-
 <style>
 #catalogShowAllWrap{
  display:flex!important;
@@ -11270,8 +11137,6 @@ document.addEventListener('DOMContentLoaded',function(){
   if(wrap && btn){ wrap.insertBefore(btn, wrap.firstChild); }
 });
 </script>
-
-
 <!-- INSORT CLEAN FINAL PATCH: OLD SHOW ALL REMOVED + OFFICE BUTTON MOVE START -->
 <style>
 /* Старий показ усього каталогу повністю вимкнено: залишена тільки нова кнопка всередині catalogIntroV2 */
@@ -11475,11 +11340,134 @@ button#catalogShowAllBtn,
 })();
 </script>
 <!-- INSORT CLEAN FINAL PATCH: OLD SHOW ALL REMOVED + OFFICE BUTTON MOVE END -->
+<!-- PATCH: buttons above search + bigger search START -->
+<style id="insortButtonsAboveSearchBigSearchCss">
+/* Кнопки "Повернутися на головну" і "товар зі знижкою" над пошуком */
+#catalogSection > #catalogShowAllWrap.catalog-show-all-wrap,
+#catalogShowAllWrap.catalog-show-all-wrap{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+  flex-wrap:wrap !important;
+  width:100% !important;
+  margin:0 0 14px 0 !important;
+  padding:0 !important;
+  position:relative !important;
+  z-index:90 !important;
+  order:0 !important;
+}
 
-</body>
+#catalogHomeReturnBtn.insort-catalog-action-btn,
+#catalogDiscountBtn.insort-catalog-action-btn{
+  min-width:230px !important;
+  height:48px !important;
+  min-height:48px !important;
+  padding:12px 22px !important;
+  margin:0 !important;
+  font-size:17px !important;
+  border-radius:18px !important;
+  text-decoration:none !important;
+}
 
+/* Пошук більший */
+#catalogSection > .search-box,
+.catalog-shell > .search-box{
+  display:block !important;
+  width:100% !important;
+  margin:0 0 18px 0 !important;
+}
 
-</html>
+#catalogSection .search-wrapper,
+.catalog-shell .search-wrapper,
+.search-box .search-wrapper{
+  width:100% !important;
+  max-width:none !important;
+  display:block !important;
+}
+
+#catalogSection .search-wrapper input#searchInput,
+.catalog-shell .search-wrapper input#searchInput,
+#searchInput{
+  width:100% !important;
+  height:66px !important;
+  min-height:66px !important;
+  padding:0 24px !important;
+  font-size:21px !important;
+  font-weight:700 !important;
+  border-radius:24px !important;
+  border:2px solid rgba(107,255,42,.35) !important;
+  box-shadow:0 10px 26px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.7) !important;
+  box-sizing:border-box !important;
+}
+
+@media(max-width:700px){
+  #catalogShowAllWrap.catalog-show-all-wrap{
+    gap:8px !important;
+    margin:0 0 12px 0 !important;
+  }
+  #catalogHomeReturnBtn.insort-catalog-action-btn,
+  #catalogDiscountBtn.insort-catalog-action-btn{
+    width:100% !important;
+    min-width:0 !important;
+    height:46px !important;
+    min-height:46px !important;
+    font-size:16px !important;
+    border-radius:16px !important;
+  }
+  #catalogSection .search-wrapper input#searchInput,
+  .catalog-shell .search-wrapper input#searchInput,
+  #searchInput{
+    height:58px !important;
+    min-height:58px !important;
+    padding:0 18px !important;
+    font-size:18px !important;
+    border-radius:20px !important;
+  }
+}
+</style>
+<script id="insortButtonsAboveSearchBigSearchJs">
+(function(){
+  function byId(id){return document.getElementById(id);}
+  function placeButtonsAboveSearch(){
+    var catalog=byId('catalogSection') || document.querySelector('.catalog-shell');
+    if(!catalog) return;
+    var search=catalog.querySelector(':scope > .search-box') || catalog.querySelector('.search-box');
+    var wrap=byId('catalogShowAllWrap');
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.id='catalogShowAllWrap';
+      wrap.className='catalog-show-all-wrap';
+    }
+    if(search && wrap.nextElementSibling!==search){
+      catalog.insertBefore(wrap, search);
+    }
+    var home=byId('catalogHomeReturnBtn');
+    var discount=byId('catalogDiscountBtn');
+    if(home){
+      home.classList.add('insort-catalog-action-btn');
+      home.textContent='Повернутися на головну';
+      if(home.parentElement!==wrap) wrap.appendChild(home);
+    }
+    if(discount){
+      discount.classList.add('insort-catalog-action-btn');
+      if(discount.parentElement!==wrap) wrap.appendChild(discount);
+    }
+    if(home && wrap.firstElementChild!==home) wrap.insertBefore(home, wrap.firstChild);
+    if(home && discount && home.nextElementSibling!==discount) wrap.insertBefore(discount, home.nextSibling);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    placeButtonsAboveSearch();
+    setTimeout(placeButtonsAboveSearch, 300);
+    setTimeout(placeButtonsAboveSearch, 1200);
+  });
+  window.addEventListener('load', function(){
+    placeButtonsAboveSearch();
+    setTimeout(placeButtonsAboveSearch, 600);
+  });
+})();
+</script>
+<!-- PATCH: buttons above search + bigger search END -->
 <!-- FINAL FILTER PANEL CUT/OFF FIX 2026-05-27 START -->
 <style>
 @media (min-width:701px){
@@ -11518,8 +11506,6 @@ button#catalogShowAllBtn,
 }
 </style>
 <!-- FINAL FILTER PANEL CUT/OFF FIX 2026-05-27 END -->
-
-
 <!-- MOBILE SCROLL + HOME SOCIAL RETURN FIX 2026-05-27 START -->
 <style>
 /* Соцкнопки мають бути тільки на головному екрані і не пропадати після повернення з каталогу */
@@ -11639,7 +11625,6 @@ body.catalog-open #homeSocialLinks{
 })();
 </script>
 <!-- MOBILE SCROLL + HOME SOCIAL RETURN FIX 2026-05-27 END -->
-
 <!-- FIX 2026-05-29: підкатегорії тільки у своїх основних категоріях + товари не зникають -->
 <style>
 .category-choose-main-wrap{display:flex;flex-direction:column;gap:8px;}
@@ -11907,7 +11892,6 @@ body.catalog-open #homeSocialLinks{
   window.addEventListener('load', function(){ setTimeout(refreshCategoryFix, 500); });
 })();
 </script>
-
 <!-- FIX 2026-05-29: кнопки Фото / Без фото в основних категоріях -->
 <script>
 (function(){
@@ -12085,7 +12069,6 @@ body.catalog-open #homeSocialLinks{
   }
 })();
 </script>
-
 <!-- FIX 2026-05-30: основні категорії без фото + товари зі знижкою -->
 <style>
 /* У основних категорій фото більше не показуються для покупців */
@@ -12189,19 +12172,17 @@ body.catalog-open #homeSocialLinks{
   border-radius:14px !important;
 }
 </style>
-
 <div class="modal" id="discountModal" onclick="closeDiscountModal(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h3 style="margin-top:0;">Знижка товару</h3>
-    <input id="discountPercentInput" type="number" min="0" max="99" placeholder="Знижка у відсотках, наприклад 10">
-    <input id="discountCustomInput" type="number" min="0" step="1" placeholder="Точна ціна зі знижкою, наприклад 1200">
-    <p style="font-size:13px;color:#b8efb8;line-height:1.35;">Перше поле рахує ціну по відсотку. Друге поле — це точна нова ціна товару, не мінус. Якщо очистити знижку, товар повернеться до звичайної ціни.</p>
-    <button type="button" onclick="saveDiscountModal()">Застосувати</button>
-    <button type="button" style="background:#444;color:#fff;" onclick="clearDiscountModal()">Прибрати знижку</button>
-    <button type="button" style="background:#222;color:#fff;" onclick="closeDiscountModal()">Закрити</button>
-  </div>
+<div class="modal-content" onclick="event.stopPropagation()">
+<h3 style="margin-top:0;">Знижка товару</h3>
+<input id="discountPercentInput" max="99" min="0" placeholder="Знижка у відсотках, наприклад 10" type="number"/>
+<input id="discountCustomInput" min="0" placeholder="Точна ціна зі знижкою, наприклад 1200" step="1" type="number"/>
+<p style="font-size:13px;color:#b8efb8;line-height:1.35;">Перше поле рахує ціну по відсотку. Друге поле — це точна нова ціна товару, не мінус. Якщо очистити знижку, товар повернеться до звичайної ціни.</p>
+<button onclick="saveDiscountModal()" type="button">Застосувати</button>
+<button onclick="clearDiscountModal()" style="background:#444;color:#fff;" type="button">Прибрати знижку</button>
+<button onclick="closeDiscountModal()" style="background:#222;color:#fff;" type="button">Закрити</button>
 </div>
-
+</div>
 <script>
 (function(){
   'use strict';
@@ -12519,7 +12500,6 @@ body.catalog-open #homeSocialLinks{
   window.addEventListener('load', function(){ setTimeout(initDiscountFix, 300); });
 })();
 </script>
-
 <!-- UPDATE 2026-06-01: каталог-лендінг, обране, хіти, статистика, лічильник акції -->
 <style>
 #catalogIntroV2{display:none;margin:0 0 18px;}
@@ -12572,31 +12552,28 @@ body.catalog-preview-v2 .catalog-inline-filters{display:none !important;}
 @media(max-width:900px){.catalog-hit-list{grid-template-columns:repeat(2,minmax(0,1fr));}.favorite-list{grid-template-columns:repeat(2,minmax(0,1fr));}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:600px){.catalog-intro-title{font-size:26px}.catalog-hit-section{padding:14px;border-radius:20px}.catalog-hit-title{font-size:22px}.catalog-hit-card img{height:135px}.favorite-list{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr}.favorite-heart-btn{width:36px;height:36px;font-size:19px}.catalog-show-full-v2 button{width:100%;}}
 </style>
-
 <div class="modal" id="favoritesModal" onclick="closeFavoritesModal(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h2 style="margin-top:0;">❤️ Обране</h2>
-    <div class="favorite-list" id="favoritesList"></div>
-    <button onclick="closeFavoritesModal()" type="button">Закрити</button>
-  </div>
+<div class="modal-content" onclick="event.stopPropagation()">
+<h2 style="margin-top:0;">❤️ Обране</h2>
+<div class="favorite-list" id="favoritesList"></div>
+<button onclick="closeFavoritesModal()" type="button">Закрити</button>
 </div>
-
+</div>
 <div class="modal" id="statsModal" onclick="closeStatsModal(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h2 style="margin-top:0;">📊 Статистика / рейтинг</h2>
-    <div class="stats-grid" id="statsSummary"></div>
-    <h3>🔥 Рейтинг товарів по замовленнях</h3>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px;">
-      <button type="button" onclick="renderStatsModal('day')">День</button>
-      <button type="button" onclick="renderStatsModal('week')">Тиждень</button>
-      <button type="button" onclick="renderStatsModal('month')">Місяць</button>
-      <button type="button" onclick="renderStatsModal('all')">Весь час</button>
-    </div>
-    <div id="statsProducts"></div>
-    <button onclick="closeStatsModal()" type="button">Закрити</button>
-  </div>
+<div class="modal-content" onclick="event.stopPropagation()">
+<h2 style="margin-top:0;">📊 Статистика / рейтинг</h2>
+<div class="stats-grid" id="statsSummary"></div>
+<h3>🔥 Рейтинг товарів по замовленнях</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px;">
+<button onclick="renderStatsModal('day')" type="button">День</button>
+<button onclick="renderStatsModal('week')" type="button">Тиждень</button>
+<button onclick="renderStatsModal('month')" type="button">Місяць</button>
+<button onclick="renderStatsModal('all')" type="button">Весь час</button>
 </div>
-
+<div id="statsProducts"></div>
+<button onclick="closeStatsModal()" type="button">Закрити</button>
+</div>
+</div>
 <script>
 (function(){
   'use strict';
@@ -12683,8 +12660,6 @@ body.catalog-preview-v2 .catalog-inline-filters{display:none !important;}
   window.addEventListener('load',function(){setTimeout(init,400);});
 })();
 </script>
-
-
 <!-- INSORT FINAL STABLE CATALOG FIX 2026-06-01 -->
 <style id="insortFinalStableCatalogCss">
 /* ПК/ноут: фільтри є, кнопки категорій немає */
@@ -12932,8 +12907,6 @@ body.insort-catalog-preview #catalogDiscountBtn.insort-catalog-action-btn{displa
   window.addEventListener('resize',function(){clearTimeout(window.__insortFinalStableResize); window.__insortFinalStableResize=setTimeout(function(){applyResponsiveControls();updateActionButtons();},120);});
 })();
 </script>
-
-
 <!-- INSORT FINAL PATCH 66: stable buttons, responsive filters/category, discount view fix -->
 <style id="insortPatch66Css">
 /* ПК/ноут: тільки фільтри */
@@ -13143,3 +13116,201 @@ body.catalog-full-v2 #catalogDiscountBtn.insort-catalog-action-btn{display:inlin
   window.addEventListener('resize',function(){clearTimeout(window.__insortPatch66Resize);window.__insortPatch66Resize=setTimeout(function(){applyResponsive();ensureButtons();updateButtons();},120);});
 })();
 </script>
+<!-- INSORT GLOBAL CLEANUP / STABILITY PATCH START -->
+<style id="insort-global-cleanup-style">
+/* Один фінальний блок керування важливими елементами. Міняй тільки ці змінні. */
+:root{
+  --insort-accent:#90ee90;
+  --insort-green:#6bff2a;
+  --insort-black:#101010;
+  --insort-white:#ffffff;
+  --home-btn-move-x:0px;
+  --home-btn-move-y:0px;
+  --discount-btn-move-x:0px;
+  --discount-btn-move-y:0px;
+  --catalog-actions-gap:10px;
+  --catalog-action-height:54px;
+  --catalog-action-radius:18px;
+  --catalog-search-height:58px;
+  --catalog-search-font:18px;
+}
+*{box-sizing:border-box;}
+html,body{max-width:100%;overflow-x:hidden;}
+body{min-height:100vh;}
+img{max-width:100%;}
+button,input,select,textarea{font-family:inherit;}
+button{touch-action:manipulation;}
+/* Захист від вічного loader */
+#loader.force-hide{display:none!important;opacity:0!important;pointer-events:none!important;}
+/* Правильний скрол сторінки на телефоні */
+@media(max-width:700px){
+  html:not(.no-scroll),body:not(.no-scroll){height:auto!important;min-height:100%!important;overflow-y:auto!important;touch-action:auto!important;-webkit-overflow-scrolling:touch;}
+  .container,.catalog-shell,.hero,.overview-grid,.ads-section{overflow:visible!important;}
+}
+/* Модальні вікна не ламають скрол у середині */
+.modal{overscroll-behavior:contain;}
+.modal[style*="display: flex"],.modal.is-open{display:flex!important;}
+.modal-content{max-height:calc(100dvh - 28px)!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;}
+/* Картки товарів без обрізання фото */
+.products{display:grid!important;gap:16px!important;grid-template-columns:repeat(2,minmax(0,1fr));}
+@media(min-width:900px){.products{grid-template-columns:repeat(4,minmax(0,1fr));}}
+.product{min-width:0!important;width:100%!important;max-width:100%!important;overflow:hidden!important;}
+.product img{width:100%!important;object-fit:contain!important;border-radius:14px!important;border:none!important;}
+.product h4,.product p{overflow-wrap:anywhere;word-break:break-word;}
+/* Один стабільний блок для кнопок над пошуком */
+#catalogShowAllWrap,
+.catalog-show-all-wrap,
+.insort-catalog-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:var(--catalog-actions-gap)!important;
+  flex-wrap:wrap!important;
+  width:100%!important;
+  margin:0 0 10px 0!important;
+  padding:0!important;
+  position:relative!important;
+  z-index:20!important;
+}
+#catalogHomeReturnBtn,
+#catalogDiscountBtn,
+#catalogReturnBtn,
+.insort-catalog-action-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:var(--catalog-action-height)!important;
+  padding:12px 24px!important;
+  border-radius:var(--catalog-action-radius)!important;
+  border:1px solid rgba(107,255,42,.35)!important;
+  background:#fff!important;
+  color:#000!important;
+  font-size:18px!important;
+  font-weight:900!important;
+  line-height:1.1!important;
+  text-decoration:none!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.14)!important;
+  margin:0!important;
+  cursor:pointer!important;
+}
+#catalogHomeReturnBtn{transform:translate(var(--home-btn-move-x),var(--home-btn-move-y))!important;}
+#catalogDiscountBtn{transform:translate(var(--discount-btn-move-x),var(--discount-btn-move-y))!important;}
+#catalogDiscountBtn.active{background:linear-gradient(135deg,var(--insort-accent),#49d71c)!important;color:#071007!important;}
+.search-box{width:100%!important;margin:0 0 12px 0!important;}
+.search-wrapper{width:100%!important;}
+.search-wrapper input{
+  width:100%!important;
+  min-height:var(--catalog-search-height)!important;
+  font-size:var(--catalog-search-font)!important;
+  padding:16px 18px!important;
+  border-radius:18px!important;
+}
+@media(max-width:700px){
+  #catalogHomeReturnBtn,#catalogDiscountBtn,#catalogReturnBtn,.insort-catalog-action-btn{width:100%!important;font-size:16px!important;}
+  #catalogShowAllWrap,.catalog-show-all-wrap,.insort-catalog-actions{gap:8px!important;}
+  .search-wrapper input{font-size:16px!important;}
+}
+</style>
+<script id="insort-global-cleanup-script">
+(function(){
+  'use strict';
+  if(window.__insortGlobalCleanupLoaded) return;
+  window.__insortGlobalCleanupLoaded=true;
+  function byId(id){return document.getElementById(id);}
+  function qs(sel,root){return (root||document).querySelector(sel);}
+  function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
+  function show(el,display){if(el){el.style.display=display||''; el.hidden=false;}}
+  function hide(el){if(el){el.style.display='none';}}
+  function text(el,value){if(el) el.textContent=value;}
+  function cleanupDuplicateIds(){
+    var seen=Object.create(null);
+    qsa('[id]').forEach(function(el){
+      var id=el.id;
+      if(!id || id.indexOf('${')!==-1) return;
+      if(seen[id]){
+        /* Видаляємо тільки реальні дублікати DOM, щоб кнопки/модалки не ламались. */
+        try{ el.parentNode && el.parentNode.removeChild(el); }catch(e){}
+      }else seen[id]=el;
+    });
+  }
+  function cleanupDuplicateStyles(){
+    var seen=Object.create(null);
+    qsa('style').forEach(function(st){
+      var key=(st.textContent||'').replace(/\s+/g,' ').trim();
+      if(!key) return;
+      if(seen[key]){ try{st.remove();}catch(e){} } else seen[key]=true;
+    });
+  }
+  function forceHideLoader(){
+    var loader=byId('loader');
+    if(loader){loader.classList.add('hide','force-hide'); loader.style.display='none';}
+  }
+  function unlockBodyIfNoModal(){
+    var open=qsa('.modal').some(function(m){
+      var cs=getComputedStyle(m);
+      return cs.display!=='none' && cs.visibility!=='hidden' && cs.opacity!=='0';
+    }) || !!byId('fullscreenViewer') && getComputedStyle(byId('fullscreenViewer')).display!=='none';
+    if(!open){document.documentElement.classList.remove('no-scroll');document.body.classList.remove('no-scroll');}
+  }
+  function ensureCatalogActionButtons(){
+    var shell=qs('#catalogSection') || qs('.catalog-shell') || qs('.container');
+    if(!shell) return;
+    var search=qs('#catalogSection .search-box') || qs('.catalog-shell .search-box') || qs('.search-box');
+    var wrap=byId('catalogShowAllWrap') || qs('.catalog-show-all-wrap') || document.createElement('div');
+    wrap.id='catalogShowAllWrap';
+    wrap.className='catalog-show-all-wrap insort-catalog-actions';
+    var home=byId('catalogHomeReturnBtn') || byId('catalogReturnBtn') || document.createElement('button');
+    home.id='catalogHomeReturnBtn'; home.type='button'; home.className='insort-catalog-action-btn'; text(home,'Повернутися на головну');
+    var disc=byId('catalogDiscountBtn') || document.createElement('button');
+    disc.id='catalogDiscountBtn'; disc.type='button'; disc.className='insort-catalog-action-btn';
+    if(!disc.textContent.trim()) text(disc,'товар зі знижкою');
+    if(home.parentNode!==wrap) wrap.appendChild(home);
+    if(disc.parentNode!==wrap) wrap.appendChild(disc);
+    if(wrap.firstElementChild!==home) wrap.insertBefore(home,wrap.firstChild);
+    if(home.nextElementSibling!==disc) wrap.insertBefore(disc,home.nextSibling);
+    if(search && wrap.parentNode!==search.parentNode) search.parentNode.insertBefore(wrap,search);
+    else if(!wrap.parentNode) shell.insertBefore(wrap,shell.firstChild);
+    home.onclick=function(e){
+      if(e){e.preventDefault();e.stopPropagation();}
+      if(typeof window.returnToCatalogStartV2==='function') window.returnToCatalogStartV2();
+      else if(typeof window.goToHomeScreen==='function') window.goToHomeScreen();
+      else window.scrollTo({top:0,behavior:'smooth'});
+      return false;
+    };
+    disc.onclick=function(e){
+      if(e){e.preventDefault();e.stopPropagation();}
+      if(typeof window.toggleDiscountProducts==='function') return window.toggleDiscountProducts(e);
+      return false;
+    };
+  }
+  function stabilizeImages(){
+    qsa('img').forEach(function(img){
+      img.loading=img.loading||'lazy';
+      img.decoding=img.decoding||'async';
+      if(!img.__insortErrorFixed){
+        img.__insortErrorFixed=true;
+        img.addEventListener('error',function(){
+          this.style.objectFit='contain';
+          this.style.background='#fff';
+          if(!this.alt) this.alt='Фото товару';
+        });
+      }
+    });
+  }
+  function run(){
+    cleanupDuplicateIds();
+    cleanupDuplicateStyles();
+    ensureCatalogActionButtons();
+    stabilizeImages();
+    unlockBodyIfNoModal();
+  }
+  document.addEventListener('DOMContentLoaded',function(){run();setTimeout(run,300);setTimeout(run,1200);setTimeout(forceHideLoader,2500);});
+  window.addEventListener('load',function(){run();setTimeout(run,700);setTimeout(forceHideLoader,1200);});
+  window.addEventListener('resize',function(){clearTimeout(window.__insortCleanupResize);window.__insortCleanupResize=setTimeout(run,120);});
+  document.addEventListener('click',function(){setTimeout(function(){unlockBodyIfNoModal();ensureCatalogActionButtons();},80);},true);
+  window.addEventListener('error',function(){setTimeout(forceHideLoader,1000);});
+})();
+</script>
+<!-- INSORT GLOBAL CLEANUP / STABILITY PATCH END -->
+</body>
+</html>
