@@ -2296,15 +2296,6 @@ body::before{
   }
 }
 
-
-/* USER BUTTON POSITIONS */
-#catalogReturnBtn{
-transform: translate(200px, 0px) !important;
-}
-#backToHomeBtn{
-transform: translate(-130px, -41px) !important;
-}
-
 </style>
 <!-- Кнопка кошика -->
 <button aria-label="Відкрити кошик" id="orderSelectedBtn" onclick="openCartModal()" title="Кошик">
@@ -13312,5 +13303,56 @@ button{touch-action:manipulation;}
 })();
 </script>
 <!-- INSORT GLOBAL CLEANUP / STABILITY PATCH END -->
+
+<!-- USER FINAL BUTTON POSITION FIX START -->
+<style id="userFinalButtonPositionFix">
+/* Реальні кнопки каталогу:
+   catalogDiscountBtn = "товар зі знижкою"
+   catalogHomeReturnBtn = "повернутися на головну"
+*/
+#catalogDiscountBtn{
+  transform: translate(200px, 0px) !important;
+}
+
+#catalogHomeReturnBtn{
+  transform: translate(-130px, -41px) !important;
+}
+</style>
+
+<script id="userFinalButtonPositionFixJs">
+(function(){
+  function applyUserButtonPositions(){
+    var discountBtn = document.getElementById('catalogDiscountBtn');
+    var homeBtn = document.getElementById('catalogHomeReturnBtn');
+
+    if(discountBtn){
+      discountBtn.style.setProperty('transform', 'translate(200px, 0px)', 'important');
+    }
+
+    if(homeBtn){
+      homeBtn.style.setProperty('transform', 'translate(-130px, -41px)', 'important');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', applyUserButtonPositions);
+  window.addEventListener('load', applyUserButtonPositions);
+  document.addEventListener('click', function(){
+    setTimeout(applyUserButtonPositions, 0);
+    setTimeout(applyUserButtonPositions, 100);
+    setTimeout(applyUserButtonPositions, 300);
+  }, true);
+
+  var observer = new MutationObserver(applyUserButtonPositions);
+  observer.observe(document.documentElement, {
+    childList:true,
+    subtree:true,
+    attributes:true,
+    attributeFilter:['style','class']
+  });
+
+  setInterval(applyUserButtonPositions, 500);
+})();
+</script>
+<!-- USER FINAL BUTTON POSITION FIX END -->
 </body>
 </html>
