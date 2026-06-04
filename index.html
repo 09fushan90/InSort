@@ -13049,5 +13049,141 @@ body.discount-only-mode #catalogDiscountBtn{display:inline-flex !important;}
 </script>
 <!-- /INSORT ULTIMATE FIX -->
 
+
+
+<!-- INSORT FIX 2026-06-04: стабільний режим "Товар зі знижкою" без зникання каталогу -->
+<script>
+(function(){
+  'use strict';
+
+  var discountActive = false;
+
+  function byId(id){ return document.getElementById(id); }
+  function show(el, display){
+    if(!el) return;
+    el.classList.remove('catalog-hidden');
+    el.style.removeProperty('visibility');
+    el.style.removeProperty('opacity');
+    el.style.removeProperty('height');
+    el.style.removeProperty('min-height');
+    el.style.removeProperty('overflow');
+    el.style.display = display || '';
+  }
+  function hide(el){ if(el) el.style.display = 'none'; }
+  function isDiscountedProduct(p){
+    return !!(p && (p.hasDiscount === true || p.discountPercent || p.discountCustom));
+  }
+  function discountedList(){
+    try{ return (Array.isArray(window.products) ? window.products : products || []).filter(isDiscountedProduct); }
+    catch(e){ return []; }
+  }
+  function ensureCatalogIsVisible(){
+    var container = document.querySelector('.container');
+    var catalog = byId('catalogSection');
+    var productsBox = byId('products');
+    var search = document.querySelector('#catalogSection > .search-box');
+    var filters = document.querySelector('.catalog-inline-filters');
+    var topCats = byId('topMainCategories');
+    var intro = byId('catalogIntroV2');
+    var ads = byId('adsSection');
+    var header = byId('topHeaderSection');
+    var hero = byId('heroSection');
+    var overview = byId('overviewSection');
+    var returnBtn = byId('catalogReturnBtn');
+    var mainBtn = byId('catalogToggleBtn');
+    var discountBtn = byId('catalogDiscountBtn');
+    var wrap = byId('catalogShowAllWrap');
+
+    show(container, 'block');
+    show(catalog, 'block');
+    show(productsBox, 'grid');
+    show(search, 'block');
+    show(topCats, 'flex');
+    show(wrap, '');
+    if(filters) filters.style.removeProperty('display');
+
+    hide(intro);
+    hide(ads);
+    hide(header);
+    hide(hero);
+    hide(overview);
+
+    document.body.classList.add('catalog-open','catalog-full-v2');
+    document.body.classList.remove('catalog-preview-v2','filters-panel-open');
+    document.body.classList.toggle('discount-only-mode', discountActive);
+
+    if(returnBtn) returnBtn.style.display = 'inline-flex';
+    if(mainBtn) mainBtn.textContent = 'Повернутися';
+    if(discountBtn){
+      discountBtn.style.display = 'inline-flex';
+      discountBtn.classList.toggle('active', discountActive);
+      discountBtn.textContent = discountActive ? 'Повернутися' : 'товар зі знижкою';
+    }
+  }
+  function renderDiscountProducts(){
+    ensureCatalogIsVisible();
+    var list = discountedList();
+    try{
+      if(typeof window.renderProducts === 'function') window.renderProducts(list);
+      var box = byId('products');
+      if(box && !list.length){
+        box.innerHTML = '<div class="filter-no-products">Товарів зі знижкою поки немає.</div>';
+      }
+    }catch(e){}
+    ensureCatalogIsVisible();
+  }
+  function renderAllProductsAfterDiscount(){
+    discountActive = false;
+    document.body.classList.remove('discount-only-mode');
+    ensureCatalogIsVisible();
+    try{
+      if(typeof window.applyAllFilters === 'function') window.applyAllFilters();
+      else if(typeof window.renderProducts === 'function') window.renderProducts(Array.isArray(window.products) ? window.products : products || []);
+    }catch(e){}
+    setTimeout(ensureCatalogIsVisible, 0);
+    setTimeout(ensureCatalogIsVisible, 120);
+  }
+
+  window.toggleDiscountProducts = function(e){
+    if(e){ e.preventDefault(); e.stopPropagation(); }
+    discountActive = !discountActive;
+    if(discountActive){
+      renderDiscountProducts();
+      setTimeout(renderDiscountProducts, 80);
+    }else{
+      renderAllProductsAfterDiscount();
+    }
+    return false;
+  };
+
+  document.addEventListener('click', function(e){
+    var btn = e.target && e.target.closest && e.target.closest('#catalogDiscountBtn');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    window.toggleDiscountProducts(e);
+    return false;
+  }, true);
+
+  document.addEventListener('click', function(e){
+    var home = e.target && e.target.closest && e.target.closest('.brand-title,.logo-mark,.catalog-brand-home,#catalogToggleBtn,#catalogReturnBtn');
+    if(home) discountActive = false;
+  }, true);
+
+  var oldShowFull = window.showFullCatalogV2;
+  window.showFullCatalogV2 = function(){
+    discountActive = false;
+    document.body.classList.remove('discount-only-mode');
+    var res = typeof oldShowFull === 'function' ? oldShowFull.apply(this, arguments) : undefined;
+    setTimeout(function(){
+      var btn = byId('catalogDiscountBtn');
+      if(btn){ btn.textContent = 'товар зі знижкою'; btn.classList.remove('active'); btn.style.display = 'inline-flex'; }
+    }, 80);
+    return res;
+  };
+})();
+</script>
+<!-- /INSORT FIX 2026-06-04 -->
+
 </body>
 </html>
