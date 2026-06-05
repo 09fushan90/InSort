@@ -2695,6 +2695,29 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+
+<!-- FIX 2026-06-06: edit buttons only in Office + unique device counter styles -->
+<style>
+/* Кнопки редагування жорстко приховані для всіх, поки не увімкнений режим Офісу */
+body:not(.office-active) .edit-btn,
+body:not(.office-active) #editProductBtn,
+body:not(.office-active) .office-section-edit-btn,
+body:not(.office-active) .office-add-card-btn,
+body:not(.office-active) .office-card-delete-btn,
+body:not(.office-active) .ad-edit-btn,
+body:not(.office-active) .ad-bind-btn,
+body:not(.office-active) .ad-delete-btn,
+body:not(.office-active) #cardStyleOfficeBtn,
+body:not(.office-active) #manageBestSellersBtn{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+.visitor-unique-card{
+  box-shadow:0 0 0 1px rgba(144,238,144,.25), 0 12px 28px rgba(0,0,0,.24);
+}
+</style>
+
 </head>
 <body>
 <button id="menuBtn" onclick="toggleMenu()">☰</button>
@@ -4316,7 +4339,7 @@ function openViewModal(id){
 
   currentProductId = id;
 
-  if(adminMode){
+  if(adminMode && isAdminUser()){
     document.getElementById("editProductBtn").style.display = "inline-block";
   }else{
     document.getElementById("editProductBtn").style.display = "none";
@@ -4339,6 +4362,10 @@ function openViewModal(id){
 }
 
 function editFromView(){
+  if(!(adminMode && isAdminUser())){
+    try{ showSiteNotice("Редагування доступне тільки в Офісі"); }catch(e){}
+    return;
+  }
   closeModal();
   openEditModal(currentProductId);
 }
@@ -4453,6 +4480,10 @@ function openAddModal(){
 
 // Открытие модалки "редактировать товар"
 function openEditModal(id){
+  if(!(adminMode && isAdminUser())){
+    try{ showSiteNotice("Редагування доступне тільки в Офісі"); }catch(e){}
+    return;
+  }
   const p = products.find(x => x.id === id);
   if(!p) return;
   editingId = id;
@@ -5967,11 +5998,11 @@ function renderProducts(list = products){
       <div class="card-buttons">
         <button class="order-btn ${inCart ? 'added' : ''}">${inCart ? 'В кошику' : 'Обрати'}</button>
         <button class="add-btn">Замовити одразу</button>
-        ${adminMode ? `<button class="edit-btn">Редагувати</button>` : ""}
+        ${(adminMode && isAdminUser()) ? `<button class="edit-btn">Редагувати</button>` : ""}
       </div>
     `;
 
-    if(adminMode){
+    if(adminMode && isAdminUser()){
       const editBtn = div.querySelector('.edit-btn');
       editBtn.addEventListener('click', (e)=>{
         e.stopPropagation();
@@ -13184,6 +13215,145 @@ body.discount-only-mode #catalogDiscountBtn{display:inline-flex !important;}
 })();
 </script>
 <!-- /INSORT FIX 2026-06-04 -->
+
+
+
+<!-- FIX 2026-06-06: лічильник унікальних пристроїв -->
+<script>
+(function(){
+  'use strict';
+  var DEVICE_ID_KEY = 'insort_unique_device_id_v1';
+  var DEVICE_COUNTED_KEY = 'insort_unique_device_counted_v1';
+  var UNIQUE_TOTAL_PATH = 'siteStats/uniqueDevicesTotal';
+  var UNIQUE_DEVICE_PATH = 'siteStats/uniqueDevices';
+
+  function isAdminSafe(){
+    try{ return typeof isAdminUser === 'function' && isAdminUser(); }catch(e){ return false; }
+  }
+
+  function makeDeviceId(){
+    try{
+      if(window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+      if(window.crypto && crypto.getRandomValues){
+        var arr = new Uint32Array(4);
+        crypto.getRandomValues(arr);
+        return Array.from(arr).map(function(n){return n.toString(16);}).join('-') + '-' + Date.now().toString(16);
+      }
+    }catch(e){}
+    return 'dev-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,12);
+  }
+
+  function getDeviceId(){
+    var id = '';
+    try{ id = localStorage.getItem(DEVICE_ID_KEY) || ''; }catch(e){}
+    if(!id){
+      id = makeDeviceId();
+      try{ localStorage.setItem(DEVICE_ID_KEY, id); }catch(e){}
+    }
+    return id;
+  }
+
+  function markLocalCounted(){
+    try{ localStorage.setItem(DEVICE_COUNTED_KEY, '1'); }catch(e){}
+  }
+
+  function isLocalCounted(){
+    try{ return localStorage.getItem(DEVICE_COUNTED_KEY) === '1'; }catch(e){ return false; }
+  }
+
+  async function countThisDeviceOnce(){
+    var id = getDeviceId();
+    if(!id || isLocalCounted()) return;
+
+    try{
+      if(typeof db === 'undefined' || !db || !db.ref) return;
+      var deviceRef = db.ref(UNIQUE_DEVICE_PATH + '/' + id.replace(/[.#$\[\]/]/g, '_'));
+      var snap = await deviceRef.get();
+      if(snap.exists()){
+        markLocalCounted();
+        return;
+      }
+
+      await deviceRef.set({
+        firstVisitAt: Date.now(),
+        userAgent: navigator.userAgent || '',
+        language: navigator.language || '',
+        screen: (screen && screen.width && screen.height) ? (screen.width + 'x' + screen.height) : ''
+      });
+
+      await db.ref(UNIQUE_TOTAL_PATH).transaction(function(current){
+        return (Number(current) || 0) + 1;
+      });
+
+      markLocalCounted();
+    }catch(e){
+      // Якщо Firebase не дозволив запис через правила, не ламаємо сайт.
+      // Локально все одно позначаємо пристрій, щоб не спамити базу повторними спробами.
+      markLocalCounted();
+      try{ console.warn('Unique visitor counter was not saved:', e); }catch(_e){}
+    }
+  }
+
+  async function updateUniqueVisitorsInStats(){
+    if(!isAdminSafe()) return;
+    var summary = document.getElementById('statsSummary');
+    if(!summary) return;
+
+    var total = 0;
+    try{
+      if(typeof db !== 'undefined' && db && db.ref){
+        var snap = await db.ref(UNIQUE_TOTAL_PATH).get();
+        total = Number(snap.val()) || 0;
+      }
+    }catch(e){}
+
+    var old = document.getElementById('uniqueDeviceVisitorsCard');
+    if(old) old.remove();
+
+    var card = document.createElement('div');
+    card.id = 'uniqueDeviceVisitorsCard';
+    card.className = 'stats-card visitor-unique-card';
+    card.innerHTML = '<div class="stats-number">' + total + '</div><div class="stats-label">Унікальних пристроїв</div>';
+    summary.insertBefore(card, summary.firstChild);
+  }
+
+  function wrapStatsModal(){
+    if(window.__insortUniqueVisitorsWrapped) return;
+    window.__insortUniqueVisitorsWrapped = true;
+
+    var oldOpen = window.openStatsModal;
+    if(typeof oldOpen === 'function'){
+      window.openStatsModal = function(){
+        var res = oldOpen.apply(this, arguments);
+        setTimeout(updateUniqueVisitorsInStats, 250);
+        return res;
+      };
+    }
+
+    var oldRender = window.renderStatsModal;
+    if(typeof oldRender === 'function'){
+      window.renderStatsModal = function(){
+        var res = oldRender.apply(this, arguments);
+        setTimeout(updateUniqueVisitorsInStats, 250);
+        return res;
+      };
+    }
+  }
+
+  function initUniqueVisitorFix(){
+    countThisDeviceOnce();
+    wrapStatsModal();
+    setTimeout(updateUniqueVisitorsInStats, 800);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initUniqueVisitorFix);
+  }else{
+    initUniqueVisitorFix();
+  }
+  window.addEventListener('load', function(){ setTimeout(initUniqueVisitorFix, 500); });
+})();
+</script>
 
 </body>
 </html>
