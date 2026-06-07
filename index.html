@@ -7964,7 +7964,7 @@ body.office-active .home-link-style-editor{
 (function(){
   const LINK_KEY='insort_home_custom_link_v1';
   const STYLE_KEY='insort_home_custom_link_style_v1';
-  let catalogShowAll=false;
+  let catalogShowAll=true;
   let lastCatalogList=null;
 
   function adminCanEdit(){
@@ -8123,7 +8123,7 @@ body.office-active .home-link-style-editor{
   window.toggleCatalogView=function(){
     const catalog=document.querySelector('.container');
     const opening=!!(catalog && catalog.classList.contains('catalog-hidden'));
-    if(opening) catalogShowAll=false;
+    if(opening) catalogShowAll=true;
     if(typeof prevToggle==='function') prevToggle.apply(this,arguments);
     ensureCatalogShowAllButton();
     if(opening){
@@ -8138,7 +8138,7 @@ body.office-active .home-link-style-editor{
       lastCatalogList=arr;
       const catalog=document.querySelector('.container');
       const catalogOpen=!!(catalog && !catalog.classList.contains('catalog-hidden'));
-      const limited=(catalogOpen && !catalogShowAll && arr.length>20)?arr.slice(0,20):arr;
+      const limited=arr;
       const res=prevRender.call(this,limited);
       ensureCatalogShowAllButton();
       updateCatalogLimitNote(arr.length);
@@ -14072,6 +14072,92 @@ body.discount-only-mode #catalogDiscountBtn{display:inline-flex !important;}
 })();
 </script>
 <!-- FIX 2026-06-06: real subcategories in filters + hide filters button in discount mode END -->
+
+
+<!-- USER FIX 2026-06-07: hide discount/filter buttons + show all catalog products START -->
+<style>
+  #catalogDiscountBtn,
+  #catalogReturnBtn,
+  #discountReturnInFilters,
+  #filtersWrap,
+  #filtersPanel,
+  .filter-open-btn,
+  .catalog-inline-filters,
+  .discount-products-btn,
+  button[onclick*="toggleDiscountProducts"],
+  button[onclick*="toggleFiltersPanel"]{
+    display:none !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+  }
+  #catalogLimitNote,
+  .catalog-limit-note{
+    display:none !important;
+  }
+</style>
+<script>
+(function(){
+  function hideRequestedButtons(){
+    var selectors = [
+      '#catalogDiscountBtn', '#catalogReturnBtn', '#discountReturnInFilters',
+      '#filtersWrap', '#filtersPanel', '.filter-open-btn', '.catalog-inline-filters',
+      '.discount-products-btn', 'button[onclick*="toggleDiscountProducts"]',
+      'button[onclick*="toggleFiltersPanel"]'
+    ];
+    selectors.forEach(function(sel){
+      document.querySelectorAll(sel).forEach(function(el){
+        el.style.setProperty('display','none','important');
+        el.style.setProperty('visibility','hidden','important');
+        el.style.setProperty('pointer-events','none','important');
+      });
+    });
+    document.querySelectorAll('button, a, span, div').forEach(function(el){
+      var txt=(el.textContent||'').trim().toLowerCase();
+      if(txt === 'товар зі знижкою' || txt === 'фільтри'){
+        el.style.setProperty('display','none','important');
+        el.style.setProperty('visibility','hidden','important');
+        el.style.setProperty('pointer-events','none','important');
+      }
+    });
+  }
+
+  function forceAllCatalogProducts(){
+    try{ window.catalogShowAll = true; }catch(e){}
+    var note=document.getElementById('catalogLimitNote');
+    if(note) note.textContent='';
+    var showAll=document.getElementById('catalogShowAllBtn');
+    if(showAll) showAll.style.setProperty('display','none','important');
+  }
+
+  var oldApply = window.applyAllFilters;
+  if(typeof oldApply === 'function'){
+    window.applyAllFilters = function(){
+      forceAllCatalogProducts();
+      var res = oldApply.apply(this, arguments);
+      hideRequestedButtons();
+      forceAllCatalogProducts();
+      return res;
+    };
+  }
+
+  function boot(){
+    forceAllCatalogProducts();
+    hideRequestedButtons();
+    try{
+      if(Array.isArray(window.products) && typeof window.renderProducts === 'function'){
+        window.renderProducts(window.products);
+      }
+    }catch(e){}
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  window.addEventListener('load', function(){ setTimeout(boot, 100); setTimeout(boot, 800); });
+  new MutationObserver(function(){ hideRequestedButtons(); forceAllCatalogProducts(); })
+    .observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+<!-- USER FIX 2026-06-07: hide discount/filter buttons + show all catalog products END -->
 
 </body>
 </html>
