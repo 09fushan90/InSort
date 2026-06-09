@@ -136,9 +136,8 @@
 
 .seo-text{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
-#officeMenuBtn{
-    display:none !important;
-}
+/* Office ховається/показується тільки через JS, щоб адмін бачив кнопку після входу */
+#officeMenuBtn{display:none;}
 
 </style>
 </head>
@@ -161,7 +160,7 @@
   </div>
   <button class="menu-register-btn" onclick="openOrderHistoryModal()">📦 Історія замовлень</button>
   <a class="menu-location-btn" href="https://maps.app.goo.gl/ZGbhuZCJgETar49n8?g_st=atm" target="_blank" rel="noopener">📍 Місцезнаходження магазину</a>
-  <button class="menu-register-btn" id="officeMenuBtn" onclick="openOffice()" style="display:none !important; margin-top:auto;">🏢 Офіс</button>
+  <button class="menu-register-btn" id="officeMenuBtn" onclick="openOffice()" style="display:none; margin-top:auto;">🏢 Офіс</button>
   <button id="logoutMenuBtn" class="menu-register-btn" onclick="logoutAccount()" style="display:none">🚪 Вийти</button>
   <p class="menu-copy-message" id="copyMessage"></p>
 </nav>
@@ -177,7 +176,7 @@
   <a class="social-circle telegram-circle" href="https://t.me/shop_insort" target="_blank" rel="noopener" aria-label="Telegram InSort"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.04 15.52 8.7 20.2c.5 0 .72-.21.98-.47l2.35-2.25 4.87 3.56c.9.5 1.53.24 1.77-.83l3.2-15.01c.28-1.31-.48-1.82-1.35-1.5L1.72 10.96c-1.28.5-1.26 1.22-.22 1.54l4.81 1.5L17.48 7c.53-.35 1.02-.16.62.2L9.04 15.52z"/></svg></a>
   <a class="social-circle tiktok-circle" href="https://www.tiktok.com/@insort_official" target="_blank" rel="noopener" aria-label="TikTok InSort"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></a>
 </div><button class="cart-menu-btn" onclick="openCart()">🛒 <span>Кошик</span><span class="cart-count" id="cartCount">0</span></button><button class="support-btn" onclick="openSupport()">Підтримка</button><button class="mobile-support-btn" onclick="openSupport()">?</button></div></div></header>
-  <section class="hero"><div class="hero-card"><div><div class="hero-kicker" id="heroKicker">Продаж електроінструментів</div><h1 id="heroTitle">Товари видно одразу — без зайвих кліків</h1><p id="heroText">Новий чистий дизайн для магазину: зліва категорії, справа каталог, зверху рекламна пропозиція, а картка товару відкривається красиво й зрозуміло.</p><div class="hero-buttons"><button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Дивитися каталог</button><button class="secondary" onclick="clearFilters()">Усі товари</button></div></div><div class="hero-visual" id="heroVisual"><img class="hero-photo" id="heroPhotoImg" alt="InSort"><div class="hero-badge" id="heroBadge">Procraft / InSort</div><div class="tool-shape"></div></div></div></section>
+  <section class="hero"><div class="hero-card"><div><div class="hero-kicker" id="heroKicker">Продаж електроінструментів</div><h1 id="heroTitle">Товари видно одразу — без зайвих кліків</h1><p id="heroText">Новий чистий дизайн для магазину: зліва категорії, справа каталог, зверху рекламна пропозиція, а картка товару відкривається красиво й зрозуміло.</p><div class="hero-buttons"><button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Дивитися каталог</button><button class="secondary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Весь каталог</button></div></div><div class="hero-visual" id="heroVisual"><img class="hero-photo" id="heroPhotoImg" alt="InSort"><div class="hero-badge" id="heroBadge">Procraft / InSort</div><div class="tool-shape"></div></div></div></section>
   <section class="ad-section"><div class="ad-card" id="adCard" onclick="openAdModal()"><div class="ad-photo" id="adPhotoBox"><img id="adPhotoImg" alt="Реклама InSort"></div><div class="ad-content"><div class="ad-title" id="adTitle">Рекламне поле</div><div class="ad-text" id="adText">Тут буде головна акція, товар дня або банер. Додай фото і товари через Офіс.</div><div class="ad-products-preview" id="adProductsPreview"></div></div></div></section>
   <main class="shop" id="catalog"><aside class="sidebar"><div class="sidebar-head"><div class="sidebar-title">Категорії</div><div class="sidebar-small">Можна листати прямо тут</div></div><div class="category-list" id="categoryList"></div></aside><section class="content"><div class="catalog-panel"><div class="catalog-top"><div><div class="catalog-title">Каталог товарів</div><div class="catalog-sub" id="catalogSub">Усі товари з твоєї бази</div></div><div class="catalog-tools"><button class="saved-inline-btn" id="savedInlineBtn" onclick="showSaved()">Збережене</button><button class="discount-inline-btn" onclick="showDiscounts()">Товари зі знижкою</button><div class="search"><input id="searchInput" placeholder="Пошук товару..." oninput="renderProducts()"></div></div></div><div class="mobile-cats" id="mobileCats"></div><div class="products" id="products"></div></div></section></main>
 </div>
@@ -243,14 +242,19 @@ function isAdminUser(){
   const user = firebase.auth().currentUser;
   return !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
 }
-function updateOfficeButtonVisibility(){
+function updateOfficeButtonVisibility(user){
   const officeBtn = document.getElementById('officeMenuBtn');
   if(!officeBtn) return;
-  const user = firebase.auth().currentUser;
-  if(user && user.email && user.email.toLowerCase()==='09fushan90@gmail.com'){
-      officeBtn.style.display='flex';
+  user = user || firebase.auth().currentUser;
+  const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+  if(isAdmin){
+      officeBtn.style.setProperty('display','flex','important');
+      officeBtn.hidden = false;
+      officeBtn.removeAttribute('aria-hidden');
   } else {
-      officeBtn.style.display='none';
+      officeBtn.style.setProperty('display','none','important');
+      officeBtn.hidden = true;
+      officeBtn.setAttribute('aria-hidden','true');
   }
 }
 firebase.auth().onAuthStateChanged(updateOfficeButtonVisibility);
@@ -371,6 +375,8 @@ async function loadData(){
     categories=normalizeList(data.categories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.category)).filter(Boolean);
     mainCategories=normalizeList(data.mainCategories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.mainCategory)).filter(Boolean);
     ads=normalizeList(data.ads||data.advertisements);
+    activeMain=''; activeSub=''; discountOnly=false; savedOnly=false;
+    if($('searchInput')) $('searchInput').value='';
     build();
     startHeroRealtime();
   }catch(e){
@@ -429,7 +435,22 @@ function updateDynamicSeo(){
   }catch(e){console.warn('SEO update skipped',e)}
 }
 
-function build(){renderCategories();renderProducts();renderAd();renderHeroSettings();updateDynamicSeo();updateCart();updateSavedUI();$('statProducts').textContent=products.length;$('statCats').textContent=mains().length;/* totalPill removed: social icons are shown instead */}
+function build(){
+  // Каталог завжди стартує в режимі “усі товари”, без додаткової кнопки.
+  if(!discountOnly && !savedOnly){activeMain='';activeSub='';}
+  renderCategories();
+  renderProducts();
+  renderAd();
+  renderHeroSettings();
+  updateDynamicSeo();
+  updateCart();
+  updateSavedUI();
+  const statProducts=$('statProducts');
+  const statCats=$('statCats');
+  if(statProducts)statProducts.textContent=products.length;
+  if(statCats)statCats.textContent=mains().length;
+  updateOfficeButtonVisibility();
+}
 function renderCategories(){const list=$('categoryList'), mob=$('mobileCats'); let html='<button class="cat-btn all-btn '+(!activeMain&&!activeSub&&!discountOnly?'active':'')+'" onclick="clearFilters()"><span>Усі товари</span><span>'+products.length+'</span></button>'; let mh='<button class="'+(!activeMain&&!activeSub?'active':'')+'" onclick="clearFilters()">Усі</button>'; mains().forEach(m=>{const s=subsFor(m),open=low(activeMain)===low(m); const count=products.filter(p=>low(pMain(p))===low(m)||low(pCat(p))===low(m)).length; html+='<div class="cat-group '+(open?'open':'')+'"><button class="cat-btn '+(open&&!activeSub?'active':'')+'" onclick="selectMain(`'+esc(m)+'`)"><span>'+esc(m)+'</span><span>'+count+'</span></button><div class="sub-list">'; s.forEach(sub=>html+='<button class="sub-btn '+(low(activeSub)===low(sub)?'active':'')+'" onclick="selectSub(`'+esc(m)+'`,`'+esc(sub)+'`)">'+esc(sub)+'</button>'); html+='</div></div>'; mh+='<button class="'+(open?'active':'')+'" onclick="selectMain(`'+esc(m)+'`)">'+esc(m)+'</button>'}); list.innerHTML=html; mob.innerHTML=mh}
 function selectMain(m){if(low(activeMain)===low(m)&&!activeSub){activeMain='';activeSub=''}else{activeMain=m;activeSub=''}discountOnly=false;savedOnly=false;renderCategories();renderProducts()} function selectSub(m,s){activeMain=m;activeSub=s;discountOnly=false;savedOnly=false;renderCategories();renderProducts()} function clearFilters(){activeMain='';activeSub='';discountOnly=false;savedOnly=false;$('searchInput').value='';renderCategories();renderProducts()} 
 function showDiscounts(){activeMain='';activeSub='';discountOnly=true;savedOnly=false;renderCategories();renderProducts();document.getElementById('catalog').scrollIntoView({behavior:'smooth'})}
@@ -996,7 +1017,7 @@ async function submitAuth(){const email=$('authEmail').value.trim();const pass=$
 function openProfileModal(){const u=firebase.auth().currentUser;if(!u){openAuthBox('login');return}$('profileContent').innerHTML='<div class="profile-line"><b>Email:</b><br>'+esc(u.email||'')+'</div><div class="profile-line"><b>Ім’я:</b><br>'+esc(u.displayName||'Не вказано')+'</div><button class="big-btn primary" onclick="logoutAccount();closeProfileModal()">Вийти з акаунта</button>';$('profileModal').classList.add('show');document.body.style.overflow='hidden'}
 function closeProfileModal(){$('profileModal').classList.remove('show');document.body.style.overflow=''}
 function logoutAccount(){firebase.auth().signOut().then(()=>{updateAuthUI(null);showToast('Ви вийшли з акаунта')}).catch(()=>showInfo('Помилка','Не вдалося вийти з акаунта. Спробуйте ще раз.'))}
-function updateAuthUI(user){const logged=!!user;if($('loginMenuBtn'))$('loginMenuBtn').style.display=logged?'none':'flex';if($('registerMenuBtn'))$('registerMenuBtn').style.display=logged?'none':'flex';if($('logoutMenuBtn'))$('logoutMenuBtn').style.display=logged?'flex':'none';if($('userBadge'))$('userBadge').textContent=logged?'👤 '+(user.displayName||user.email||'Профіль'):'👤 Профіль';if($('officeMenuBtn'))$('officeMenuBtn').style.display='flex'}
+function updateAuthUI(user){const logged=!!user;if($('loginMenuBtn'))$('loginMenuBtn').style.display=logged?'none':'flex';if($('registerMenuBtn'))$('registerMenuBtn').style.display=logged?'none':'flex';if($('logoutMenuBtn'))$('logoutMenuBtn').style.display=logged?'flex':'none';if($('userBadge'))$('userBadge').textContent=logged?'👤 '+(user.displayName||user.email||'Профіль'):'👤 Профіль';updateOfficeButtonVisibility(user)}
 
 function openRegisterModal(){openAuthBox('register')}
 function closeRegisterModal(){closeAuthBox()}
