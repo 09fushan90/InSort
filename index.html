@@ -135,6 +135,11 @@
 .google-auth-btn:hover{background:#f8f9fa}
 
 .seo-text{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+#officeMenuBtn{
+    display:none !important;
+}
+
 </style>
 </head>
 <body>
@@ -156,7 +161,7 @@
   </div>
   <button class="menu-register-btn" onclick="openOrderHistoryModal()">📦 Історія замовлень</button>
   <a class="menu-location-btn" href="https://maps.app.goo.gl/ZGbhuZCJgETar49n8?g_st=atm" target="_blank" rel="noopener">📍 Місцезнаходження магазину</a>
-  <button class="menu-register-btn" id="officeMenuBtn" onclick="openOffice()" style="display:flex;margin-top:auto;">🏢 Офіс</button>
+  <button class="menu-register-btn" id="officeMenuBtn" onclick="openOffice()" style="display:none !important; margin-top:auto;">🏢 Офіс</button>
   <button id="logoutMenuBtn" class="menu-register-btn" onclick="logoutAccount()" style="display:none">🚪 Вийти</button>
   <p class="menu-copy-message" id="copyMessage"></p>
 </nav>
@@ -207,7 +212,7 @@
 <div class="modal form-modal" id="profileModal"><div class="modal-card"><button class="modal-close" onclick="closeProfileModal()">×</button><h2>Профіль</h2><div id="profileContent"></div></div></div>
 <div class="modal form-modal" id="orderHistoryModal"><div class="modal-card"><button class="modal-close" onclick="closeOrderHistoryModal()">×</button><h2>Історія замовлень</h2><div id="orderHistoryContent"></div></div></div>
 
-<div class="modal office-modal" id="officeModal"><div class="modal-card"><button class="modal-close" onclick="closeOfficePanel()">×</button><h2>Офіс</h2><div class="office-note" id="officeNotice">Офіс відкритий для всіх. Тут можна додати, змінити або видалити товар у базі, а також налаштувати рекламне поле.</div>
+<div class="modal office-modal" id="officeModal"><div class="modal-card"><button class="modal-close" onclick="closeOfficePanel()">×</button><h2>Офіс</h2><div class="office-note" id="officeNotice">Офіс доступний тільки адміну.</div>
 <h3>Головне поле зверху</h3><div class="office-ad-box"><div class="office-grid">
 <div class="office-field"><label>Малий зелений напис</label><input id="officeHeroKicker" placeholder="Продаж електроінструментів"></div>
 <div class="office-field"><label>Заголовок</label><input id="officeHeroTitle" placeholder="Товари видно одразу — без зайвих кліків"></div>
@@ -232,6 +237,26 @@
 <script>
 const firebaseConfig={apiKey:"AIzaSyCPEYu_S1qn9dwCkh22QzyX4-hB4_ecM0A",authDomain:"vesinya-pratsya-shop.firebaseapp.com",databaseURL:"https://vesinya-pratsya-shop-default-rtdb.firebaseio.com",projectId:"vesinya-pratsya-shop",storageBucket:"vesinya-pratsya-shop.firebasestorage.app",messagingSenderId:"352467558248",appId:"1:352467558248:web:fd2c80d6be6d837cff80dd",measurementId:"G-NMM6FYEYT8"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
+const ADMIN_EMAIL='09fushan90@gmail.com';
+
+function isAdminUser(){
+  const user = firebase.auth().currentUser;
+  return !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+}
+function updateOfficeButtonVisibility(){
+  const officeBtn = document.getElementById('officeMenuBtn');
+  if(!officeBtn) return;
+  const user = firebase.auth().currentUser;
+  if(user && user.email && user.email.toLowerCase()==='09fushan90@gmail.com'){
+      officeBtn.style.display='flex';
+  } else {
+      officeBtn.style.display='none';
+  }
+}
+firebase.auth().onAuthStateChanged(updateOfficeButtonVisibility);
+document.addEventListener('DOMContentLoaded', updateOfficeButtonVisibility);
+
+
 let heroSettings={};
 const HERO_LOCAL_KEY='insort_hero_settings_local_v1';
 let heroSaveTimer=null,heroRemoteSaveBusy=false;
@@ -657,7 +682,9 @@ function toggleOwnersMenu(){$('ownersMenu').classList.toggle('open')}
 function toggleOwnerSection(id){$(id).classList.toggle('open')}
 function copyPhone(phone){if(navigator.clipboard){navigator.clipboard.writeText(phone).catch(()=>{})}$('copyMessage').textContent='Номер скопійовано: '+phone;showToast('Номер скопійовано');setTimeout(()=>{$('copyMessage').textContent=''},1800)}
 function showLocationSoon(){showInfo('Місцезнаходження магазину','Цей розділ готовий як окреме вікно. Коли скажеш адресу магазину, я підключу сюди карту, маршрут і кнопку “Прокласти маршрут”.')}
-function openOffice(){setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeList();renderOfficeAdProducts();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
+function openOffice(){
+  if(!isAdminUser()){ showToast('Офіс доступний тільки адміну.'); return; }
+setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeList();renderOfficeAdProducts();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
 
 
 
