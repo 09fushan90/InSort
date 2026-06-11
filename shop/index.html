@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InSort — перехід</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(73,208,24,.25), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(34,158,217,.25), transparent 30%),
+        linear-gradient(135deg,#071007,#101512 55%,#18211c);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:min(520px,100%);
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:34px;
+      padding:34px;
+      text-align:center;
+      box-shadow:0 28px 80px rgba(0,0,0,.35);
+      backdrop-filter:blur(18px);
+    }
+    .logo{
+      width:88px;
+      height:88px;
+      border-radius:26px;
+      margin:0 auto 18px;
+      display:grid;
+      place-items:center;
+      font-size:44px;
+      font-weight:1000;
+      color:#071007;
+      background:linear-gradient(135deg,#90ee90,#49d018);
+      box-shadow:0 16px 40px rgba(73,208,24,.32);
+    }
+    h1{
+      margin:0 0 10px;
+      font-size:42px;
+      letter-spacing:-1px;
+    }
+    p{
+      margin:0 0 26px;
+      color:#d7e4d9;
+      line-height:1.5;
+      font-size:17px;
+    }
+    .buttons{
+      display:grid;
+      gap:16px;
+    }
+    .rainbow-btn{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      min-height:64px;
+      padding:16px 22px;
+      border-radius:22px;
+      text-decoration:none;
+      color:#fff;
+      font-size:18px;
+      font-weight:1000;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .rainbow-btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,#49d018,#90ee90,#229ED9,#7c4dff,#ff3b30,#ffcc00,#49d018);
+      background-size:400% 400%;
+      animation:borderFlow 4s linear infinite;
+      z-index:-2;
+    }
+    .rainbow-btn::after{
+      content:"";
+      position:absolute;
+      inset:3px;
+      border-radius:19px;
+      background:#101512;
+      z-index:-1;
+      transition:.2s;
+    }
+    .rainbow-btn:hover{
+      transform:translateY(-2px);
+    }
+    .rainbow-btn:hover::after{
+      background:#16221b;
+    }
+    .site-btn .icon{
+      width:30px;
+      height:30px;
+      border-radius:10px;
+      background:linear-gradient(135deg,#90ee90,#49d018);
+      color:#071007;
+      display:grid;
+      place-items:center;
+      font-weight:1000;
+    }
+    .tg-btn .tg-icon{
+      width:32px;
+      height:32px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:#229ED9;
+      box-shadow:0 8px 20px rgba(34,158,217,.35);
+    }
+    .tg-btn svg{
+      width:20px;
+      height:20px;
+      fill:#fff;
+      margin-left:-2px;
+    }
+    @keyframes borderFlow{
+      0%{background-position:0% 50%}
+      100%{background-position:400% 50%}
+    }
+    .small{
+      margin-top:22px;
+      font-size:13px;
+      color:#aebbb1;
+    }
+    @media(max-width:520px){
+      .card{padding:26px 18px;border-radius:28px}
+      h1{font-size:34px}
+      .rainbow-btn{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo">I</div>
+    <h1>InSort</h1>
+    <p>Перейдіть за посиланням</p>
+
+    <div class="buttons">
+      <a class="rainbow-btn site-btn" href="https://insort.kyiv.ua" target="_blank" rel="noopener">
+        <span class="icon">I</span>
+        Перейти на сайт
+      </a>
+
+      <a class="rainbow-btn tg-btn" href="https://t.me/shop_insort" target="_blank" rel="noopener">
+        <span class="tg-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.04 15.52 8.7 20.2c.5 0 .72-.21.98-.47l2.35-2.25 4.87 3.56c.9.5 1.53.24 1.77-.83l3.2-15.01c.28-1.31-.48-1.82-1.35-1.5L1.72 10.96c-1.28.5-1.26 1.22-.22 1.54l4.81 1.5L17.48 7c.53-.35 1.02-.16.62.2L9.04 15.52z"/>
+          </svg>
+        </span>
+        Перейти в Telegram
+      </a>
+    </div>
+
+    <div class="small">InSort — каталог різного інструменту та різних брендів</div>
+  </main>
+</body>
+</html>
