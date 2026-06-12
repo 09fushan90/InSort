@@ -118,8 +118,8 @@
 
 /* ===== Перенесена логіка кнопок з index(100): стани картки/кнопки ===== */
 .product.selected{border-color:#ff3b30!important;box-shadow:0 0 0 2px rgba(255,59,48,.22),0 18px 36px rgba(12,22,15,.16)!important}
-.cart-btn.added,.order-btn.added{background:#ff3b30!important;color:#fff!important;box-shadow:0 0 12px rgba(255,59,48,.45)!important}
-.cart-btn.bump,.order-btn.bump{animation:cartBtnPulse .35s ease}
+.cart-btn.added,.order-btn.added,#viewCartBtn.added{background:#ff3b30!important;color:#fff!important;box-shadow:0 0 12px rgba(255,59,48,.45)!important}
+.cart-btn.bump,.order-btn.bump,#viewCartBtn.bump{animation:cartBtnPulse .35s ease}
 @keyframes cartBtnPulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
 
 
@@ -165,6 +165,28 @@
 .office-check-row{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px;background:#f8faf8;border:1px solid var(--line);border-radius:14px;padding:12px 13px;font-weight:1000}
 .office-check-row input{width:20px;height:20px}
 @media(max-width:620px){.home-nav{grid-template-columns:1fr;padding-left:12px;padding-right:12px}.home-section{padding-left:12px;padding-right:12px}.home-section-title{font-size:26px}}
+
+
+
+/* ===== Office v2: розділи, вибір категорій та підкатегорій ===== */
+.office-modal .modal-card{width:min(1120px,100%)!important}
+.office-tabs{position:sticky;top:0;z-index:4;background:#fff;display:flex;gap:8px;flex-wrap:wrap;padding:10px 0 14px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.office-tab-btn{border-radius:999px;padding:12px 16px;background:#f3f7f4;color:#263229;border:1px solid var(--line);font-weight:1000}
+.office-tab-btn.active{background:#101512;color:#fff;border-color:#101512;box-shadow:0 10px 22px rgba(16,21,18,.15)}
+.office-section{display:none}
+.office-section.active{display:block}
+.office-field select{border:1px solid var(--line);border-radius:14px;padding:12px 13px;font-size:15px;background:#f8faf8;font-weight:850;color:#263229}
+.office-category-manager{display:grid;grid-template-columns:minmax(260px,.8fr) 1.2fr;gap:14px}
+.office-cat-card{border:1px solid var(--line);border-radius:20px;background:#fbfdfb;padding:14px}
+.office-cat-list{display:grid;gap:8px;max-height:420px;overflow:auto}
+.office-cat-row{border:1px solid #edf2ee;border-radius:15px;background:#fff;padding:12px;display:grid;gap:8px}
+.office-cat-title{font-weight:1000;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.office-cat-subs{display:flex;gap:6px;flex-wrap:wrap}
+.office-cat-chip{border-radius:999px;background:#eef9ed;color:#20820d;padding:7px 10px;font-size:13px;font-weight:900}
+.office-mini-actions{display:flex;gap:7px;flex-wrap:wrap}
+.office-mini-actions button{border-radius:12px;padding:9px 10px;font-weight:1000;background:#101512;color:#fff}
+.office-mini-actions .danger-btn{background:#ffecec!important;color:#b00000!important}
+@media(max-width:760px){.office-category-manager{grid-template-columns:1fr}.office-tabs{position:relative}.office-tab-btn{flex:1 1 160px}}
 
 </style>
 
@@ -232,13 +254,13 @@
   <section class="home-nav" id="homeNav">
     <button class="home-nav-btn primary-home nav-icon-btn" onclick="showCatalog()"><span class="nav-icon shelf-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="4" rx="2" fill="#101512"/><rect x="7" y="12" width="5" height="12" rx="1.6" fill="#49d018"/><rect x="14" y="12" width="5" height="12" rx="1.6" fill="#90ee90"/><rect x="21" y="12" width="4" height="12" rx="1.4" fill="#49d018"/><rect x="4" y="24" width="24" height="4" rx="2" fill="#101512"/></svg></span><span>Весь каталог</span></button>
     <button class="home-nav-btn nav-icon-btn" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Хіти продажів</span></button>
-    <button class="home-nav-btn nav-icon-btn" onclick="showDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#90ee90" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button>
+    <button class="home-nav-btn nav-icon-btn" onclick="toggleDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#90ee90" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button>
   </section>
   <section class="home-section" id="homeHitsSection"><div class="home-section-card"><div class="home-section-head"><div><div class="home-section-title">Хіти продажів</div><div class="home-section-sub" id="homeHitsSub">Товари, які адмін позначив як хіт</div></div><button class="home-nav-btn nav-icon-btn" style="width:auto;padding:13px 16px" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Дивитися всі хіти</span></button></div><div class="products" id="homeHitsProducts"></div></div></section>
-  <main class="shop catalog-hidden" id="catalog"><aside class="sidebar"><div class="sidebar-head"><div class="sidebar-title">Категорії</div><div class="sidebar-small">Можна листати прямо тут</div></div><div class="category-list" id="categoryList"></div></aside><section class="content"><div class="catalog-panel"><div class="catalog-top"><div><div class="catalog-title">Каталог товарів</div><div class="catalog-sub" id="catalogSub">Усі товари з твоєї бази</div></div><div class="catalog-tools"><button class="saved-inline-btn nav-icon-btn" id="hitsInlineBtn" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Хіти продажів</span></button><button class="saved-inline-btn" id="savedInlineBtn" onclick="showSaved()">Збережене</button><button class="discount-inline-btn nav-icon-btn" onclick="showDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#90ee90" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button><div class="search"><input id="searchInput" placeholder="Пошук товару..." oninput="renderProducts()"></div></div></div><div class="mobile-cats" id="mobileCats"></div><div class="products" id="products"></div></div></section></main>
+  <main class="shop catalog-hidden" id="catalog"><aside class="sidebar"><div class="sidebar-head"><div class="sidebar-title">Категорії</div><div class="sidebar-small">Можна листати прямо тут</div></div><div class="category-list" id="categoryList"></div></aside><section class="content"><div class="catalog-panel"><div class="catalog-top"><div><div class="catalog-title">Каталог товарів</div><div class="catalog-sub" id="catalogSub">Усі товари з твоєї бази</div></div><div class="catalog-tools"><button class="saved-inline-btn nav-icon-btn" id="hitsInlineBtn" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Хіти продажів</span></button><button class="saved-inline-btn" id="savedInlineBtn" onclick="showSaved()">Збережене</button><button class="discount-inline-btn nav-icon-btn" onclick="toggleDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#90ee90" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button><div class="search"><input id="searchInput" placeholder="Пошук товару..." oninput="renderProducts()"></div></div></div><div class="mobile-cats" id="mobileCats"></div><div class="products" id="products"></div></div></section></main>
 </div>
 
-<div class="modal" id="productModal"><div class="modal-card"><button class="modal-close" onclick="closeProduct()">×</button><div class="product-view"><div class="view-image"><div class="view-gallery-wrap"><button type="button" id="viewPrevBtn" class="view-gallery-arrow left" onclick="changeViewImage(-1);event.stopPropagation()">‹</button><img id="viewImg" alt=""><button type="button" id="viewNextBtn" class="view-gallery-arrow right" onclick="changeViewImage(1);event.stopPropagation()">›</button><div id="viewPhotoCounter" class="view-photo-counter"></div></div><div id="viewThumbs" class="view-thumbs"></div></div><div class="view-info"><div class="view-cat" id="viewCat"></div><h2 id="viewTitle"></h2><div class="view-desc" id="viewDesc"></div><div class="view-price" id="viewPrice"></div><div class="view-actions"><button class="big-btn primary" id="viewCartBtn">Додати в кошик</button><a class="big-btn secondary" style="background:#101512;color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" href="https://t.me/Fushan90" target="_blank" rel="noopener">Замовити одразу</a></div></div></div></div></div>
+<div class="modal" id="productModal"><div class="modal-card"><button class="modal-close" onclick="closeProduct()">×</button><div class="product-view"><div class="view-image"><div class="view-gallery-wrap"><button type="button" id="viewPrevBtn" class="view-gallery-arrow left" onclick="changeViewImage(-1);event.stopPropagation()">‹</button><img id="viewImg" alt=""><button type="button" id="viewNextBtn" class="view-gallery-arrow right" onclick="changeViewImage(1);event.stopPropagation()">›</button><div id="viewPhotoCounter" class="view-photo-counter"></div></div><div id="viewThumbs" class="view-thumbs"></div></div><div class="view-info"><div class="view-cat" id="viewCat"></div><h2 id="viewTitle"></h2><div class="view-desc" id="viewDesc"></div><div class="view-price" id="viewPrice"></div><div class="view-actions"><button class="big-btn primary order-btn" id="viewCartBtn">Додати в кошик</button><a class="big-btn secondary" style="background:#101512;color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" href="https://t.me/Fushan90" target="_blank" rel="noopener">Замовити одразу</a></div></div></div></div></div>
 <div class="modal ad-modal" id="adModal"><div class="modal-card"><button class="modal-close" onclick="closeAdModal()">×</button><h2 id="adModalTitle">Реклама</h2><p id="adModalText" style="color:#66736b;line-height:1.5"></p><img class="ad-modal-image" id="adModalImg" alt="Реклама" style="display:none"><h3>Прикріплені товари</h3><div class="ad-linked-products" id="adLinkedProducts"></div></div></div>
 <div class="modal support-modal" id="supportModal"><div class="modal-card"><button class="modal-close" onclick="closeSupport()">×</button><h2>Підтримка</h2>
   <div class="support-block">
@@ -269,6 +291,22 @@
 <div class="modal form-modal" id="orderHistoryModal"><div class="modal-card"><button class="modal-close" onclick="closeOrderHistoryModal()">×</button><h2>Історія замовлень</h2><div id="orderHistoryContent"></div></div></div>
 
 <div class="modal office-modal" id="officeModal"><div class="modal-card"><button class="modal-close" onclick="closeOfficePanel()">×</button><h2>Офіс</h2><div class="office-note" id="officeNotice">Офіс доступний тільки адміну.</div>
+<div class="office-tabs">
+  <button type="button" class="office-tab-btn active" data-office-tab="products" onclick="switchOfficeTab('products')">🛠️ Товари</button>
+  <button type="button" class="office-tab-btn" data-office-tab="ads" onclick="switchOfficeTab('ads')">📢 Реклама</button>
+  <button type="button" class="office-tab-btn" data-office-tab="categories" onclick="switchOfficeTab('categories')">🗂️ Категорії</button>
+  <button type="button" class="office-tab-btn" data-office-tab="hero" onclick="switchOfficeTab('hero')">🏠 Головне поле</button>
+</div>
+<section class="office-section active" id="officeSectionProducts">
+<h3>Додавання товару</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><select id="officeMain" onchange="updateOfficeSubcategorySelect()"><option value="">Спочатку додай або обери категорію</option></select></div><div class="office-field"><label>Підкатегорія</label><select id="officeCat"><option value="">Спочатку обери основну категорію</option></select></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div><h3>Товари з бази</h3><div class="office-list" id="officeProductsList"></div>
+</section>
+<section class="office-section" id="officeSectionAds">
+<h3>Рекламне поле</h3><div class="office-ad-box"><div class="office-grid"><input id="officeAdId" type="hidden"><div class="office-field"><label>Заголовок реклами</label><input id="officeAdTitle" placeholder="Наприклад: Акція тижня"></div><div class="office-field"><label>Короткий текст</label><input id="officeAdText" placeholder="Опис реклами або умови акції"></div><div class="office-field office-full"><label>Фото реклами — файл з комп’ютера</label><input id="officeAdFile" type="file" accept="image/*" onchange="handleAdFile(event)"><img id="officeAdPreview" class="office-ad-preview" alt="Попередній перегляд"></div><div class="office-field office-full"><label>Або посилання / data:image для фото реклами</label><input id="officeAdImage" placeholder="https://... або data:image"></div></div><h4>Усі реклами</h4><div class="office-ads-list" id="officeAdsList"></div><h4>Прикріпити товари до реклами</h4><div class="office-ad-products" id="officeAdProducts"></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeAd()">Зберегти рекламу</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetAdForm()">Очистити рекламу</button><button class="big-btn secondary danger-btn" onclick="deleteOfficeAd()">Видалити рекламу</button></div></div>
+</section>
+<section class="office-section" id="officeSectionCategories">
+<h3>Категорії та підкатегорії</h3><div class="office-category-manager"><div class="office-cat-card"><h4>Додати основну категорію</h4><div class="office-field"><label>Назва основної категорії</label><input id="officeNewMainCategory" placeholder="Наприклад: Акумуляторний інструмент"></div><div class="office-actions"><button class="big-btn primary" onclick="addOfficeMainCategory()">Додати категорію</button></div><h4>Додати підкатегорію</h4><div class="office-field"><label>До якої основної категорії</label><select id="officeSubParent"></select></div><div class="office-field"><label>Назва підкатегорії</label><input id="officeNewSubCategory" placeholder="Наприклад: Шуруповерти"></div><div class="office-actions"><button class="big-btn primary" onclick="addOfficeSubCategory()">Додати підкатегорію</button></div></div><div class="office-cat-card"><h4>Список категорій</h4><div class="office-cat-list" id="officeCategoriesList"></div></div></div>
+</section>
+<section class="office-section" id="officeSectionHero">
 <h3>Головне поле зверху</h3><div class="office-ad-box"><div class="office-grid">
 <div class="office-field"><label>Малий зелений напис</label><input id="officeHeroKicker" placeholder="Продаж електроінструментів"></div>
 <div class="office-field"><label>Заголовок</label><input id="officeHeroTitle" placeholder="Товари видно одразу — без зайвих кліків"></div>
@@ -283,8 +321,7 @@
 <div class="office-field office-full"><label>Фото поля — файл з комп’ютера</label><input id="officeHeroFile" type="file" accept="image/*" onchange="handleHeroFile(event)"><img id="officeHeroPreview" class="office-hero-preview" alt="Попередній перегляд"></div>
 <div class="office-field office-full"><label>Або посилання / data:image для фото</label><input id="officeHeroImage" placeholder="https://... або data:image"></div>
 </div><div class="office-actions"><button class="big-btn primary" onclick="saveHeroSettings()">Зберегти головне поле</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetHeroForm()">Очистити фото</button></div></div>
-<h3>Рекламне поле</h3><div class="office-ad-box"><div class="office-grid"><input id="officeAdId" type="hidden"><div class="office-field"><label>Заголовок реклами</label><input id="officeAdTitle" placeholder="Наприклад: Акція тижня"></div><div class="office-field"><label>Короткий текст</label><input id="officeAdText" placeholder="Опис реклами або умови акції"></div><div class="office-field office-full"><label>Фото реклами — файл з комп’ютера</label><input id="officeAdFile" type="file" accept="image/*" onchange="handleAdFile(event)"><img id="officeAdPreview" class="office-ad-preview" alt="Попередній перегляд"></div><div class="office-field office-full"><label>Або посилання / data:image для фото реклами</label><input id="officeAdImage" placeholder="https://... або data:image"></div></div><h4>Усі реклами</h4><div class="office-ads-list" id="officeAdsList"></div><h4>Прикріпити товари до реклами</h4><div class="office-ad-products" id="officeAdProducts"></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeAd()">Зберегти рекламу</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetAdForm()">Очистити рекламу</button><button class="big-btn secondary danger-btn" onclick="deleteOfficeAd()">Видалити рекламу</button></div></div>
-<h3>Товари</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><input id="officeMain" placeholder="Акумуляторний інструмент"></div><div class="office-field"><label>Підкатегорія</label><input id="officeCat" placeholder="Шуруповерти"></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div><h3>Товари з бази</h3><div class="office-list" id="officeProductsList"></div></div></div>
+</section></div></div>
 <div class="modal form-modal" id="infoModal"><div class="modal-card"><button class="modal-close" onclick="closeInfoModal()">×</button><h2 id="infoTitle">Повідомлення</h2><p id="infoText"></p><button class="big-btn primary" onclick="closeInfoModal()">Зрозуміло</button></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -294,6 +331,9 @@
 const firebaseConfig={apiKey:"AIzaSyCPEYu_S1qn9dwCkh22QzyX4-hB4_ecM0A",authDomain:"vesinya-pratsya-shop.firebaseapp.com",databaseURL:"https://vesinya-pratsya-shop-default-rtdb.firebaseio.com",projectId:"vesinya-pratsya-shop",storageBucket:"vesinya-pratsya-shop.firebasestorage.app",messagingSenderId:"352467558248",appId:"1:352467558248:web:fd2c80d6be6d837cff80dd",measurementId:"G-NMM6FYEYT8"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
 const ADMIN_EMAIL='09fushan90@gmail.com';
+const PUBLIC_SITE_CACHE_PATH='siteCache/publicSnapshot6h';
+const PUBLIC_SITE_CACHE_TTL=6*60*60*1000;
+let insortDataLoadedOnce=false;
 
 function isAdminUser(){
   const user = firebase.auth().currentUser;
@@ -364,7 +404,7 @@ function readDb(path){
     db.ref(path).once('value',snap=>resolve(snap.val()),err=>reject(err));
   });
 }
-let products=[],categories=[],mainCategories=[],ads=[],activeMain='',activeSub='',discountOnly=false,savedOnly=false,hitOnly=false,currentView='home',cart=safeCartLoad(),savedProducts=safeSavedLoad();
+let products=[],categories=[],mainCategories=[],subCategoriesMap={},ads=[],activeMain='',activeSub='',discountOnly=false,savedOnly=false,hitOnly=false,currentView='home',cart=safeCartLoad(),savedProducts=safeSavedLoad();
 let currentAdIndex=0, adSliderTimer=null;
 function safeCartLoad(){try{const saved=JSON.parse(localStorage.getItem('insort_cart_v2')||'[]');return Array.isArray(saved)?saved.filter(Boolean):[]}catch(e){return []}}
 function safeSavedLoad(){try{const saved=JSON.parse(localStorage.getItem('insort_saved_v1')||'[]');return Array.isArray(saved)?saved.map(String):[]}catch(e){return []}}
@@ -441,33 +481,70 @@ function prepareProductIds(){
   savedProducts=savedProducts.filter(id=>valid.has(String(id)));
   saveSavedToStorage();
 }
+async function readFreshCatalogData(){
+  let data=await readDb('catalog')||{};
+
+  // Важливо для телефону: якщо в catalog є тільки налаштування головного поля,
+  // товари все одно дочитуються зі старих кореневих шляхів бази.
+  if(!data.products){
+    const [ps,cs,ms,ss,as]=await Promise.all([
+      readDb('products').catch(()=>null),
+      readDb('categories').catch(()=>null),
+      readDb('mainCategories').catch(()=>null),
+      readDb('subCategories').catch(()=>null),
+      readDb('ads').catch(()=>null)
+    ]);
+    data={...data,products:data.products||ps,categories:data.categories||cs,mainCategories:data.mainCategories||ms,subCategories:data.subCategories||ss,ads:data.ads||as};
+  }
+  return data;
+}
+
+function isValidPublicCache(cache){
+  if(!cache || typeof cache!=='object')return false;
+  const created=Number(cache.createdAt)||0;
+  if(!created)return false;
+  if(Date.now()-created>PUBLIC_SITE_CACHE_TTL)return false;
+  if(!cache.data || typeof cache.data!=='object')return false;
+  return true;
+}
+
+async function readCatalogWithSixHourPublicCache(){
+  // Адмін завжди бачить живу базу й не залежить від кешу.
+  if(isAdminUser())return await readFreshCatalogData();
+
+  const cache=await readDb(PUBLIC_SITE_CACHE_PATH).catch(()=>null);
+  if(isValidPublicCache(cache)){
+    console.log('InSort: використано загальний кеш сайту на 6 годин');
+    return cache.data;
+  }
+
+  // Перший звичайний відвідувач після завершення 6 годин оновлює загальний знімок.
+  const fresh=await readFreshCatalogData();
+  const publicCache={
+    createdAt:Date.now(),
+    expiresAt:Date.now()+PUBLIC_SITE_CACHE_TTL,
+    data:fresh
+  };
+  db.ref(PUBLIC_SITE_CACHE_PATH).set(publicCache).catch(e=>console.warn('Не вдалося записати 6-годинний кеш:',e));
+  return fresh;
+}
+
 async function loadData(){
   try{
-    let data=await readDb('catalog')||{};
-
-    // Важливо для телефону: якщо в catalog є тільки налаштування головного поля,
-    // товари все одно дочитуються зі старих кореневих шляхів бази.
-    if(!data.products){
-      const [ps,cs,ms,as]=await Promise.all([
-        readDb('products').catch(()=>null),
-        readDb('categories').catch(()=>null),
-        readDb('mainCategories').catch(()=>null),
-        readDb('ads').catch(()=>null)
-      ]);
-      data={...data,products:data.products||ps,categories:data.categories||cs,mainCategories:data.mainCategories||ms,ads:data.ads||as};
-    }
+    let data=await readCatalogWithSixHourPublicCache();
 
     heroSettings=mergeHeroSettings(data.heroSettings||{});
     products=normalizeList(data.products);
     prepareProductIds();
     categories=normalizeList(data.categories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.category)).filter(Boolean);
     mainCategories=normalizeList(data.mainCategories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.mainCategory)).filter(Boolean);
+    subCategoriesMap=normalizeSubCategories(data.subCategories||data.subs||{});
     ads=normalizeList(data.ads||data.advertisements);
     currentAdIndex=0;
     activeMain=''; activeSub=''; discountOnly=false; savedOnly=false; hitOnly=false; currentView='home';
     if($('searchInput')) $('searchInput').value='';
     build();
-    startHeroRealtime();
+    if(isAdminUser())startHeroRealtime();
   }catch(e){
     console.error(e);
     $('products').innerHTML='<div class="empty">Не вдалося завантажити базу. Перевір Firebase або інтернет.</div>';
@@ -475,9 +552,23 @@ async function loadData(){
     $('loader').classList.add('hide');
   }
 }
+
+function startInsortAppOnce(){
+  if(insortDataLoadedOnce)return;
+  insortDataLoadedOnce=true;
+  loadData();
+}
 function uniq(a){const out=[];a.forEach(x=>{x=text(x);if(x&&!out.some(y=>low(y)===low(x)))out.push(x)});return out}
-function mains(){const pm=uniq(products.map(pMain).filter(Boolean)); return uniq([...mainCategories,...pm, ...(mainCategories.length||pm.length?[]:products.map(pCat).filter(Boolean))])}
-function subsFor(m){const arr=[];products.forEach(p=>{const pm=pMain(p),pc=pCat(p); if(pc&&low(pm)===low(m)&&low(pc)!==low(m)) arr.push(pc)});return uniq(arr)}
+function normalizeSubCategories(src){
+  const out={};
+  if(src&&typeof src==='object'&&!Array.isArray(src)){
+    Object.keys(src).forEach(k=>{const main=text(k); if(!main)return; out[main]=normalizeList(src[k]).map(x=>typeof x==='string'?x:text(x.name||x.title||x.category||x.subCategory)).filter(Boolean);});
+  }else normalizeList(src).forEach(x=>{const main=text(x.main||x.mainCategory||x.parent||''); const sub=text(x.name||x.title||x.category||x.subCategory||''); if(main&&sub){out[main]=out[main]||[];out[main].push(sub)}});
+  Object.keys(out).forEach(k=>out[k]=uniq(out[k]));
+  return out;
+}
+function mains(){const pm=uniq(products.map(pMain).filter(Boolean)); return uniq([...mainCategories,...Object.keys(subCategoriesMap||{}),...pm, ...(mainCategories.length||pm.length?[]:products.map(pCat).filter(Boolean))])}
+function subsFor(m){const fromMap=(subCategoriesMap&&subCategoriesMap[m])||[]; const arr=[...fromMap];products.forEach(p=>{const pm=pMain(p),pc=pCat(p); if(pc&&low(pm)===low(m)&&low(pc)!==low(m)) arr.push(pc)});return uniq(arr)}
 
 function updateDynamicSeo(){
   try{
@@ -547,6 +638,7 @@ function applyPageView(){
   ['hero','homeAdSection','homeNav','homeHitsSection'].forEach(id=>{const el=$(id);if(el)el.classList.toggle('home-hidden',!home)});
   const cat=$('catalog');
   if(cat)cat.classList.toggle('catalog-hidden',home);
+  updateDiscountButtons();
 }
 function showHome(){currentView='home';activeMain='';activeSub='';discountOnly=false;savedOnly=false;hitOnly=false;if($('searchInput'))$('searchInput').value='';renderCategories();renderProducts();renderHomeHits();applyPageView();window.scrollTo({top:0,behavior:'smooth'});}
 function showCatalog(){currentView='catalog';activeMain='';activeSub='';discountOnly=false;savedOnly=false;hitOnly=false;if($('searchInput'))$('searchInput').value='';renderCategories();renderProducts();applyPageView();document.getElementById('catalog').scrollIntoView({behavior:'smooth'});}
@@ -555,6 +647,33 @@ function renderHomeHits(){const box=$('homeHitsProducts');if(!box)return;const h
 function renderCategories(){const list=$('categoryList'), mob=$('mobileCats'); let html='<button class="cat-btn all-btn '+(!activeMain&&!activeSub&&!discountOnly&&!hitOnly?'active':'')+'" onclick="clearFilters()"><span>Усі товари</span><span>'+products.length+'</span></button>'; let mh='<button class="'+(!activeMain&&!activeSub?'active':'')+'" onclick="clearFilters()">Усі</button>'; mains().forEach(m=>{const s=subsFor(m),open=low(activeMain)===low(m); const count=products.filter(p=>low(pMain(p))===low(m)||low(pCat(p))===low(m)).length; html+='<div class="cat-group '+(open?'open':'')+'"><button class="cat-btn '+(open&&!activeSub?'active':'')+'" onclick="selectMain(`'+esc(m)+'`)"><span>'+esc(m)+'</span><span>'+count+'</span></button><div class="sub-list">'; s.forEach(sub=>html+='<button class="sub-btn '+(low(activeSub)===low(sub)?'active':'')+'" onclick="selectSub(`'+esc(m)+'`,`'+esc(sub)+'`)">'+esc(sub)+'</button>'); html+='</div></div>'; mh+='<button class="'+(open?'active':'')+'" onclick="selectMain(`'+esc(m)+'`)">'+esc(m)+'</button>'}); list.innerHTML=html; mob.innerHTML=mh}
 function selectMain(m){currentView='catalog';if(low(activeMain)===low(m)&&!activeSub){activeMain='';activeSub=''}else{activeMain=m;activeSub=''}discountOnly=false;savedOnly=false;hitOnly=false;renderCategories();renderProducts();applyPageView()} function selectSub(m,s){currentView='catalog';activeMain=m;activeSub=s;discountOnly=false;savedOnly=false;hitOnly=false;renderCategories();renderProducts();applyPageView()} function clearFilters(){currentView='catalog';activeMain='';activeSub='';discountOnly=false;savedOnly=false;hitOnly=false;$('searchInput').value='';renderCategories();renderProducts();applyPageView()} 
 function showDiscounts(){currentView='discounts';activeMain='';activeSub='';discountOnly=true;savedOnly=false;hitOnly=false;if($('searchInput'))$('searchInput').value='';renderCategories();renderProducts();applyPageView();document.getElementById('catalog').scrollIntoView({behavior:'smooth'})}
+function toggleDiscounts(){
+  if(currentView==='discounts'){
+    showHome();
+    return;
+  }
+  showDiscounts();
+}
+function discountTicketIconHtml(){
+  return '<span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#90ee90" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span>';
+}
+function updateDiscountButtons(){
+  const inDiscounts=currentView==='discounts';
+  document.querySelectorAll('.discount-inline-btn, .home-nav-btn').forEach(btn=>{
+    const text=(btn.textContent||'').trim();
+    const isDiscountBtn=btn.classList.contains('discount-inline-btn') || text.includes('Товари зі знижкою') || (inDiscounts && text.includes('Повернутися') && btn.getAttribute('onclick')==='toggleDiscounts()');
+    if(!isDiscountBtn || btn.getAttribute('onclick')!=='toggleDiscounts()') return;
+    if(inDiscounts){
+      btn.innerHTML='<span class="nav-icon" aria-hidden="true">←</span><span>Повернутися</span>';
+      btn.classList.add('active');
+      btn.setAttribute('title','Повернутися на головний екран');
+    }else{
+      btn.innerHTML=discountTicketIconHtml()+'<span>Товари зі знижкою</span>';
+      btn.classList.remove('active');
+      btn.removeAttribute('title');
+    }
+  });
+}
 function filtered(){const q=low($('searchInput').value);return products.filter(p=>{const n=low(pName(p)),c=low(pCat(p)),m=low(pMain(p)); if(q&&!(`${n} ${c} ${m}`.includes(q)))return false; if(discountOnly&&!pIsDiscount(p))return false; if(hitOnly&&!pIsHit(p))return false; if(savedOnly&&!isSaved(getProductId(p,products.indexOf(p))))return false; if(activeSub&&c!==low(activeSub))return false; if(activeMain&&!activeSub&&m!==low(activeMain)&&c!==low(activeMain))return false; return true})}
 function renderProducts(){const arr=filtered();$('catalogSub').textContent=(savedOnly?'Збережене':hitOnly?'Хіти продажів':discountOnly?'Товари зі знижкою':activeSub||activeMain||'Усі товари з твоєї бази')+' • '+arr.length+' шт.'; updateSavedButtonState(); updateHitsButtonState(); $('products').innerHTML=arr.length?arr.map((p,i)=>card(p,products.indexOf(p))).join(''):'<div class="empty">Товарів у цьому розділі поки немає</div>'}
 function getProductId(p,i){return String((p&&p._cartUid)||'product_'+i)}
@@ -605,12 +724,26 @@ function updateSavedButtonState(){
   }
 }
 
+function hitIconHtml(){
+  return '<span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span>';
+}
 function updateHitsButtonState(){
   const b=$('hitsInlineBtn');
   if(b){
+    b.classList.add('nav-icon-btn');
     b.classList.toggle('active',hitOnly);
-    b.textContent='Хіти продажів';
+    if(hitOnly){
+      b.innerHTML='<span class="nav-icon" aria-hidden="true">↩</span><span>Повернутися</span>';
+      b.onclick=function(e){ if(e){e.preventDefault();e.stopPropagation();} returnFromHitsToHome(); };
+    }else{
+      b.innerHTML=hitIconHtml()+'<span>Хіти продажів</span>';
+      b.onclick=function(e){ if(e){e.preventDefault();e.stopPropagation();} showHits(); };
+    }
   }
+}
+function returnFromHitsToHome(){
+  showHome();
+  setTimeout(()=>{const h=$('homeHitsSection'); if(h)h.scrollIntoView({behavior:'smooth',block:'start'});},80);
 }
 
 function showSaved(){
@@ -827,7 +960,7 @@ function copyPhone(phone){if(navigator.clipboard){navigator.clipboard.writeText(
 function showLocationSoon(){showInfo('Місцезнаходження магазину','Цей розділ готовий як окреме вікно. Коли скажеш адресу магазину, я підключу сюди карту, маршрут і кнопку “Прокласти маршрут”.')}
 function openOffice(){
   if(!isAdminUser()){ showToast('Офіс доступний тільки адміну.'); return; }
-setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeList();renderOfficeAdProducts();renderOfficeAdsList();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
+setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeCategoryControls();switchOfficeTab('products');renderOfficeList();renderOfficeAdProducts();renderOfficeAdsList();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
 
 
 
@@ -1125,6 +1258,85 @@ function closeAdDetailModal(){closeAdModal()}
 
 function closeOfficePanel(){$('officeModal').classList.remove('show');document.body.style.overflow='';document.body.classList.remove('office-edit-on')}
 
+
+function switchOfficeTab(tab){
+  document.querySelectorAll('.office-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.officeTab===tab));
+  const map={products:'officeSectionProducts',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
+  Object.values(map).forEach(id=>{const el=$(id); if(el)el.classList.remove('active')});
+  if($(map[tab]))$(map[tab]).classList.add('active');
+  if(tab==='categories')renderOfficeCategoriesList();
+  if(tab==='products')renderOfficeCategoryControls();
+}
+function optionsHtml(items,placeholder){
+  return '<option value="">'+esc(placeholder||'Обрати')+'</option>'+uniq(items).map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
+}
+function renderOfficeCategoryControls(){
+  const ms=mains();
+  if($('officeMain')){
+    const current=$('officeMain').value;
+    $('officeMain').innerHTML=optionsHtml(ms,'Обери основну категорію');
+    if(current)$('officeMain').value=current;
+  }
+  if($('officeSubParent')){
+    const current=$('officeSubParent').value;
+    $('officeSubParent').innerHTML=optionsHtml(ms,'Обери основну категорію');
+    if(current)$('officeSubParent').value=current;
+  }
+  updateOfficeSubcategorySelect();
+  renderOfficeCategoriesList();
+}
+function updateOfficeSubcategorySelect(){
+  if(!$('officeCat'))return;
+  const main=$('officeMain')?$('officeMain').value:'';
+  const current=$('officeCat').value;
+  const subs=main?subsFor(main):[];
+  $('officeCat').innerHTML=optionsHtml(subs, main?'Обери підкатегорію':'Спочатку обери основну категорію');
+  if(current&&subs.some(x=>low(x)===low(current)))$('officeCat').value=current;
+}
+function renderOfficeCategoriesList(){
+  const box=$('officeCategoriesList'); if(!box)return;
+  const ms=mains();
+  box.innerHTML=ms.length?ms.map(m=>{
+    const subs=subsFor(m);
+    return '<div class="office-cat-row"><div class="office-cat-title"><span>'+esc(m)+'</span><button class="danger-btn" onclick="deleteOfficeMainCategory(`'+esc(m)+'`)">Видалити</button></div><div class="office-cat-subs">'+(subs.length?subs.map(s=>'<span class="office-cat-chip">'+esc(s)+' <button onclick="deleteOfficeSubCategory(`'+esc(m)+'`,`'+esc(s)+'`)" style="background:transparent;color:#b00000;font-weight:1000;padding:0 0 0 5px">×</button></span>').join(''):'<span style="color:#66736b;font-weight:850">Підкатегорій ще немає</span>')+'</div></div>';
+  }).join(''):'<div class="empty">Категорій ще немає</div>';
+}
+async function saveOfficeCategories(){
+  mainCategories=uniq(mainCategories);
+  Object.keys(subCategoriesMap).forEach(k=>subCategoriesMap[k]=uniq(subCategoriesMap[k]||[]));
+  try{
+    await Promise.all([db.ref('catalog/mainCategories').set(mainCategories),db.ref('catalog/subCategories').set(subCategoriesMap)]);
+    renderOfficeCategoryControls(); build(); showToast('Категорії збережено');
+  }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося зберегти категорії. Перевір правила Firebase або вхід в адмін-акаунт.')}
+}
+function addOfficeMainCategory(){
+  const name=text($('officeNewMainCategory')?$('officeNewMainCategory').value:'');
+  if(!name){showInfo('Не додано','Вкажи назву основної категорії.');return}
+  if(!mainCategories.some(x=>low(x)===low(name)))mainCategories.push(name);
+  subCategoriesMap[name]=subCategoriesMap[name]||[];
+  if($('officeNewMainCategory'))$('officeNewMainCategory').value='';
+  saveOfficeCategories();
+}
+function addOfficeSubCategory(){
+  const main=text($('officeSubParent')?$('officeSubParent').value:'');
+  const sub=text($('officeNewSubCategory')?$('officeNewSubCategory').value:'');
+  if(!main||!sub){showInfo('Не додано','Обери основну категорію і напиши назву підкатегорії.');return}
+  subCategoriesMap[main]=subCategoriesMap[main]||[];
+  if(!subCategoriesMap[main].some(x=>low(x)===low(sub)))subCategoriesMap[main].push(sub);
+  if($('officeNewSubCategory'))$('officeNewSubCategory').value='';
+  saveOfficeCategories();
+}
+function deleteOfficeMainCategory(main){
+  if(!confirm('Видалити основну категорію "'+main+'"? Товари не видаляються, але категорія зникне зі списку вибору.'))return;
+  mainCategories=mainCategories.filter(x=>low(x)!==low(main));
+  delete subCategoriesMap[main];
+  saveOfficeCategories();
+}
+function deleteOfficeSubCategory(main,sub){
+  subCategoriesMap[main]=(subCategoriesMap[main]||[]).filter(x=>low(x)!==low(sub));
+  saveOfficeCategories();
+}
+
 function recalculateOfficeDiscount(){
   if($('officeDiscountPercent') && text($('officeDiscountPercent').value)){syncOfficeDiscountFromPercent();}
 }
@@ -1142,7 +1354,7 @@ function syncOfficeDiscountFromPrice(){
     $('officeDiscountPercent').value=Math.round((1-sale/base)*100);
   }
 }
-function resetOfficeForm(){['officeEditId','officeName','officePrice','officeDiscountPrice','officeDiscountPercent','officeMain','officeCat','officePhoto','officeDesc'].forEach(id=>{if($(id))$(id).value=''});if($('officeIsHit'))$('officeIsHit').checked=false;selectedProductImages=[];if($('officeProductFile'))$('officeProductFile').value='';renderOfficeProductPreviews();}
+function resetOfficeForm(){['officeEditId','officeName','officePrice','officeDiscountPrice','officeDiscountPercent','officeMain','officeCat','officePhoto','officeDesc'].forEach(id=>{if($(id))$(id).value=''});if($('officeIsHit'))$('officeIsHit').checked=false;selectedProductImages=[];if($('officeProductFile'))$('officeProductFile').value='';renderOfficeCategoryControls();renderOfficeProductPreviews();}
 
 function openUnavailablePickerModal(){showInfo('Немає в асортименті','У цьому файлі окремого вікна вибору немає. Позначення можна робити через поле статусу товару в базі або додати поле outOfStock/status у товар.')}
 function closeUnavailablePickerModal(){closeInfoModal()}
@@ -1158,7 +1370,7 @@ function renderOfficeList(){
     return '<div class="office-item"><div class="office-thumb">'+thumb+'</div><div><div class="office-item-title">'+esc(pName(p))+'</div><div class="office-item-meta">'+esc([pMain(p),pCat(p)].filter(Boolean).join(' / ')||'Без категорії')+' • '+esc(money(pPrice(p)))+(pIsHit(p)?' • ХІТ':'')+(pIsDiscount(p)?' • ЗНИЖКА':'')+'</div></div><div class="office-actions" style="margin:0"><button class="cart-btn" onclick="editOfficeProduct('+i+')">Змінити</button><button class="cart-btn danger-btn" onclick="deleteOfficeProduct('+i+')">Видалити</button></div></div>';
   }).join(''):'<div class="empty">Товарів у базі поки немає</div>';
 }
-function editOfficeProduct(i){const p=products[i]; if(!p)return; selectedProductImages=productImages(p); const img=selectedProductImages[0]||pImg(p); $('officeEditId').value=p.id||i; $('officeName').value=pName(p); $('officePrice').value=pBasePrice(p)||pPrice(p); if($('officeDiscountPrice'))$('officeDiscountPrice').value=pManualDiscountPrice(p)||''; if($('officeDiscountPercent'))$('officeDiscountPercent').value=pDiscountPercent(p)||''; if($('officeIsHit'))$('officeIsHit').checked=pIsHit(p); $('officeMain').value=pMain(p); $('officeCat').value=pCat(p); $('officePhoto').value=img; $('officeDesc').value=pDesc(p); if($('officeProductFile'))$('officeProductFile').value=''; renderOfficeProductPreviews(); $('officeName').focus()}
+function editOfficeProduct(i){const p=products[i]; if(!p)return; switchOfficeTab('products'); renderOfficeCategoryControls(); selectedProductImages=productImages(p); const img=selectedProductImages[0]||pImg(p); $('officeEditId').value=p.id||i; $('officeName').value=pName(p); $('officePrice').value=pBasePrice(p)||pPrice(p); if($('officeDiscountPrice'))$('officeDiscountPrice').value=pManualDiscountPrice(p)||''; if($('officeDiscountPercent'))$('officeDiscountPercent').value=pDiscountPercent(p)||''; if($('officeIsHit'))$('officeIsHit').checked=pIsHit(p); $('officeMain').value=pMain(p); updateOfficeSubcategorySelect(); $('officeCat').value=pCat(p); $('officePhoto').value=img; $('officeDesc').value=pDesc(p); if($('officeProductFile'))$('officeProductFile').value=''; renderOfficeProductPreviews(); $('officeName').focus()}
 async function saveOfficeProduct(){
   const id=text($('officeEditId').value)||db.ref('catalog/products').push().key;
   const manualImg=text($('officePhoto').value);
@@ -1172,7 +1384,7 @@ async function saveOfficeProduct(){
   try{
     await db.ref('catalog/products/'+id).set(product);
     const idx=products.findIndex(x=>text(x.id)===text(id)); if(idx>=0)products[idx]=product; else products.unshift(product);
-    resetOfficeForm(); build(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар збережено в базі')
+    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар збережено в базі')
   }catch(e){
     console.error(e);
     const msg=(e&&e.code==='PERMISSION_DENIED')?'База відхилила запис. Перевір правила Firebase або увійди в адмін-акаунт.':'Не вдалося зберегти товар у Firebase. Я зменшив фото перед збереженням; якщо помилка лишилась — перевір правила доступу до бази.';
@@ -1220,11 +1432,13 @@ function loginUser(){authMode='login';submitAuth()}
 function confirmLogout(){logoutAccount()}
 function logoutUser(){logoutAccount()}
 
-firebase.auth().onAuthStateChanged(updateAuthUI);
+firebase.auth().onAuthStateChanged(user=>{
+  updateAuthUI(user);
+  startInsortAppOnce();
+});
 function submitOrder(){saveOrderAndSupport()}
 function saveOrderAndSupport(){if(!cart.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return}const orders=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');orders.unshift({date:new Date().toLocaleString('uk-UA'),count:cart.reduce((s,x)=>s+x.qty,0),items:cart});localStorage.setItem('insort_orders_v4',JSON.stringify(orders.slice(0,30)));showToast('Замовлення збережено в історії');openSupport()}
 
-loadData();
 </script>
 </body>
 </html>
