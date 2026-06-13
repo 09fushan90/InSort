@@ -951,6 +951,23 @@ const INSORT_BOT_USERNAME='insort_order_bot';
 function makeOrderId(){return 'ord_'+Date.now()+'_'+Math.random().toString(36).slice(2,10)}
 function telegramBotStartUrl(orderId){return 'https://t.me/'+INSORT_BOT_USERNAME+'?start='+encodeURIComponent(orderId)}
 function numberPrice(v){return Number(String(v||0).replace(/[^0-9.,-]/g,'').replace(',','.'))||0}
+function buildBotOrderText(items){
+  const orderItems=normalizeOrderItems(items);
+  const total=orderItems.reduce((sum,x)=>sum+(numberPrice(x.price)*(Number(x.qty)||1)),0);
+  return 'Хочу замовити:\n'+orderItems.map((x,i)=>(i+1)+'. '+x.name+' — '+(Number(x.qty)||1)+' шт.'+(x.price?' — '+money(x.price):'')).join('\n')+'\n\nРазом: '+money(total);
+}
+async function copyOrderTextForBot(items){
+  const text=buildBotOrderText(items);
+  try{
+    await navigator.clipboard.writeText(text);
+    try{sessionStorage.setItem('insort_last_bot_order_text',text)}catch(_){}
+    showToast('Товар скопійовано. У боті натисніть Start, вставте текст і надішліть.');
+    return true;
+  }catch(e){
+    try{sessionStorage.setItem('insort_last_bot_order_text',text)}catch(_){}
+    return false;
+  }
+}
 function normalizeOrderItems(items){return (Array.isArray(items)?items:[]).filter(Boolean).map((x,i)=>({
   name:String(x.name||x.title||('Товар '+(i+1))),
   qty:Math.max(1,Number(x.qty||x.quantity||1)||1),
@@ -960,12 +977,14 @@ function normalizeOrderItems(items){return (Array.isArray(items)?items:[]).filte
 async function openTelegramOrder(items,source){
   const orderItems=normalizeOrderItems(items);
   if(!orderItems.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return false}
+  await copyOrderTextForBot(orderItems);
   const orderId=makeOrderId();
   try{
     await db.ref('orders_temp/'+orderId).set({
       createdAt:new Date().toISOString(),
       source:source||'site',
-      items:orderItems
+      items:orderItems,
+      orderText:buildBotOrderText(orderItems)
     });
     const url=telegramBotStartUrl(orderId);
     window.location.href=url;
