@@ -961,7 +961,6 @@ async function openTelegramOrder(items,source){
   const orderItems=normalizeOrderItems(items);
   if(!orderItems.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return false}
   const orderId=makeOrderId();
-  const popup=window.open('about:blank','_blank','noopener');
   try{
     await db.ref('orders_temp/'+orderId).set({
       createdAt:new Date().toISOString(),
@@ -969,10 +968,9 @@ async function openTelegramOrder(items,source){
       items:orderItems
     });
     const url=telegramBotStartUrl(orderId);
-    if(popup)popup.location.href=url;else window.location.href=url;
+    window.location.href=url;
     return true;
   }catch(e){
-    if(popup)popup.close();
     console.error('Telegram order save error',e);
     showInfo('Не вдалося підключити бота','Сайт не зміг зберегти замовлення для бота у Firebase. Перевір правила Firebase для orders_temp або спробуй ще раз.');
     return false;
