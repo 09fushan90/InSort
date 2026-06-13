@@ -289,7 +289,7 @@
     </div>
   </div>
 </div></div>
-<div class="modal" id="cartModal"><div class="modal-card" style="width:min(620px,100%);padding:30px"><button class="modal-close" onclick="closeCart()">×</button><h2>Кошик</h2><div id="cartItems"></div><div class="view-price" id="cartTotal"></div><div class="checkout-buttons"><button class="big-btn primary" onclick="saveOrderAndSupport()">Оформити через підтримку</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="clearCart()">Очистити кошик</button></div></div></div>
+<div class="modal" id="cartModal"><div class="modal-card" style="width:min(620px,100%);padding:30px"><button class="modal-close" onclick="closeCart()">×</button><h2>Кошик</h2><div id="cartItems"></div><div class="view-price" id="cartTotal"></div><div class="checkout-buttons"><button class="big-btn primary" onclick="saveOrderAndSupport()">Замовити через кошик</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="clearCart()">Очистити кошик</button></div></div></div>
 
 <div class="modal form-modal" id="authModal"><div class="modal-card"><button class="modal-close" onclick="closeAuthBox()">×</button><h2 id="authTitle">Увійти</h2><p id="authHint">Введіть email та пароль.</p><div class="form-field" id="nameField" style="display:none"><label>Ім'я</label><input id="authName" autocomplete="name" placeholder="Ваше ім'я"></div><div class="form-field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="email@example.com"></div><div class="form-field"><label>Пароль</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Мінімум 6 символів"></div><div class="form-error" id="authError"></div><button class="big-btn primary" id="authSubmitBtn" onclick="submitAuth()">Увійти</button><button class="google-auth-btn" id="googleAuthBtn" onclick="googleAuth()"><svg width="20" height="20" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px">
 <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
@@ -947,6 +947,37 @@ function clearCart(){cart=[];saveCartToStorage();updateSelectedUI();renderCartMo
 function openCheckoutModal(){saveOrderAndSupport()}
 function closeCheckoutModal(){}
 function buildOrderMessage(){const t=getCartTotals();return 'Вітаю! Хочу замовити товари з InSort:\n'+cart.map((x,i)=>(i+1)+'. '+x.name+' — '+x.qty+' шт.'+(x.price?' — '+money(x.price):'')).join('\n')+'\n\nРазом: '+money(t.total)}
+const INSORT_BOT_USERNAME='insort_order_bot';
+function makeOrderId(){return 'ord_'+Date.now()+'_'+Math.random().toString(36).slice(2,10)}
+function telegramBotStartUrl(orderId){return 'https://t.me/'+INSORT_BOT_USERNAME+'?start='+encodeURIComponent(orderId)}
+function numberPrice(v){return Number(String(v||0).replace(/[^0-9.,-]/g,'').replace(',','.'))||0}
+function normalizeOrderItems(items){return (Array.isArray(items)?items:[]).filter(Boolean).map((x,i)=>({
+  name:String(x.name||x.title||('Товар '+(i+1))),
+  qty:Math.max(1,Number(x.qty||x.quantity||1)||1),
+  price:numberPrice(x.price),
+  productId:x.id||x.productId||null
+}))}
+async function openTelegramOrder(items,source){
+  const orderItems=normalizeOrderItems(items);
+  if(!orderItems.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return false}
+  const orderId=makeOrderId();
+  const popup=window.open('about:blank','_blank','noopener');
+  try{
+    await db.ref('orders_temp/'+orderId).set({
+      createdAt:new Date().toISOString(),
+      source:source||'site',
+      items:orderItems
+    });
+    const url=telegramBotStartUrl(orderId);
+    if(popup)popup.location.href=url;else window.location.href=url;
+    return true;
+  }catch(e){
+    if(popup)popup.close();
+    console.error('Telegram order save error',e);
+    showInfo('Не вдалося підключити бота','Сайт не зміг зберегти замовлення для бота у Firebase. Перевір правила Firebase для orders_temp або спробуй ще раз.');
+    return false;
+  }
+}
 function addCart(i,btn){
   i=Number(i);
   if(!Number.isFinite(i)||i<0||i>=products.length)return false;
@@ -958,16 +989,15 @@ function addCart(i,btn){
   return true;
 }
 
-function telegramOrderUrl(msg){return 'https://t.me/Fushan90?text='+encodeURIComponent(msg||'Вітаю! Хочу замовити товар.')}
-function orderDirect(i){
+function telegramOrderUrl(msg){return 'https://t.me/'+INSORT_BOT_USERNAME}
+async function orderDirect(i){
   i=Number(i);
   if(!Number.isFinite(i)||i<0||i>=products.length){
-    window.open(telegramOrderUrl('Вітаю! Хочу замовити товар.'),'_blank','noopener');
+    showInfo('Товар не знайдено','Спробуйте відкрити товар ще раз і натиснути “Замовити одразу”.');
     return false;
   }
   const p=products[i];
-  const msg='Вітаю! Хочу замовити товар з InSort: '+pName(p)+(pPrice(p)?' — '+money(pPrice(p)):'');
-  window.open(telegramOrderUrl(msg),'_blank','noopener');
+  await openTelegramOrder([{id:getProductId(p,i),name:pName(p),qty:1,price:pPrice(p)}],'direct');
   return false;
 }
 function orderDirectCurrent(){
@@ -1532,7 +1562,14 @@ firebase.auth().onAuthStateChanged(user=>{
   startInsortAppOnce();
 });
 function submitOrder(){saveOrderAndSupport()}
-function saveOrderAndSupport(){if(!cart.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return}const orders=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');orders.unshift({date:new Date().toLocaleString('uk-UA'),count:cart.reduce((s,x)=>s+x.qty,0),items:cart});localStorage.setItem('insort_orders_v4',JSON.stringify(orders.slice(0,30)));showToast('Замовлення збережено в історії');window.open(telegramOrderUrl(buildOrderMessage()),'_blank','noopener')}
+async function saveOrderAndSupport(){
+  if(!cart.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return}
+  const orders=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');
+  orders.unshift({date:new Date().toLocaleString('uk-UA'),count:cart.reduce((s,x)=>s+x.qty,0),items:cart});
+  localStorage.setItem('insort_orders_v4',JSON.stringify(orders.slice(0,30)));
+  const ok=await openTelegramOrder(cart,'cart');
+  if(ok)showToast('Замовлення передано в Telegram-бота');
+}
 
 </script>
 </body>
