@@ -303,22 +303,28 @@
 <div class="modal office-modal" id="officeModal"><div class="modal-card"><button class="modal-close" onclick="closeOfficePanel()">×</button><h2>Офіс</h2><div class="office-note" id="officeNotice">Офіс доступний тільки адміну.</div>
 <div class="office-tabs">
   <button type="button" class="office-tab-btn active" data-office-tab="products" onclick="switchOfficeTab('products')">🛠️ Товари</button>
+  <button type="button" class="office-tab-btn" data-office-tab="prices" onclick="switchOfficeTab('prices')">💰 Зміна цін</button>
   <button type="button" class="office-tab-btn" data-office-tab="ads" onclick="switchOfficeTab('ads')">📢 Реклама</button>
   <button type="button" class="office-tab-btn" data-office-tab="categories" onclick="switchOfficeTab('categories')">🗂️ Категорії</button>
   <button type="button" class="office-tab-btn" data-office-tab="hero" onclick="switchOfficeTab('hero')">🏠 Головне поле</button>
 </div>
 <section class="office-section active" id="officeSectionProducts">
 <h3>Додавання товару</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><select id="officeMain" onchange="updateOfficeSubcategorySelect()"><option value="">Спочатку додай або обери категорію</option></select></div><div class="office-field"><label>Підкатегорія</label><select id="officeCat"><option value="">Спочатку обери основну категорію</option></select></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div>
+<h3>Товари з бази</h3><div class="office-list" id="officeProductsList"></div>
+</section>
+<section class="office-section" id="officeSectionPrices">
+<h3>Окремий відділ для зміни цін</h3>
 <div class="bulk-price-box">
-  <div class="bulk-price-head"><div class="bulk-price-title">Масова зміна ціни</div><div id="bulkPriceSelectedInfo" style="color:#66736b;font-weight:900">Обрано: 0</div></div>
+  <div class="bulk-price-head"><div class="bulk-price-title">Підвищити ціну обраним товарам</div><div id="bulkPriceSelectedInfo" style="color:#66736b;font-weight:900">Обрано: 0</div></div>
   <div class="bulk-price-controls">
-    <input id="bulkPriceValue" placeholder="Нова ціна для обраних">
+    <input id="bulkPriceValue" type="number" min="0" step="1" placeholder="На скільки підвищити, наприклад 200">
     <button type="button" class="big-btn secondary" style="background:#101512;color:#fff" onclick="selectAllOfficeProductsForBulk(true)">Обрати всі</button>
     <button type="button" class="big-btn secondary" style="background:#101512;color:#fff" onclick="selectAllOfficeProductsForBulk(false)">Зняти вибір</button>
-    <button type="button" class="big-btn primary" onclick="applyBulkPriceToSelected()">Змінити ціну</button>
+    <button type="button" class="big-btn primary" onclick="applyBulkPriceToSelected()">Підвищити ціну</button>
   </div>
+  <div style="margin-top:10px;color:#66736b;font-weight:850;line-height:1.4">Приклад: обрав товари 1000, 2000 і 3000, написав 200 — стане 1200, 2200 і 3200.</div>
 </div>
-<h3>Товари з бази</h3><div class="office-list" id="officeProductsList"></div>
+<h3>Обери товари для підвищення ціни</h3><div class="office-list" id="officePriceProductsList"></div>
 </section>
 <section class="office-section" id="officeSectionAds">
 <h3>Рекламне поле</h3><div class="office-ad-box"><div class="office-grid"><input id="officeAdId" type="hidden"><div class="office-field"><label>Заголовок реклами</label><input id="officeAdTitle" placeholder="Наприклад: Акція тижня"></div><div class="office-field"><label>Короткий текст</label><input id="officeAdText" placeholder="Опис реклами або умови акції"></div><div class="office-field office-full"><label>Фото реклами — файл з комп’ютера</label><input id="officeAdFile" type="file" accept="image/*" onchange="handleAdFile(event)"><img id="officeAdPreview" class="office-ad-preview" alt="Попередній перегляд"></div><div class="office-field office-full"><label>Або посилання / data:image для фото реклами</label><input id="officeAdImage" placeholder="https://... або data:image"></div></div><h4>Усі реклами</h4><div class="office-ads-list" id="officeAdsList"></div><h4>Прикріпити товари до реклами</h4><div class="office-ad-products" id="officeAdProducts"></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeAd()">Зберегти рекламу</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetAdForm()">Очистити рекламу</button><button class="big-btn secondary danger-btn" onclick="deleteOfficeAd()">Видалити рекламу</button></div></div>
@@ -1287,11 +1293,12 @@ function closeOfficePanel(){$('officeModal').classList.remove('show');document.b
 
 function switchOfficeTab(tab){
   document.querySelectorAll('.office-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.officeTab===tab));
-  const map={products:'officeSectionProducts',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
+  const map={products:'officeSectionProducts',prices:'officeSectionPrices',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
   Object.values(map).forEach(id=>{const el=$(id); if(el)el.classList.remove('active')});
   if($(map[tab]))$(map[tab]).classList.add('active');
   if(tab==='categories')renderOfficeCategoriesList();
   if(tab==='products')renderOfficeCategoryControls();
+  if(tab==='prices')renderOfficeList();
 }
 function optionsHtml(items,placeholder){
   return '<option value="">'+esc(placeholder||'Обрати')+'</option>'+uniq(items).map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
@@ -1405,16 +1412,19 @@ function selectAllOfficeProductsForBulk(flag){
   showToast(flag?'Обрано всі товари':'Вибір очищено');
 }
 async function applyBulkPriceToSelected(){
-  const newPrice=text($('bulkPriceValue')?$('bulkPriceValue').value:'');
-  if(!newPrice){showInfo('Не змінено','Напиши нову ціну, яку треба поставити обраним товарам.');return}
+  const addAmount=toNum($('bulkPriceValue')?$('bulkPriceValue').value:'');
+  if(addAmount<=0){showInfo('Не змінено','Напиши суму, на яку треба підвищити ціну. Наприклад: 200.');return}
   const ids=[...bulkSelectedProductIds];
-  if(!ids.length){showInfo('Не обрано товари','Постав галочки біля товарів, яким треба змінити ціну.');return}
+  if(!ids.length){showInfo('Не обрано товари','Постав галочки біля товарів, яким треба підвищити ціну.');return}
   const updates={};
   let changed=0;
   products.forEach((p,i)=>{
     const id=bulkProductDbId(p,i);
     if(ids.includes(id)){
       const dbId=text(p._dbKey||p.id||id);
+      const currentPrice=toNum(pPrice(p)||pBasePrice(p));
+      if(currentPrice<=0)return;
+      const newPrice=String(Math.round(currentPrice+addAmount));
       updates['catalog/products/'+dbId+'/price']=newPrice;
       updates['catalog/products/'+dbId+'/discountPrice']='';
       updates['catalog/products/'+dbId+'/discountPercent']='';
@@ -1424,32 +1434,37 @@ async function applyBulkPriceToSelected(){
       changed++;
     }
   });
-  if(!changed){showInfo('Не знайдено','Обрані товари не знайдені у поточному списку. Онови список і спробуй ще раз.');return}
+  if(!changed){showInfo('Не знайдено','У вибраних товарах не знайдено нормальну поточну ціну. Перевір ціни і спробуй ще раз.');return}
   try{
     await db.ref().update(updates);
     bulkSelectedProductIds.clear();
     if($('bulkPriceValue'))$('bulkPriceValue').value='';
     build();renderOfficeList();renderOfficeAdProducts();
-    showToast('Ціну змінено у '+changed+' товарів');
+    showToast('Ціну підвищено на '+money(addAmount)+' у '+changed+' товарів');
   }catch(e){
     console.error(e);
     showInfo('Помилка бази','Не вдалося змінити ціни у Firebase. Перевір правила бази або чи ти увійшов як адмін.');
   }
 }
+
 function renderOfficeList(){
   const box=$('officeProductsList');
-  if(!box)return;
+  const priceBox=$('officePriceProductsList');
+  if(!box&&!priceBox)return;
   const valid=new Set(products.map((p,i)=>bulkProductDbId(p,i)).filter(Boolean));
   bulkSelectedProductIds=new Set([...bulkSelectedProductIds].filter(id=>valid.has(id)));
-  updateBulkPriceInfo();
-  box.innerHTML=products.length?products.map((p,i)=>{
+  const html=products.length?products.map((p,i)=>{
     const img=pImg(p);
     const thumb=img?'<img src="'+esc(img)+'" onerror="this.remove();this.parentElement.textContent=&quot;🛠️&quot;">':'🛠️';
     const bid=bulkProductDbId(p,i);
     const checked=bulkSelectedProductIds.has(bid);
-    return '<div class="office-item '+(checked?'bulk-selected':'')+'" data-bulk-id="'+esc(bid)+'"><label style="display:flex;align-items:center;justify-content:center"><input class="bulk-select-check" type="checkbox" '+(checked?'checked':'')+' onclick="event.stopPropagation()" onchange="toggleOfficeBulkProduct(\''+esc(bid)+'\',this.checked)"></label><div class="office-thumb">'+thumb+'</div><div><div class="office-item-title">'+esc(pName(p))+'</div><div class="office-item-meta">'+esc([pMain(p),pCat(p)].filter(Boolean).join(' / ')||'Без категорії')+' • '+esc(money(pPrice(p)))+(pIsHit(p)?' • ХІТ':'')+(pIsDiscount(p)?' • ЗНИЖКА':'')+'</div></div><div class="office-actions" style="margin:0"><button class="cart-btn" onclick="editOfficeProduct('+i+')">Змінити</button><button class="cart-btn danger-btn" onclick="deleteOfficeProduct('+i+')">Видалити</button></div></div>';
-  }).join(''):'<div class="empty">Товарів у базі поки немає</div>';
+    return '<div class="office-item '+(checked?'bulk-selected':'')+'" data-bulk-id="'+esc(bid)+'"><label style="display:flex;align-items:center;justify-content:center"><input class="bulk-select-check" type="checkbox" '+(checked?'checked':'')+' onclick="event.stopPropagation()" onchange="toggleOfficeBulkProduct(this.closest(&quot;.office-item&quot;).dataset.bulkId,this.checked)"></label><div class="office-thumb">'+thumb+'</div><div><div class="office-item-title">'+esc(pName(p))+'</div><div class="office-item-meta">'+esc([pMain(p),pCat(p)].filter(Boolean).join(' / ')||'Без категорії')+' • '+esc(money(pPrice(p)))+(pIsHit(p)?' • ХІТ':'')+(pIsDiscount(p)?' • ЗНИЖКА':'')+'</div></div><div class="office-actions" style="margin:0"><button class="cart-btn" onclick="editOfficeProduct('+i+')">Змінити</button><button class="cart-btn danger-btn" onclick="deleteOfficeProduct('+i+')">Видалити</button></div></div>';
+  }).join(''):'<div class="empty">Товарів поки немає</div>';
+  if(box)box.innerHTML=html;
+  if(priceBox)priceBox.innerHTML=html;
+  updateBulkPriceInfo();
 }
+
 function editOfficeProduct(i){const p=products[i]; if(!p)return; switchOfficeTab('products'); renderOfficeCategoryControls(); selectedProductImages=productImages(p); const img=selectedProductImages[0]||pImg(p); $('officeEditId').value=p.id||i; $('officeName').value=pName(p); $('officePrice').value=pBasePrice(p)||pPrice(p); if($('officeDiscountPrice'))$('officeDiscountPrice').value=pManualDiscountPrice(p)||''; if($('officeDiscountPercent'))$('officeDiscountPercent').value=pDiscountPercent(p)||''; if($('officeIsHit'))$('officeIsHit').checked=pIsHit(p); $('officeMain').value=pMain(p); updateOfficeSubcategorySelect(); $('officeCat').value=pCat(p); $('officePhoto').value=img; $('officeDesc').value=pDesc(p); if($('officeProductFile'))$('officeProductFile').value=''; renderOfficeProductPreviews(); $('officeName').focus()}
 async function saveOfficeProduct(){
   const id=text($('officeEditId').value)||db.ref('catalog/products').push().key;
