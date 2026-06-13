@@ -85,7 +85,7 @@
     .side-menu{position:fixed;top:0;left:-330px;width:min(310px,92vw);height:100vh;background:#111713;color:#fff;z-index:9998;padding:78px 16px 18px;display:flex;flex-direction:column;gap:10px;transition:left .24s ease;box-shadow:25px 0 50px rgba(0,0,0,.32);overflow-y:auto}.side-menu.show{left:0}
     .menu-close{position:absolute;top:15px;right:14px;width:42px;height:42px;border-radius:14px;background:#222c25;color:#90ee90;font-size:25px;font-weight:900}.menu-close:hover{background:#2d3a31}
     .menu-register-btn,.menu-copy-btn,.menu-location-btn,.menu-link-btn,.submenu-toggle,.owner-contact-btn,.owner-telegram-btn{width:100%;min-height:46px;border-radius:15px;background:#1b241f;color:#ecfff0;border:1px solid #2e4034;padding:12px 14px;font-weight:900;text-align:left;text-decoration:none;display:flex;align-items:center;gap:10px;line-height:1.2}.menu-register-btn:hover,.menu-copy-btn:hover,.menu-location-btn:hover,.menu-link-btn:hover,.submenu-toggle:hover,.owner-contact-btn:hover,.owner-telegram-btn:hover{background:#233228;border-color:#62d85b;color:#fff}.menu-cart-line{justify-content:space-between}.submenu{display:none;padding:6px 0 4px 12px;border-left:2px solid #2e4034;margin-left:6px;gap:8px}.submenu.open{display:flex;flex-direction:column}.owner-section{display:none;gap:8px;flex-direction:column;padding:6px 0}.owner-section.open{display:flex}.owner-telegram-btn{background:#173029;color:#9fffd1}.menu-copy-message{font-size:13px;color:#90ee90;margin:8px 2px 0;min-height:18px;font-weight:800}.auth-box{display:flex;flex-direction:column;gap:10px}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(30px);opacity:0;pointer-events:none;z-index:10050;background:#101512;color:#fff;border:1px solid #2f5f2f;border-radius:18px;padding:14px 18px;box-shadow:0 18px 45px rgba(0,0,0,.28);font-weight:900;max-width:min(520px,92vw);transition:.25s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .form-modal .modal-card{width:min(480px,100%);padding:30px}.form-modal h2{margin:0 0 10px}.form-modal p{color:var(--muted);line-height:1.45}.form-field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.form-field label{font-weight:900;color:#263229}.form-field input{border:1px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;background:#f8faf8}.form-error{display:none;margin-top:10px;background:#fff0f0;border:1px solid #ffcaca;color:#bd1919;border-radius:14px;padding:12px;font-weight:850;line-height:1.35}.form-error.show{display:block}.profile-line{padding:12px;border:1px solid var(--line);border-radius:14px;background:#f8faf8;margin:12px 0;font-weight:850}.cart-row{display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #e2e8e4;padding:12px 0}.cart-row-name{font-weight:1000;line-height:1.25}.cart-remove{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:#ffecec;color:#b00000;font-weight:1000}.checkout-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.category-list .sub-list:empty{display:none!important}.cat-group:not(.open) .sub-list{display:none!important}
+    .form-modal .modal-card{width:min(480px,100%);padding:30px}.form-modal h2{margin:0 0 10px}.form-modal p{color:var(--muted);line-height:1.45}.form-field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.form-field label{font-weight:900;color:#263229}.form-field input,.form-field select{border:1px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;background:#f8faf8}.form-error{display:none;margin-top:10px;background:#fff0f0;border:1px solid #ffcaca;color:#bd1919;border-radius:14px;padding:12px;font-weight:850;line-height:1.35}.form-error.show{display:block}.profile-line{padding:12px;border:1px solid var(--line);border-radius:14px;background:#f8faf8;margin:12px 0;font-weight:850}.cart-row{display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #e2e8e4;padding:12px 0}.cart-row-name{font-weight:1000;line-height:1.25}.cart-remove{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:#ffecec;color:#b00000;font-weight:1000}.checkout-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.category-list .sub-list:empty{display:none!important}.cat-group:not(.open) .sub-list{display:none!important}
     @media(max-width:720px){.brand{padding-left:46px}.top-actions .support-btn{display:none}.side-menu{width:min(330px,94vw)}.cart-row{grid-template-columns:56px 1fr auto}.products .view-btn,.products .cart-btn{font-size:13px;padding:10px 8px;white-space:normal;min-height:42px}.product-name{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.price-row{align-items:flex-start}.badge{display:none}}
 
   
@@ -198,6 +198,14 @@
 .office-item.bulk-selected{outline:2px solid #49d018;outline-offset:-2px;background:#f1fff0}
 @media(max-width:720px){.bulk-price-controls{grid-template-columns:1fr}.bulk-price-controls button{width:100%}}
 
+
+.checkout-summary{border:1px solid var(--line);border-radius:18px;background:#fbfdfb;padding:12px;margin:12px 0;max-height:210px;overflow:auto}
+.checkout-summary-row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #e8eee9;padding:9px 0;font-weight:850}
+.checkout-summary-row:last-child{border-bottom:0}
+.checkout-generated{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.checkout-code-box{border:1px solid var(--line);border-radius:16px;background:#f8faf8;padding:12px;font-weight:1000}
+.checkout-code-box span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+@media(max-width:620px){.checkout-generated{grid-template-columns:1fr}}
 </style>
 
 <script>
@@ -289,7 +297,9 @@
     </div>
   </div>
 </div></div>
-<div class="modal" id="cartModal"><div class="modal-card" style="width:min(620px,100%);padding:30px"><button class="modal-close" onclick="closeCart()">×</button><h2>Кошик</h2><div id="cartItems"></div><div class="view-price" id="cartTotal"></div><div class="checkout-buttons"><button class="big-btn primary" onclick="saveOrderAndSupport()">Замовити через кошик</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="clearCart()">Очистити кошик</button></div></div></div>
+<div class="modal" id="cartModal"><div class="modal-card" style="width:min(620px,100%);padding:30px"><button class="modal-close" onclick="closeCart()">×</button><h2>Кошик</h2><div id="cartItems"></div><div class="view-price" id="cartTotal"></div><div class="checkout-buttons"><button class="big-btn primary" onclick="openCheckoutModal(cart, 'cart')">Оформити замовлення</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="clearCart()">Очистити кошик</button></div></div></div>
+
+<div class="modal form-modal" id="checkoutModal"><div class="modal-card"><button class="modal-close" onclick="closeCheckoutModal()">×</button><h2>Оформлення замовлення</h2><p>Заповніть дані на сайті. Після підтвердження система створить номер замовлення і код, скопіює текст та відкриє Telegram.</p><div class="form-field"><label>Ім’я та прізвище</label><input id="checkoutName" autocomplete="name" placeholder="Наприклад: Іван Петренко"></div><div class="form-field"><label>Номер телефону</label><input id="checkoutPhone" type="tel" autocomplete="tel" placeholder="Наприклад: 0991234567"></div><div class="form-field"><label>Ваш Telegram</label><input id="checkoutTelegram" placeholder="Наприклад: @username"></div><div class="form-field"><label>Місто / населений пункт</label><input id="checkoutCity" placeholder="Наприклад: Київ, Красилівка або Лісовий масив"></div><div class="form-field"><label>Спосіб отримання</label><select id="checkoutDelivery" onchange="toggleCheckoutDeliveryDetails()"><option value="">Оберіть спосіб отримання</option><option value="Нова пошта">Нова пошта</option><option value="Укрпошта">Укрпошта</option><option value="Поштомат">Поштомат</option><option value="Самовивіз">Самовивіз — тільки Красилівка / Лісовий масив</option></select></div><div class="form-field" id="checkoutDeliveryDetailsWrap"><label id="checkoutDeliveryDetailsLabel">Відділення / поштомат</label><input id="checkoutDeliveryDetails" placeholder="Наприклад: відділення №45 або поштомат №1234"></div><div class="checkout-summary" id="checkoutItemsPreview"></div><div class="view-price" id="checkoutTotalPreview"></div><div class="form-error" id="checkoutError"></div><button class="big-btn primary" onclick="submitCheckoutOrder()">Підтвердити замовлення</button></div></div>
 
 <div class="modal form-modal" id="authModal"><div class="modal-card"><button class="modal-close" onclick="closeAuthBox()">×</button><h2 id="authTitle">Увійти</h2><p id="authHint">Введіть email та пароль.</p><div class="form-field" id="nameField" style="display:none"><label>Ім'я</label><input id="authName" autocomplete="name" placeholder="Ваше ім'я"></div><div class="form-field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="email@example.com"></div><div class="form-field"><label>Пароль</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Мінімум 6 символів"></div><div class="form-error" id="authError"></div><button class="big-btn primary" id="authSubmitBtn" onclick="submitAuth()">Увійти</button><button class="google-auth-btn" id="googleAuthBtn" onclick="googleAuth()"><svg width="20" height="20" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px">
 <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
@@ -946,55 +956,107 @@ function changeCartQuantity(id,delta){const item=cart.find(x=>String(x.id)===Str
 function clearCart(){cart=[];saveCartToStorage();updateSelectedUI();renderCartModal();showToast('Кошик очищено')}
 function openCheckoutModal(){saveOrderAndSupport()}
 function closeCheckoutModal(){}
-function buildOrderMessage(){const t=getCartTotals();return 'Вітаю! Хочу замовити товари з InSort:\n'+cart.map((x,i)=>(i+1)+'. '+x.name+' — '+x.qty+' шт.'+(x.price?' — '+money(x.price):'')).join('\n')+'\n\nРазом: '+money(t.total)}
-const INSORT_BOT_USERNAME='insort_order_bot';
-function makeOrderId(){return 'ord_'+Date.now()+'_'+Math.random().toString(36).slice(2,10)}
-function telegramBotStartUrl(orderId){return 'https://t.me/'+INSORT_BOT_USERNAME+'?start='+encodeURIComponent(orderId)}
+let checkoutPendingItems=[];
+let checkoutPendingSource='cart';
+function buildOrderMessage(){return buildFinalOrderMessage({items:cart},false)}
+const INSORT_TELEGRAM_USERNAME='shop_insort';
+function makePublicOrderNumber(){return String(Math.floor(100000000+Math.random()*900000000))}
+function makeConfirmCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];return code}
 function numberPrice(v){return Number(String(v||0).replace(/[^0-9.,-]/g,'').replace(',','.'))||0}
-function buildBotOrderText(items){
-  const orderItems=normalizeOrderItems(items);
-  const total=orderItems.reduce((sum,x)=>sum+(numberPrice(x.price)*(Number(x.qty)||1)),0);
-  return 'Хочу замовити:\n'+orderItems.map((x,i)=>(i+1)+'. '+x.name+' — '+(Number(x.qty)||1)+' шт.'+(x.price?' — '+money(x.price):'')).join('\n')+'\n\nРазом: '+money(total);
-}
-async function copyOrderTextForBot(items){
-  const text=buildBotOrderText(items);
-  try{
-    await navigator.clipboard.writeText(text);
-    try{sessionStorage.setItem('insort_last_bot_order_text',text)}catch(_){}
-    showToast('Товар скопійовано. У боті натисніть Start, вставте текст і надішліть.');
-    return true;
-  }catch(e){
-    try{sessionStorage.setItem('insort_last_bot_order_text',text)}catch(_){}
-    return false;
-  }
-}
 function normalizeOrderItems(items){return (Array.isArray(items)?items:[]).filter(Boolean).map((x,i)=>({
+  id:x.id||x.productId||null,
   name:String(x.name||x.title||('Товар '+(i+1))),
   qty:Math.max(1,Number(x.qty||x.quantity||1)||1),
-  price:numberPrice(x.price),
-  productId:x.id||x.productId||null
+  price:numberPrice(x.price)
 }))}
-async function openTelegramOrder(items,source){
-  const orderItems=normalizeOrderItems(items);
+function checkoutTotals(items){return normalizeOrderItems(items).reduce((a,x)=>{a.count+=x.qty;a.total+=numberPrice(x.price)*x.qty;return a},{count:0,total:0})}
+function checkoutItemsHtml(items){
+  const list=normalizeOrderItems(items);
+  if(!list.length)return '<div class="empty">Товари не обрані</div>';
+  return list.map(x=>'<div class="checkout-summary-row"><span>'+esc(x.name)+' × '+x.qty+'</span><b>'+money(numberPrice(x.price)*x.qty)+'</b></div>').join('');
+}
+function openCheckoutModal(items,source){
+  const orderItems=normalizeOrderItems(items&&items.length?items:cart);
   if(!orderItems.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return false}
-  await copyOrderTextForBot(orderItems);
-  const orderId=makeOrderId();
-  try{
-    await db.ref('orders_temp/'+orderId).set({
-      createdAt:new Date().toISOString(),
-      source:source||'site',
-      items:orderItems,
-      orderText:buildBotOrderText(orderItems)
-    });
-    const url=telegramBotStartUrl(orderId);
-    window.location.href=url;
-    return true;
-  }catch(e){
-    console.error('Telegram order save error',e);
-    showInfo('Не вдалося підключити бота','Сайт не зміг зберегти замовлення для бота у Firebase. Перевір правила Firebase для orders_temp або спробуй ще раз.');
-    return false;
+  checkoutPendingItems=orderItems;
+  checkoutPendingSource=source||'cart';
+  if($('cartModal'))$('cartModal').classList.remove('show');
+  if($('checkoutItemsPreview'))$('checkoutItemsPreview').innerHTML=checkoutItemsHtml(orderItems);
+  const t=checkoutTotals(orderItems);
+  if($('checkoutTotalPreview'))$('checkoutTotalPreview').textContent='Товарів: '+t.count+' • Сума: '+money(t.total);
+  if($('checkoutError')){$('checkoutError').classList.remove('show');$('checkoutError').textContent=''}
+  toggleCheckoutDeliveryDetails();
+  $('checkoutModal').classList.add('show');
+  document.body.style.overflow='hidden';
+  return false;
+}
+function closeCheckoutModal(){if($('checkoutModal'))$('checkoutModal').classList.remove('show');document.body.style.overflow=''}
+function normalizeText(v){return String(v||'').trim().toLowerCase().replace(/ї/g,'і').replace(/є/g,'е').replace(/ё/g,'е')}
+function isPickupAllowed(city){const c=normalizeText(city);return c.includes('красилівка')||c.includes('красилiвка')||c.includes('лісовий масив')||c.includes('лiсовий масив')||c.includes('лесной массив')}
+function toggleCheckoutDeliveryDetails(){
+  const delivery=$('checkoutDelivery')?$('checkoutDelivery').value:'';
+  const wrap=$('checkoutDeliveryDetailsWrap');
+  const label=$('checkoutDeliveryDetailsLabel');
+  const input=$('checkoutDeliveryDetails');
+  if(!wrap||!label||!input)return;
+  if(delivery==='Самовивіз'){
+    wrap.style.display='none';
+    input.value='';
+  }else{
+    wrap.style.display='flex';
+    label.textContent=delivery==='Поштомат'?'Номер поштомату':'Відділення / адреса отримання';
+    input.placeholder=delivery==='Поштомат'?'Наприклад: поштомат №1234':'Наприклад: відділення №45';
   }
 }
+function checkoutError(msg){const e=$('checkoutError');if(e){e.textContent=msg;e.classList.add('show')}else showInfo('Помилка',msg)}
+function buildFinalOrderMessage(order,includeHeader=true){
+  const items=normalizeOrderItems(order.items||[]);
+  const total=checkoutTotals(items).total;
+  const lines=[];
+  if(includeHeader)lines.push('🛒 Нове замовлення InSort','');
+  if(order.orderNumber)lines.push('📦 Номер замовлення: '+order.orderNumber);
+  if(order.confirmCode)lines.push('🔐 Код підтвердження: '+order.confirmCode,'');
+  if(order.name)lines.push('👤 Ім’я: '+order.name);
+  if(order.phone)lines.push('📞 Телефон: '+order.phone);
+  if(order.telegram)lines.push('💬 Telegram покупця: '+order.telegram);
+  if(order.city)lines.push('🏙 Місто / населений пункт: '+order.city);
+  if(order.delivery)lines.push('🚚 Отримання: '+order.delivery);
+  if(order.deliveryDetails)lines.push('📍 Відділення / поштомат: '+order.deliveryDetails);
+  lines.push('', '🛍 Товари:');
+  items.forEach((x,i)=>lines.push((i+1)+'. '+x.name+' — '+x.qty+' шт.'+(x.price?' — '+money(x.price):'')));
+  lines.push('', '💰 Разом: '+money(total));
+  return lines.join('\n');
+}
+function telegramShareUrl(text){return 'https://t.me/share/url?url=&text='+encodeURIComponent(text)}
+async function submitCheckoutOrder(){
+  const items=normalizeOrderItems(checkoutPendingItems.length?checkoutPendingItems:cart);
+  if(!items.length){checkoutError('Товари не обрані. Додайте товар у кошик.');return false}
+  const name=($('checkoutName')?.value||'').trim();
+  const phone=($('checkoutPhone')?.value||'').trim();
+  let telegram=($('checkoutTelegram')?.value||'').trim();
+  const city=($('checkoutCity')?.value||'').trim();
+  const delivery=($('checkoutDelivery')?.value||'').trim();
+  const deliveryDetails=($('checkoutDeliveryDetails')?.value||'').trim();
+  if(!name)return checkoutError('Вкажіть ім’я та прізвище.');
+  if(!phone)return checkoutError('Вкажіть номер телефону.');
+  if(!telegram)return checkoutError('Вкажіть Telegram, щоб з вами можна було зв’язатися.');
+  if(telegram && telegram[0]!=='@')telegram='@'+telegram.replace(/^https?:\/\/t\.me\//i,'').replace(/^t\.me\//i,'');
+  if(!city)return checkoutError('Вкажіть місто або населений пункт.');
+  if(!delivery)return checkoutError('Оберіть спосіб отримання.');
+  if(delivery==='Самовивіз'&&!isPickupAllowed(city))return checkoutError('Самовивіз доступний тільки для села Красилівка та Лісового масиву.');
+  if(delivery!=='Самовивіз'&&!deliveryDetails)return checkoutError('Вкажіть відділення або номер поштомату.');
+  const order={createdAt:new Date().toISOString(),source:checkoutPendingSource||'site',orderNumber:makePublicOrderNumber(),confirmCode:makeConfirmCode(),name,phone,telegram,city,delivery,deliveryDetails,items};
+  const message=buildFinalOrderMessage(order,true);
+  const orders=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');
+  orders.unshift({date:new Date().toLocaleString('uk-UA'),count:items.reduce((s,x)=>s+x.qty,0),items,orderNumber:order.orderNumber,confirmCode:order.confirmCode,customer:{name,phone,telegram,city,delivery,deliveryDetails}});
+  localStorage.setItem('insort_orders_v4',JSON.stringify(orders.slice(0,30)));
+  try{await navigator.clipboard.writeText(message);showToast('Текст замовлення скопійовано. Вставте його в Telegram.')}catch(_){showToast('Замовлення створено. Відкриваємо Telegram.')} 
+  try{await db.ref('orders_site/'+order.orderNumber).set({...order,orderText:message})}catch(e){console.warn('orders_site save skipped',e)}
+  closeCheckoutModal();
+  window.location.href=telegramShareUrl(message);
+  return false;
+}
+async function openTelegramOrder(items,source){return openCheckoutModal(items,source)}
 function addCart(i,btn){
   i=Number(i);
   if(!Number.isFinite(i)||i<0||i>=products.length)return false;
@@ -1005,8 +1067,7 @@ function addCart(i,btn){
   animateOrderButton(btn);
   return true;
 }
-
-function telegramOrderUrl(msg){return 'https://t.me/'+INSORT_BOT_USERNAME}
+function telegramOrderUrl(msg){return telegramShareUrl(msg||'')}
 async function orderDirect(i){
   i=Number(i);
   if(!Number.isFinite(i)||i<0||i>=products.length){
@@ -1014,14 +1075,12 @@ async function orderDirect(i){
     return false;
   }
   const p=products[i];
-  await openTelegramOrder([{id:getProductId(p,i),name:pName(p),qty:1,price:pPrice(p)}],'direct');
-  return false;
+  return openCheckoutModal([{id:getProductId(p,i),name:pName(p),qty:1,price:pPrice(p)}],'direct');
 }
 function orderDirectCurrent(){
   const i=productIndexById(currentProductId);
   return orderDirect(i);
 }
-
 function openSupport(){$('supportModal').classList.add('show');document.body.style.overflow='hidden'}
 function closeSupport(){$('supportModal').classList.remove('show');document.body.style.overflow=''}
 function showToast(msg){let t=$('toast'); if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
@@ -1578,15 +1637,8 @@ firebase.auth().onAuthStateChanged(user=>{
   updateAuthUI(user);
   startInsortAppOnce();
 });
-function submitOrder(){saveOrderAndSupport()}
-async function saveOrderAndSupport(){
-  if(!cart.length){showInfo('Кошик порожній','Додайте хоча б один товар, а потім оформлюйте замовлення.');return}
-  const orders=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');
-  orders.unshift({date:new Date().toLocaleString('uk-UA'),count:cart.reduce((s,x)=>s+x.qty,0),items:cart});
-  localStorage.setItem('insort_orders_v4',JSON.stringify(orders.slice(0,30)));
-  const ok=await openTelegramOrder(cart,'cart');
-  if(ok)showToast('Замовлення передано в Telegram-бота');
-}
+function submitOrder(){openCheckoutModal(cart,'cart')}
+async function saveOrderAndSupport(){return openCheckoutModal(cart,'cart')}
 
 </script>
 </body>
