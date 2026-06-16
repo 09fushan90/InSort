@@ -314,6 +314,7 @@
 <div class="office-tabs">
   <button type="button" class="office-tab-btn active" data-office-tab="products" onclick="switchOfficeTab('products')">🛠️ Товари</button>
   <button type="button" class="office-tab-btn" data-office-tab="prices" onclick="switchOfficeTab('prices')">💰 Зміна цін</button>
+  <button type="button" class="office-tab-btn" data-office-tab="excel" onclick="switchOfficeTab('excel')">📊 Excel</button>
   <button type="button" class="office-tab-btn" data-office-tab="ads" onclick="switchOfficeTab('ads')">📢 Реклама</button>
   <button type="button" class="office-tab-btn" data-office-tab="categories" onclick="switchOfficeTab('categories')">🗂️ Категорії</button>
   <button type="button" class="office-tab-btn" data-office-tab="hero" onclick="switchOfficeTab('hero')">🏠 Головне поле</button>
@@ -335,6 +336,18 @@
   <div style="margin-top:10px;color:#66736b;font-weight:850;line-height:1.4">Приклад: обрав товари 1000, 2000 і 3000, написав 200 — стане 1200, 2200 і 3200.</div>
 </div>
 <h3>Обери товари для підвищення ціни</h3><div class="office-list" id="officePriceProductsList"></div>
+</section>
+<section class="office-section" id="officeSectionExcel">
+<h3>Excel таблиця товарів</h3>
+<div class="office-ad-box">
+  <div class="office-note">Таблиця формується з усіх товарів, які зараз є в базі сайту. Коли ти додаєш новий товар в Офісі, він теж потрапить у цей Excel при наступному експорті.</div>
+  <div class="office-actions">
+    <button type="button" class="big-btn primary" onclick="downloadProductsExcel()">Скачати Excel</button>
+    <button type="button" class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderExcelPreview()">Оновити перегляд</button>
+  </div>
+  <div style="color:#66736b;font-weight:850;line-height:1.45;margin-bottom:12px">Колонки: назва товару, ціна товару, знижка/акція, основна категорія.</div>
+  <div class="office-list" id="excelPreviewList"></div>
+</div>
 </section>
 <section class="office-section" id="officeSectionAds">
 <h3>Рекламне поле</h3><div class="office-ad-box"><div class="office-grid"><input id="officeAdId" type="hidden"><div class="office-field"><label>Заголовок реклами</label><input id="officeAdTitle" placeholder="Наприклад: Акція тижня"></div><div class="office-field"><label>Короткий текст</label><input id="officeAdText" placeholder="Опис реклами або умови акції"></div><div class="office-field office-full"><label>Фото реклами — файл з комп’ютера</label><input id="officeAdFile" type="file" accept="image/*" onchange="handleAdFile(event)"><img id="officeAdPreview" class="office-ad-preview" alt="Попередній перегляд"></div><div class="office-field office-full"><label>Або посилання / data:image для фото реклами</label><input id="officeAdImage" placeholder="https://... або data:image"></div></div><h4>Усі реклами</h4><div class="office-ads-list" id="officeAdsList"></div><h4>Прикріпити товари до реклами</h4><div class="office-ad-products" id="officeAdProducts"></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeAd()">Зберегти рекламу</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetAdForm()">Очистити рекламу</button><button class="big-btn secondary danger-btn" onclick="deleteOfficeAd()">Видалити рекламу</button></div></div>
@@ -1399,12 +1412,13 @@ function closeOfficePanel(){$('officeModal').classList.remove('show');document.b
 
 function switchOfficeTab(tab){
   document.querySelectorAll('.office-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.officeTab===tab));
-  const map={products:'officeSectionProducts',prices:'officeSectionPrices',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
+  const map={products:'officeSectionProducts',prices:'officeSectionPrices',excel:'officeSectionExcel',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
   Object.values(map).forEach(id=>{const el=$(id); if(el)el.classList.remove('active')});
   if($(map[tab]))$(map[tab]).classList.add('active');
   if(tab==='categories')renderOfficeCategoriesList();
   if(tab==='products')renderOfficeCategoryControls();
   if(tab==='prices')renderOfficeList();
+  if(tab==='excel')renderExcelPreview();
 }
 function optionsHtml(items,placeholder){
   return '<option value="">'+esc(placeholder||'Обрати')+'</option>'+uniq(items).map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
@@ -1598,6 +1612,47 @@ function openEditModal(id){const i=products.findIndex((p,idx)=>String(getProduct
 function closeEditModal(){closeOfficePanel()}
 function saveProduct(){saveOfficeProduct()}
 function deleteProduct(){const id=$('officeEditId')?$('officeEditId').value:'';const i=products.findIndex((p,idx)=>String(getProductId(p,idx))===String(id));if(i>=0)deleteOfficeProduct(i)}
+
+
+function excelDiscountText(p){
+  if(!pIsDiscount(p))return '';
+  const parts=[];
+  const percent=pDiscountPercent(p);
+  const discountPrice=pManualDiscountPrice(p);
+  if(percent>0)parts.push('-'+percent+'%');
+  if(toNum(discountPrice)>0)parts.push('акційна ціна: '+money(discountPrice));
+  if(!parts.length)parts.push('є акція');
+  return parts.join(' / ');
+}
+function productsExcelRows(){
+  return products.map((p,i)=>({
+    name:pName(p),
+    price:money(pBasePrice(p)||pPrice(p)),
+    discount:excelDiscountText(p),
+    main:pMain(p)||pCat(p)||''
+  }));
+}
+function renderExcelPreview(){
+  const box=$('excelPreviewList');
+  if(!box)return;
+  const rows=productsExcelRows();
+  box.innerHTML=rows.length?rows.map((r,i)=>'<div class="office-item" style="grid-template-columns:34px 1.6fr 1fr 1fr 1fr"><div style="font-weight:1000">'+(i+1)+'</div><div><div class="office-item-title">'+esc(r.name)+'</div></div><div class="office-item-meta">'+esc(r.price)+'</div><div class="office-item-meta">'+esc(r.discount||'—')+'</div><div class="office-item-meta">'+esc(r.main||'—')+'</div></div>').join(''):'<div class="empty">Товарів поки немає</div>';
+}
+function downloadProductsExcel(){
+  const rows=productsExcelRows();
+  if(!rows.length){showInfo('Excel порожній','У базі ще немає товарів для експорту.');return}
+  const table='<html><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr><th>Назва товару</th><th>Ціна товару</th><th>Знижка / акція</th><th>Основна категорія</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+esc(r.price)+'</td><td>'+esc(r.discount)+'</td><td>'+esc(r.main)+'</td></tr>').join('')+'</tbody></table></body></html>';
+  const blob=new Blob(['\ufeff'+table],{type:'application/vnd.ms-excel;charset=utf-8;'});
+  const a=document.createElement('a');
+  const now=new Date();
+  const date=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  a.href=URL.createObjectURL(blob);
+  a.download='insort_products_'+date+'.xls';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+  showToast('Excel файл сформовано: '+rows.length+' товарів');
+}
 
 function openOrderHistoryModal(){const saved=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');$('orderHistoryContent').innerHTML=saved.length?saved.map((o,i)=>'<div class="profile-line"><b>Замовлення #'+(i+1)+'</b><br>'+esc(o.date)+'<br>Товарів: '+o.count+'</div>').join(''):'<div class="empty">Історія поки порожня. Після оформлення кошика замовлення збережеться тут.</div>';$('orderHistoryModal').classList.add('show');document.body.style.overflow='hidden'}
 function closeOrderHistoryModal(){$('orderHistoryModal').classList.remove('show');document.body.style.overflow=''}
