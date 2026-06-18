@@ -1195,7 +1195,7 @@ function copyPhone(phone){if(navigator.clipboard){navigator.clipboard.writeText(
 function showLocationSoon(){showInfo('Місцезнаходження магазину','Цей розділ готовий як окреме вікно. Коли скажеш адресу магазину, я підключу сюди карту, маршрут і кнопку “Прокласти маршрут”.')}
 function openOffice(){
   if(!isAdminUser()){ showToast('Офіс доступний тільки адміну.'); return; }
-setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeCategoryControls();switchOfficeTab('products');renderOfficeList();renderOfficeAdProducts();renderOfficeAdsList();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
+setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeCategoryControls();switchOfficeTab('products');renderOfficeList();renderOfficeAdProducts();renderOfficeAdsList();resetAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
 
 
 
@@ -1360,10 +1360,10 @@ function renderOfficeAdsList(){
   const box=$('officeAdsList');if(!box)return;
   box.innerHTML=ads.length?ads.map((ad,i)=>{const img=pickUrl(ad.image||ad.photo||ad.img);const count=Array.isArray(ad.productIds)?ad.productIds.length:0;return '<div class="office-ad-row"><div>'+(img?'<img src="'+esc(img)+'" alt="">':'<div style="width:58px;height:58px;border-radius:12px;background:#eef6ef;display:grid;place-items:center">📢</div>')+'</div><div><div class="office-ad-row-title">'+esc(text(ad.title)||'Рекламне поле')+'</div><div class="office-ad-row-meta">'+count+' товарів прикріплено</div></div><div class="office-ad-row-actions"><button type="button" onclick="editOfficeAd('+i+')">Редагувати</button><button type="button" class="danger-btn" onclick="deleteOfficeAdByIndex('+i+')">Видалити</button></div></div>'}).join(''):'<div class="empty">Поки що реклами немає. Заповни форму нижче і натисни “Зберегти рекламу”.</div>';
 }
-function renderOfficeAdProducts(){const box=$('officeAdProducts');if(!box)return;box.innerHTML=products.length?products.map((p,i)=>'<label class="office-ad-check"><input class="office-ad-product-check" type="checkbox" value="'+esc(productKey(p,i))+'"><span>'+esc(pName(p))+'<br><small style="color:#66736b">'+esc(money(pPrice(p)))+'</small></span></label>').join(''):'<div class="empty">Спочатку додай товари в базу</div>';renderOfficeAdsList();fillAdForm()}
-function fillAdForm(ad){ad=ad||currentAd();if(!$('officeAdTitle'))return;const ids=ad&&Array.isArray(ad.productIds)?ad.productIds.map(text):[];$('officeAdId').value=ad?text(ad.id||ad._dbKey||''):'';$('officeAdTitle').value=ad?text(ad.title):'';$('officeAdText').value=ad?text(ad.text||ad.description):'';$('officeAdImage').value=ad?pickUrl(ad.image||ad.photo||ad.img):'';const prev=$('officeAdPreview');if(prev&&$('officeAdImage').value){prev.src=$('officeAdImage').value;prev.style.display='block'}else if(prev){prev.style.display='none'}document.querySelectorAll('.office-ad-product-check').forEach(ch=>{ch.checked=ids.includes(text(ch.value))})}
-function editOfficeAd(i){currentAdIndex=i;fillAdForm(ads[i]);renderAd();showToast('Реклама відкрита для редагування')}
-function resetAdForm(){['officeAdId','officeAdTitle','officeAdText','officeAdImage'].forEach(id=>{if($(id))$(id).value=''});if($('officeAdFile'))$('officeAdFile').value='';if($('officeAdPreview'))$('officeAdPreview').style.display='none';document.querySelectorAll('.office-ad-product-check').forEach(ch=>ch.checked=false)}
+function renderOfficeAdProducts(){const box=$('officeAdProducts');if(!box)return;box.innerHTML=products.length?products.map((p,i)=>'<label class="office-ad-check"><input class="office-ad-product-check" type="checkbox" value="'+esc(productKey(p,i))+'"><span>'+esc(pName(p))+'<br><small style="color:#66736b">'+esc(money(pPrice(p)))+'</small></span></label>').join(''):'<div class="empty">Спочатку додай товари в базу</div>';renderOfficeAdsList()}
+function fillAdForm(ad){if(!$('officeAdTitle'))return;ad=ad||null;const ids=ad&&Array.isArray(ad.productIds)?ad.productIds.map(text):[];$('officeAdId').value=ad?text(ad.id||ad._dbKey||''):'';$('officeAdTitle').value=ad?text(ad.title):'';$('officeAdText').value=ad?text(ad.text||ad.description):'';$('officeAdImage').value=ad?pickUrl(ad.image||ad.photo||ad.img):'';if($('officeAdFile'))$('officeAdFile').value='';const prev=$('officeAdPreview');if(prev&&$('officeAdImage').value){prev.src=$('officeAdImage').value;prev.style.display='block'}else if(prev){prev.removeAttribute('src');prev.style.display='none'}document.querySelectorAll('.office-ad-product-check').forEach(ch=>{ch.checked=ids.includes(text(ch.value))})}
+function editOfficeAd(i){if(!ads[i])return;currentAdIndex=i;fillAdForm(ads[i]);renderAd();showToast('Реклама відкрита для редагування')}
+function resetAdForm(){fillAdForm(null)}
 function handleAdFile(e){const file=e.target.files&&e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){showInfo('Не фото','Обери файл зображення.');return}const reader=new FileReader();reader.onload=()=>{if($('officeAdImage'))$('officeAdImage').value=reader.result;if($('officeAdPreview')){$('officeAdPreview').src=reader.result;$('officeAdPreview').style.display='block'}};reader.readAsDataURL(file)}
 function fileToCompressedDataUrl(file,maxSide=900,quality=.78){
   return new Promise((resolve,reject)=>{
@@ -1474,15 +1474,14 @@ async function saveOfficeAd(){
     try{await db.ref(PUBLIC_SITE_CACHE_PATH).remove()}catch(cacheErr){console.warn('Рекламу збережено, але кеш не очищено через правила Firebase:',cacheErr)}
     const oldIndex=ads.findIndex(a=>text(a.id||a._dbKey)===id);
     if(oldIndex>=0){ads[oldIndex]=ad;currentAdIndex=oldIndex}else{ads.push(ad);currentAdIndex=ads.length-1}
-    renderOfficeAdsList();renderAd();startAdsSlider();fillAdForm(ad);showToast('Рекламу збережено')
+    renderOfficeAdsList();renderAd();startAdsSlider();resetAdForm();showToast('Рекламу збережено. Форма очищена — можна додавати наступну рекламу')
   }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося зберегти рекламу у Firebase. Перевір інтернет або правила бази.')}
 }
 async function deleteOfficeAd(){
   const id=text($('officeAdId').value);
-  let i=ads.findIndex(a=>text(a.id||a._dbKey||a.key||a.adId)===id);
-  if(i<0 && currentAd())i=currentAdIndex;
-  if(i<0 || !ads[i]){showInfo('Немає реклами','Вибери рекламу зі списку і натисни “Видалити рекламу”.');return}
-  await deleteOfficeAdByIndex(i,true);
+  const i=ads.findIndex(a=>text(a.id||a._dbKey||a.key||a.adId)===id);
+  if(!id || i<0 || !ads[i]){showInfo('Немає реклами','Спочатку натисни “Редагувати” біля потрібної реклами або видали її кнопкою у списку “Усі реклами”.');return}
+  await deleteOfficeAdByIndex(i,false);
 }
 async function deleteOfficeAdByIndex(i,skipConfirm){
   const ad=ads[i]; if(!ad)return;
@@ -1492,7 +1491,7 @@ async function deleteOfficeAdByIndex(i,skipConfirm){
     ads.splice(i,1);
     currentAdIndex=ads.length?Math.min(i,ads.length-1):0;
     resetAdForm();
-    renderOfficeAdsList();renderAd();startAdsSlider();fillAdForm(ads[currentAdIndex]||null);
+    renderOfficeAdsList();renderAd();startAdsSlider();resetAdForm();
     showToast('Рекламу видалено')
   }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити рекламу. Перевір правила Firebase для catalog/ads. Кеш siteCache більше не блокує видалення.')}
 }
