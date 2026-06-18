@@ -412,18 +412,31 @@ function adsToDbObject(){
 }
 async function removeAdEverywhere(ad,i){
   const key=adDbKey(ad,i);
-  const updates={};
-  if(key){
-    updates['catalog/ads/'+key]=null;
-    updates['ads/'+key]=null;
+
+  // ВАЖЛИВО: не робимо один root update одразу в catalog/ads + ads + siteCache.
+  // Якщо правила Firebase не дозволяють хоча б один шлях, весь update падає і реклама не видаляється.
+  // Тому видаляємо тільки основний шлях реклами, а кеш чистимо окремо і без блокування.
+  if(key && !/^\d+$/.test(key)){
+    await db.ref('catalog/ads/'+key).remove();
+  }else{
+    const next=(ads||[])
+      .filter((_,idx)=>idx!==i)
+      .map((x,idx)=>{
+        const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);
+        return {...x,id:k,_dbKey:k};
+      });
+    const nextObj=next.length
+      ? next.reduce((acc,x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);acc[k]=x;return acc},{})
+      : null;
+    await db.ref('catalog/ads').set(nextObj);
   }
-  updates[PUBLIC_SITE_CACHE_PATH]=null;
-  if(!key || /^\d+$/.test(key)){
-    const next=(ads||[]).filter((_,idx)=>idx!==i).map((x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);return {...x,id:k,_dbKey:k}});
-    updates['catalog/ads']=next.length?next.reduce((acc,x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);acc[k]=x;return acc},{}):null;
-    updates['ads']=null;
+
+  // Чистимо публічний кеш окремо. Якщо rules не дають доступ до siteCache, видалення реклами все одно вже виконано.
+  try{
+    await db.ref(PUBLIC_SITE_CACHE_PATH).remove();
+  }catch(e){
+    console.warn('Рекламу видалено, але кеш не очищено через правила Firebase:', e);
   }
-  await db.ref().update(updates);
 }
 
 let insortDataLoadedOnce=false;
@@ -1426,7 +1439,8 @@ async function saveOfficeAd(){
   const ad={id,_dbKey:id,title:text($('officeAdTitle').value)||'Рекламне поле',text:text($('officeAdText').value),image:text($('officeAdImage').value),productIds:selectedAdProductIds(),updatedAt:Date.now()};
   if(!ad.image&&!ad.text&&!ad.productIds.length){showInfo('Не збережено','Додай фото, текст або хоча б один товар до реклами.');return}
   try{
-    await db.ref().update({['catalog/ads/'+id]:ad,[PUBLIC_SITE_CACHE_PATH]:null});
+    await db.ref('catalog/ads/'+id).set(ad);
+    try{await db.ref(PUBLIC_SITE_CACHE_PATH).remove()}catch(cacheErr){console.warn('Рекламу збережено, але кеш не очищено через правила Firebase:',cacheErr)}
     const oldIndex=ads.findIndex(a=>text(a.id||a._dbKey)===id);
     if(oldIndex>=0){ads[oldIndex]=ad;currentAdIndex=oldIndex}else{ads.push(ad);currentAdIndex=ads.length-1}
     renderOfficeAdsList();renderAd();startAdsSlider();fillAdForm(ad);showToast('Рекламу збережено')
@@ -1449,7 +1463,7 @@ async function deleteOfficeAdByIndex(i,skipConfirm){
     resetAdForm();
     renderOfficeAdsList();renderAd();startAdsSlider();fillAdForm(ads[currentAdIndex]||null);
     showToast('Рекламу видалено')
-  }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити рекламу. Перевір правила Firebase для catalog/ads та siteCache.')}
+  }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити рекламу. Перевір правила Firebase для catalog/ads. Кеш siteCache більше не блокує видалення.')}
 }
 function openAdEditModal(){openOffice();setTimeout(()=>{if($('officeAdTitle'))$('officeAdTitle').focus()},50)}
 function closeAdEditModal(){closeOfficePanel()}
