@@ -411,14 +411,29 @@ function adsToDbObject(){
   return out;
 }
 async function removeAdEverywhere(ad,i){
-  const key=adDbKey(ad,i);
+  const rawKey=adDbKey(ad,i);
+  const key=text(rawKey).replace(/^\/+/, '').split('/').filter(Boolean).pop();
 
-  // ВАЖЛИВО: не робимо один root update одразу в catalog/ads + ads + siteCache.
-  // Якщо правила Firebase не дозволяють хоча б один шлях, весь update падає і реклама не видаляється.
-  // Тому видаляємо тільки основний шлях реклами, а кеш чистимо окремо і без блокування.
-  if(key && !/^\d+$/.test(key)){
-    await db.ref('catalog/ads/'+key).remove();
-  }else{
+  // ВАЖЛИВО: не використовуємо db.ref().update() для видалення реклами.
+  // Firebase не дозволяє в одному update одночасно видаляти /ads/id і дочірні шляхи типу /ads/id/...
+  // Тому видаляємо тільки конкретний вузол через remove(), окремо для можливих старих/нових шляхів.
+  async function removePath(path){
+    try{
+      await db.ref(path).remove();
+      return {ok:true,path};
+    }catch(e){
+      console.warn('Не вдалося видалити шлях '+path+':', e);
+      return {ok:false,path,error:e};
+    }
+  }
+
+  let results=[];
+  if(key){
+    results=await Promise.all([
+      removePath('ads/'+key),
+      removePath('catalog/ads/'+key)
+    ]);
+  }else if(Number.isInteger(i)){
     const next=(ads||[])
       .filter((_,idx)=>idx!==i)
       .map((x,idx)=>{
@@ -426,12 +441,24 @@ async function removeAdEverywhere(ad,i){
         return {...x,id:k,_dbKey:k};
       });
     const nextObj=next.length
-      ? next.reduce((acc,x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);acc[k]=x;return acc},{})
+      ? next.reduce((acc,x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);acc[k]=x;return acc}, {})
       : null;
-    await db.ref('catalog/ads').set(nextObj);
+
+    const setResults=await Promise.all([
+      db.ref('ads').set(nextObj).then(()=>({ok:true,path:'ads'})).catch(e=>({ok:false,path:'ads',error:e})),
+      db.ref('catalog/ads').set(nextObj).then(()=>({ok:true,path:'catalog/ads'})).catch(e=>({ok:false,path:'catalog/ads',error:e}))
+    ]);
+    results=setResults;
   }
 
-  // Чистимо публічний кеш окремо. Якщо rules не дають доступ до siteCache, видалення реклами все одно вже виконано.
+  const deletedSomewhere=results.some(r=>r.ok);
+  if(!deletedSomewhere){
+    const firstErr=results.find(r=>r.error)?.error;
+    throw firstErr || new Error('Не вдалося видалити рекламу: ключ не знайдено');
+  }
+
+  // Чистимо кеш окремо. Якщо правила Firebase не дають доступ до siteCache,
+  // видалення реклами вже виконане і не має падати через кеш.
   try{
     await db.ref(PUBLIC_SITE_CACHE_PATH).remove();
   }catch(e){
@@ -1439,7 +1466,11 @@ async function saveOfficeAd(){
   const ad={id,_dbKey:id,title:text($('officeAdTitle').value)||'Рекламне поле',text:text($('officeAdText').value),image:text($('officeAdImage').value),productIds:selectedAdProductIds(),updatedAt:Date.now()};
   if(!ad.image&&!ad.text&&!ad.productIds.length){showInfo('Не збережено','Додай фото, текст або хоча б один товар до реклами.');return}
   try{
-    await db.ref('catalog/ads/'+id).set(ad);
+    const saveResults=await Promise.all([
+      db.ref('catalog/ads/'+id).set(ad).then(()=>true).catch(e=>{console.warn('Не вдалося зберегти catalog/ads:',e);return false}),
+      db.ref('ads/'+id).set(ad).then(()=>true).catch(e=>{console.warn('Не вдалося зберегти ads:',e);return false})
+    ]);
+    if(!saveResults.some(Boolean)) throw new Error('Не вдалося зберегти рекламу ні в catalog/ads, ні в ads');
     try{await db.ref(PUBLIC_SITE_CACHE_PATH).remove()}catch(cacheErr){console.warn('Рекламу збережено, але кеш не очищено через правила Firebase:',cacheErr)}
     const oldIndex=ads.findIndex(a=>text(a.id||a._dbKey)===id);
     if(oldIndex>=0){ads[oldIndex]=ad;currentAdIndex=oldIndex}else{ads.push(ad);currentAdIndex=ads.length-1}
