@@ -176,21 +176,6 @@
 .office-product-search-row button{border-radius:14px;padding:13px 16px;font-weight:1000;background:#101512;color:#fff;white-space:nowrap}
 .office-product-search-info{font-size:13px;color:#66736b;font-weight:850}
 @media(max-width:720px){.office-product-search-row{flex-direction:column;align-items:stretch}.office-product-search-row button{width:100%}}
-/* ===== Окремий розділ керування хітами в Офісі ===== */
-.office-hit-row{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--line);background:#fff}
-.office-hit-row:last-child{border-bottom:0}
-.office-hit-row.is-hit{background:#fffdf3;outline:2px solid rgba(255,179,0,.35);outline-offset:-2px}
-.office-hit-thumb{width:64px;height:64px;border-radius:14px;background:#eef6ef;display:grid;place-items:center;overflow:hidden;font-size:24px}
-.office-hit-thumb img{width:100%;height:100%;object-fit:contain;display:block}
-.office-hit-title{font-weight:1000;line-height:1.25}
-.office-hit-meta{font-size:13px;color:var(--muted);margin-top:4px;font-weight:850}
-.office-hit-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 9px;background:#ffb300;color:#101512;font-size:12px;font-weight:1000;margin-left:6px}
-.office-hit-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.office-hit-actions button{border-radius:14px;padding:11px 13px;font-weight:1000}
-.office-hit-add{background:linear-gradient(135deg,var(--green2),var(--green));color:#071007}
-.office-hit-remove{background:#ffecec;color:#b00000}
-@media(max-width:720px){.office-hit-row{grid-template-columns:52px 1fr}.office-hit-thumb{width:52px;height:52px}.office-hit-actions{grid-column:1/-1;justify-content:stretch}.office-hit-actions button{flex:1}}
-
 
 /* ===== Office v2: розділи, вибір категорій та підкатегорій ===== */
 .office-modal .modal-card{width:min(1120px,100%)!important}
@@ -337,7 +322,6 @@
 <div class="modal office-modal" id="officeModal"><div class="modal-card"><button class="modal-close" onclick="closeOfficePanel()">×</button><h2>Офіс</h2><div class="office-note" id="officeNotice">Офіс доступний тільки адміну.</div>
 <div class="office-tabs">
   <button type="button" class="office-tab-btn active" data-office-tab="products" onclick="switchOfficeTab('products')">🛠️ Товари</button>
-  <button type="button" class="office-tab-btn" data-office-tab="hits" onclick="switchOfficeTab('hits')">🔥 Хіти</button>
   <button type="button" class="office-tab-btn" data-office-tab="prices" onclick="switchOfficeTab('prices')">💰 Зміна цін</button>
   <button type="button" class="office-tab-btn" data-office-tab="excel" onclick="switchOfficeTab('excel')">📊 Excel</button>
   <button type="button" class="office-tab-btn" data-office-tab="ads" onclick="switchOfficeTab('ads')">📢 Реклама</button>
@@ -347,13 +331,6 @@
 <section class="office-section active" id="officeSectionProducts">
 <h3>Додавання товару</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><select id="officeMain" onchange="updateOfficeSubcategorySelect()"><option value="">Спочатку додай або обери категорію</option></select></div><div class="office-field"><label>Підкатегорія</label><select id="officeCat"><option value="">Спочатку обери основну категорію</option></select></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div>
 <h3>Товари з бази</h3><div class="office-product-search-box"><label for="officeProductSearch">Пошук товару для редагування</label><div class="office-product-search-row"><input id="officeProductSearch" type="search" placeholder="Введи назву, категорію, підкатегорію, ціну або ID товару" oninput="renderOfficeList()"><button type="button" onclick="clearOfficeProductSearch()">Очистити</button></div><div class="office-product-search-info" id="officeProductSearchInfo">Показано всі товари</div></div><div class="office-list" id="officeProductsList"></div>
-</section>
-<section class="office-section" id="officeSectionHits">
-<h3>Редагування хітів на головному екрані</h3>
-<div class="office-note">Тут можна швидко додати товар у блок “Хіти продажів” або прибрати його з головної. Зміни зберігаються в Firebase в полі <b>isHit</b>.</div>
-<div class="office-product-search-box"><label for="officeHitsSearch">Пошук товару для хітів</label><div class="office-product-search-row"><input id="officeHitsSearch" type="search" placeholder="Введи назву, категорію, підкатегорію, ціну або ID товару" oninput="renderOfficeHitsList()"><button type="button" onclick="clearOfficeHitsSearch()">Очистити</button></div><div class="office-product-search-info" id="officeHitsInfo">Показано всі товари</div></div>
-<div class="office-actions"><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeHitsList()">Оновити список</button><button class="big-btn primary" onclick="showHits()">Подивитися хіти на головній</button></div>
-<div class="office-list" id="officeHitsList"></div>
 </section>
 <section class="office-section" id="officeSectionPrices">
 <h3>Окремий відділ для зміни цін</h3>
@@ -414,6 +391,41 @@ firebase.initializeApp(firebaseConfig);const db=firebase.database();
 const ADMIN_EMAIL='09fushan90@gmail.com';
 const PUBLIC_SITE_CACHE_PATH='siteCache/publicSnapshot6h';
 const PUBLIC_SITE_CACHE_TTL=6*60*60*1000;
+function clearPublicSiteCache(){
+  try{
+    if(typeof db!=='undefined' && db && db.ref){
+      db.ref(PUBLIC_SITE_CACHE_PATH).remove().catch(e=>console.warn('Не вдалося очистити кеш сайту:',e));
+    }
+  }catch(e){console.warn('Помилка очищення кешу сайту:',e)}
+}
+function adDbKey(ad,i){
+  const id=text(ad && (ad.id||ad._dbKey||ad.key||ad.adId));
+  return id || (Number.isInteger(i)?String(i):'');
+}
+function adsToDbObject(){
+  const out={};
+  (ads||[]).forEach((ad,i)=>{
+    const key=adDbKey(ad,i)||('ad_'+Date.now()+'_'+i);
+    out[key]={...ad,id:key,_dbKey:key};
+  });
+  return out;
+}
+async function removeAdEverywhere(ad,i){
+  const key=adDbKey(ad,i);
+  const updates={};
+  if(key){
+    updates['catalog/ads/'+key]=null;
+    updates['ads/'+key]=null;
+  }
+  updates[PUBLIC_SITE_CACHE_PATH]=null;
+  if(!key || /^\d+$/.test(key)){
+    const next=(ads||[]).filter((_,idx)=>idx!==i).map((x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);return {...x,id:k,_dbKey:k}});
+    updates['catalog/ads']=next.length?next.reduce((acc,x,idx)=>{const k=adDbKey(x,idx)||('ad_'+Date.now()+'_'+idx);acc[k]=x;return acc},{}):null;
+    updates['ads']=null;
+  }
+  await db.ref().update(updates);
+}
+
 let insortDataLoadedOnce=false;
 
 function isAdminUser(){
@@ -1143,7 +1155,7 @@ function copyPhone(phone){if(navigator.clipboard){navigator.clipboard.writeText(
 function showLocationSoon(){showInfo('Місцезнаходження магазину','Цей розділ готовий як окреме вікно. Коли скажеш адресу магазину, я підключу сюди карту, маршрут і кнопку “Прокласти маршрут”.')}
 function openOffice(){
   if(!isAdminUser()){ showToast('Офіс доступний тільки адміну.'); return; }
-setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeCategoryControls();switchOfficeTab('products');renderOfficeList();renderOfficeHitsList();renderOfficeAdProducts();renderOfficeAdsList();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
+setTimeout(renderOfficeProductPreviews,0);closeMenu();document.body.classList.add('office-edit-on');renderOfficeCategoryControls();switchOfficeTab('products');renderOfficeList();renderOfficeAdProducts();renderOfficeAdsList();fillAdForm();fillHeroForm();setupHeroAutosave();$('officeModal').classList.add('show');document.body.style.overflow='hidden'}
 
 
 
@@ -1306,7 +1318,7 @@ function closeAdModal(){$('adModal').classList.remove('show');document.body.styl
 function selectedAdProductIds(){return Array.from(document.querySelectorAll('.office-ad-product-check:checked')).map(x=>x.value)}
 function renderOfficeAdsList(){
   const box=$('officeAdsList');if(!box)return;
-  box.innerHTML=ads.length?ads.map((ad,i)=>{const img=pickUrl(ad.image||ad.photo||ad.img);const count=Array.isArray(ad.productIds)?ad.productIds.length:0;return '<div class="office-ad-row"><div>'+(img?'<img src="'+esc(img)+'" alt="">':'<div style="width:58px;height:58px;border-radius:12px;background:#eef6ef;display:grid;place-items:center">📢</div>')+'</div><div><div class="office-ad-row-title">'+esc(text(ad.title)||'Рекламне поле')+'</div><div class="office-ad-row-meta">'+count+' товарів прикріплено</div></div><div class="office-ad-row-actions"><button onclick="editOfficeAd('+i+')">Редагувати</button><button class="danger-btn" onclick="deleteOfficeAdByIndex('+i+')">Видалити</button></div></div>'}).join(''):'<div class="empty">Поки що реклами немає. Заповни форму нижче і натисни “Зберегти рекламу”.</div>';
+  box.innerHTML=ads.length?ads.map((ad,i)=>{const img=pickUrl(ad.image||ad.photo||ad.img);const count=Array.isArray(ad.productIds)?ad.productIds.length:0;return '<div class="office-ad-row"><div>'+(img?'<img src="'+esc(img)+'" alt="">':'<div style="width:58px;height:58px;border-radius:12px;background:#eef6ef;display:grid;place-items:center">📢</div>')+'</div><div><div class="office-ad-row-title">'+esc(text(ad.title)||'Рекламне поле')+'</div><div class="office-ad-row-meta">'+count+' товарів прикріплено</div></div><div class="office-ad-row-actions"><button type="button" onclick="editOfficeAd('+i+')">Редагувати</button><button type="button" class="danger-btn" onclick="deleteOfficeAdByIndex('+i+')">Видалити</button></div></div>'}).join(''):'<div class="empty">Поки що реклами немає. Заповни форму нижче і натисни “Зберегти рекламу”.</div>';
 }
 function renderOfficeAdProducts(){const box=$('officeAdProducts');if(!box)return;box.innerHTML=products.length?products.map((p,i)=>'<label class="office-ad-check"><input class="office-ad-product-check" type="checkbox" value="'+esc(productKey(p,i))+'"><span>'+esc(pName(p))+'<br><small style="color:#66736b">'+esc(money(pPrice(p)))+'</small></span></label>').join(''):'<div class="empty">Спочатку додай товари в базу</div>';renderOfficeAdsList();fillAdForm()}
 function fillAdForm(ad){ad=ad||currentAd();if(!$('officeAdTitle'))return;const ids=ad&&Array.isArray(ad.productIds)?ad.productIds.map(text):[];$('officeAdId').value=ad?text(ad.id||ad._dbKey||''):'';$('officeAdTitle').value=ad?text(ad.title):'';$('officeAdText').value=ad?text(ad.text||ad.description):'';$('officeAdImage').value=ad?pickUrl(ad.image||ad.photo||ad.img):'';const prev=$('officeAdPreview');if(prev&&$('officeAdImage').value){prev.src=$('officeAdImage').value;prev.style.display='block'}else if(prev){prev.style.display='none'}document.querySelectorAll('.office-ad-product-check').forEach(ch=>{ch.checked=ids.includes(text(ch.value))})}
@@ -1411,25 +1423,33 @@ function handleProductFile(e){handleProductFiles(e)}
 async function saveOfficeAd(){
   let id=text($('officeAdId').value);
   if(!id)id='ad_'+Date.now();
-  const ad={id,title:text($('officeAdTitle').value)||'Рекламне поле',text:text($('officeAdText').value),image:text($('officeAdImage').value),productIds:selectedAdProductIds(),updatedAt:Date.now()};
+  const ad={id,_dbKey:id,title:text($('officeAdTitle').value)||'Рекламне поле',text:text($('officeAdText').value),image:text($('officeAdImage').value),productIds:selectedAdProductIds(),updatedAt:Date.now()};
   if(!ad.image&&!ad.text&&!ad.productIds.length){showInfo('Не збережено','Додай фото, текст або хоча б один товар до реклами.');return}
   try{
-    await db.ref('catalog/ads/'+id).set(ad);
+    await db.ref().update({['catalog/ads/'+id]:ad,[PUBLIC_SITE_CACHE_PATH]:null});
     const oldIndex=ads.findIndex(a=>text(a.id||a._dbKey)===id);
     if(oldIndex>=0){ads[oldIndex]=ad;currentAdIndex=oldIndex}else{ads.push(ad);currentAdIndex=ads.length-1}
     renderOfficeAdsList();renderAd();startAdsSlider();fillAdForm(ad);showToast('Рекламу збережено')
   }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося зберегти рекламу у Firebase. Перевір інтернет або правила бази.')}
 }
 async function deleteOfficeAd(){
-  const id=text($('officeAdId').value)||(currentAd()?text(currentAd().id||currentAd()._dbKey):'');
-  if(!id){showInfo('Немає реклами','Вибери рекламу зі списку або створи нову.');return}
-  try{await db.ref('catalog/ads/'+id).remove();ads=ads.filter(a=>text(a.id||a._dbKey)!==id);currentAdIndex=0;resetAdForm();renderOfficeAdsList();renderAd();startAdsSlider();showToast('Рекламу видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити рекламу.')}
+  const id=text($('officeAdId').value);
+  let i=ads.findIndex(a=>text(a.id||a._dbKey||a.key||a.adId)===id);
+  if(i<0 && currentAd())i=currentAdIndex;
+  if(i<0 || !ads[i]){showInfo('Немає реклами','Вибери рекламу зі списку і натисни “Видалити рекламу”.');return}
+  await deleteOfficeAdByIndex(i,true);
 }
-async function deleteOfficeAdByIndex(i){
+async function deleteOfficeAdByIndex(i,skipConfirm){
   const ad=ads[i]; if(!ad)return;
-  if(!confirm('Видалити рекламу: '+(text(ad.title)||'Рекламне поле')+'?'))return;
-  const id=text(ad.id||ad._dbKey);
-  try{await db.ref('catalog/ads/'+id).remove();ads.splice(i,1);currentAdIndex=0;resetAdForm();renderOfficeAdsList();renderAd();startAdsSlider();showToast('Рекламу видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити рекламу.')}
+  if(!skipConfirm && !confirm('Видалити рекламу: '+(text(ad.title)||'Рекламне поле')+'?'))return;
+  try{
+    await removeAdEverywhere(ad,i);
+    ads.splice(i,1);
+    currentAdIndex=ads.length?Math.min(i,ads.length-1):0;
+    resetAdForm();
+    renderOfficeAdsList();renderAd();startAdsSlider();fillAdForm(ads[currentAdIndex]||null);
+    showToast('Рекламу видалено')
+  }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити рекламу. Перевір правила Firebase для catalog/ads та siteCache.')}
 }
 function openAdEditModal(){openOffice();setTimeout(()=>{if($('officeAdTitle'))$('officeAdTitle').focus()},50)}
 function closeAdEditModal(){closeOfficePanel()}
@@ -1444,12 +1464,11 @@ function closeOfficePanel(){$('officeModal').classList.remove('show');document.b
 
 function switchOfficeTab(tab){
   document.querySelectorAll('.office-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.officeTab===tab));
-  const map={products:'officeSectionProducts',hits:'officeSectionHits',prices:'officeSectionPrices',excel:'officeSectionExcel',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
+  const map={products:'officeSectionProducts',prices:'officeSectionPrices',excel:'officeSectionExcel',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
   Object.values(map).forEach(id=>{const el=$(id); if(el)el.classList.remove('active')});
   if($(map[tab]))$(map[tab]).classList.add('active');
   if(tab==='categories')renderOfficeCategoriesList();
   if(tab==='products')renderOfficeCategoryControls();
-  if(tab==='hits')renderOfficeHitsList();
   if(tab==='prices')renderOfficeList();
   if(tab==='excel')renderExcelPreview();
 }
@@ -1592,7 +1611,7 @@ async function applyBulkPriceToSelected(){
     await db.ref().update(updates);
     bulkSelectedProductIds.clear();
     if($('bulkPriceValue'))$('bulkPriceValue').value='';
-    build();renderOfficeList();renderOfficeHitsList();renderOfficeAdProducts();
+    build();renderOfficeList();renderOfficeAdProducts();
     showToast('Ціну підвищено на '+money(addAmount)+' у '+changed+' товарів');
   }catch(e){
     console.error(e);
@@ -1620,44 +1639,6 @@ function clearOfficeProductSearch(){
   if(input)input.value='';
   renderOfficeList();
   if(input)input.focus();
-}
-function hitProductDbId(p,i){return text(p&&((p._dbKey)||(p.id)))||text(getProductId(p,i));}
-function clearOfficeHitsSearch(){
-  const input=$('officeHitsSearch');
-  if(input)input.value='';
-  renderOfficeHitsList();
-  if(input)input.focus();
-}
-function officeHitRowHtml(p,i){
-  const img=pImg(p);
-  const thumb=img?'<img src="'+esc(img)+'" onerror="this.remove();this.parentElement.textContent=&quot;🛠️&quot;">':'🛠️';
-  const isHit=pIsHit(p);
-  return '<div class="office-hit-row '+(isHit?'is-hit':'')+'"><div class="office-hit-thumb">'+thumb+'</div><div><div class="office-hit-title">'+esc(pName(p))+(isHit?'<span class="office-hit-badge">🔥 Хіт</span>':'')+'</div><div class="office-hit-meta">'+esc([pMain(p),pCat(p)].filter(Boolean).join(' / ')||'Без категорії')+' • '+esc(money(pPrice(p)))+'</div></div><div class="office-hit-actions"><button class="office-hit-add" onclick="setOfficeProductHit('+i+',true)">Додати в хіти</button><button class="office-hit-remove" onclick="setOfficeProductHit('+i+',false)">Прибрати</button><button class="cart-btn" onclick="editOfficeProduct('+i+')">Редагувати</button></div></div>';
-}
-function renderOfficeHitsList(){
-  const box=$('officeHitsList');
-  if(!box)return;
-  const query=text($('officeHitsSearch')&&$('officeHitsSearch').value).trim().toLowerCase();
-  const filtered=products.map((p,i)=>({p,i})).filter(item=>officeProductMatchesSearch(item.p,item.i,query));
-  const hitsCount=products.filter(pIsHit).length;
-  if($('officeHitsInfo'))$('officeHitsInfo').textContent=(query?('Знайдено: '+filtered.length+' з '+products.length):('Показано всі товари: '+products.length))+' • Хітів на головній: '+hitsCount;
-  box.innerHTML=products.length?(filtered.length?filtered.map(item=>officeHitRowHtml(item.p,item.i)).join(''):'<div class="empty">За цим пошуком товарів не знайдено</div>'):'<div class="empty">Товарів поки немає</div>';
-}
-async function setOfficeProductHit(i,flag){
-  const p=products[i];
-  if(!p)return;
-  const id=hitProductDbId(p,i);
-  if(!id){showInfo('Не збережено','Не вдалося знайти ID товару для збереження хіта.');return}
-  try{
-    await db.ref('catalog/products/'+id+'/isHit').set(!!flag);
-    p.isHit=!!flag;
-    delete p.hit; delete p.bestSeller;
-    build();renderHomeHits();renderOfficeHitsList();renderOfficeList();renderOfficeAdProducts();
-    showToast(flag?'Товар додано в хіти на головній':'Товар прибрано з хітів');
-  }catch(e){
-    console.error(e);
-    showInfo('Помилка бази','Не вдалося змінити хіт у Firebase. Перевір правила бази або чи ти увійшов як адмін.');
-  }
 }
 function renderOfficeList(){
   const box=$('officeProductsList');
@@ -1689,14 +1670,14 @@ async function saveOfficeProduct(){
   try{
     await db.ref('catalog/products/'+id).set(product);
     const idx=products.findIndex(x=>text(x.id)===text(id)); if(idx>=0)products[idx]=product; else products.unshift(product);
-    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeHitsList(); renderOfficeAdProducts(); showToast('Товар збережено в базі')
+    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар збережено в базі')
   }catch(e){
     console.error(e);
     const msg=(e&&e.code==='PERMISSION_DENIED')?'База відхилила запис. Перевір правила Firebase або увійди в адмін-акаунт.':'Не вдалося зберегти товар у Firebase. Я зменшив фото перед збереженням; якщо помилка лишилась — перевір правила доступу до бази.';
     showInfo('Помилка бази',msg)
   }
 }
-async function deleteOfficeProduct(i){const p=products[i]; if(!p)return; if(!confirm('Видалити товар: '+pName(p)+'?'))return; try{if(p.id)await db.ref('catalog/products/'+p.id).remove(); products.splice(i,1); build(); renderOfficeList(); renderOfficeHitsList(); renderOfficeAdProducts(); showToast('Товар видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити товар з Firebase.')}}
+async function deleteOfficeProduct(i){const p=products[i]; if(!p)return; if(!confirm('Видалити товар: '+pName(p)+'?'))return; try{if(p.id)await db.ref('catalog/products/'+p.id).remove(); products.splice(i,1); build(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити товар з Firebase.')}}
 
 function openEditModal(id){const i=products.findIndex((p,idx)=>String(getProductId(p,idx))===String(id));if(i>=0)editOfficeProduct(i)}
 function closeEditModal(){closeOfficePanel()}
