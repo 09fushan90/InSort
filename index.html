@@ -132,6 +132,21 @@
 @media(max-width:620px){.top-socials{gap:7px}.social-circle{width:42px;height:42px;flex-basis:42px}.social-circle svg{width:22px;height:22px}}
 
 
+/* ===== TikTok вибір каналів ===== */
+.tiktok-modal .modal-card{width:min(560px,100%);padding:30px}
+.tiktok-modal h2{margin:0 0 8px;font-size:30px}
+.tiktok-modal-sub{color:var(--muted);font-weight:850;line-height:1.45;margin:0 0 16px}
+.tiktok-channel-list{display:grid;gap:12px}
+.tiktok-channel-card{display:grid;grid-template-columns:62px 1fr;gap:14px;align-items:center;text-decoration:none;color:#101512;border:1px solid var(--line);border-radius:22px;background:#fbfdfb;padding:14px;transition:.18s}
+.tiktok-channel-card:hover{transform:translateY(-2px);border-color:#ff4f73;box-shadow:0 16px 32px rgba(12,22,15,.12)}
+.tiktok-channel-icon{width:62px;height:62px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg,#25F4EE 0%,#000 48%,#FE2C55 100%);color:#fff;box-shadow:0 12px 26px rgba(0,0,0,.22)}
+.tiktok-channel-icon svg{width:34px;height:34px;display:block}
+.tiktok-channel-title{font-weight:1000;font-size:18px;margin-bottom:5px}
+.tiktok-channel-link{color:#66736b;font-size:13px;font-weight:850;word-break:break-all}
+.tiktok-open-label{margin-top:9px;display:inline-flex;border-radius:999px;background:#101512;color:#fff;padding:8px 11px;font-size:13px;font-weight:1000}
+@media(max-width:520px){.tiktok-modal .modal-card{padding:24px}.tiktok-channel-card{grid-template-columns:52px 1fr;padding:12px}.tiktok-channel-icon{width:52px;height:52px;border-radius:17px}.tiktok-channel-icon svg{width:29px;height:29px}.tiktok-channel-title{font-size:16px}}
+
+
 .mobile-support-btn{display:none}
 @media(max-width:620px){
 .mobile-support-btn{display:flex!important;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#000;color:#fff;font-size:24px;font-weight:1000;border:none}
@@ -274,7 +289,7 @@
 <div class="page">
   <header class="topbar"><div class="topbar-inner"><div class="brand"><button class="menu-btn" onclick="openMenu()" aria-label="Меню">☰</button><div class="logo" onclick="showHome()" title="На головну" style="cursor:pointer">I</div><div><div class="brand-title" onclick="showHome()" title="На головну" style="cursor:pointer">In<span>Sort</span></div><div class="brand-sub">професійний інструмент</div></div></div><div class="top-actions"><div class="top-socials" id="topSocials">
   <a class="social-circle telegram-circle" href="https://t.me/shop_insort" target="_blank" rel="noopener" aria-label="Telegram InSort"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.04 15.52 8.7 20.2c.5 0 .72-.21.98-.47l2.35-2.25 4.87 3.56c.9.5 1.53.24 1.77-.83l3.2-15.01c.28-1.31-.48-1.82-1.35-1.5L1.72 10.96c-1.28.5-1.26 1.22-.22 1.54l4.81 1.5L17.48 7c.53-.35 1.02-.16.62.2L9.04 15.52z"/></svg></a>
-  <a class="social-circle tiktok-circle" href="https://www.tiktok.com/@insort_official" target="_blank" rel="noopener" aria-label="TikTok InSort"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></a>
+  <button type="button" class="social-circle tiktok-circle" onclick="openTikTokModal()" aria-label="TikTok InSort" style="border:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></button>
 </div><button class="cart-menu-btn" onclick="openCart()">🛒 <span>Кошик</span><span class="cart-count" id="cartCount">0</span></button><button class="support-btn" onclick="openSupport()">Підтримка</button><button class="mobile-support-btn" onclick="openSupport()">?</button></div></div></header>
   <section class="hero" id="hero"><div class="hero-card"><div><div class="hero-kicker" id="heroKicker">Продаж електроінструментів</div><h1 id="heroTitle">Вітаю на сайті</h1><p id="heroText">Новий чистий дизайн для магазину: зліва категорії, справа каталог, зверху рекламна пропозиція, а картка товару відкривається красиво й зрозуміло.</p><div class="hero-buttons"><button class="primary nav-icon-btn" onclick="showCatalog()"><span class="nav-icon shelf-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="4" rx="2" fill="#101512"/><rect x="7" y="12" width="5" height="12" rx="1.6" fill="#49d018"/><rect x="14" y="12" width="5" height="12" rx="1.6" fill="#90ee90"/><rect x="21" y="12" width="4" height="12" rx="1.4" fill="#49d018"/><rect x="4" y="24" width="24" height="4" rx="2" fill="#101512"/></svg></span><span>Весь каталог</span></button></div></div><div class="hero-visual" id="heroVisual"><img class="hero-photo" id="heroPhotoImg" alt="InSort"><div class="hero-badge" id="heroBadge">Procraft / InSort</div><div class="tool-shape"></div></div></div></section>
   <section class="ad-section" id="homeAdSection"><div class="ad-card" id="adCard" onclick="openAdModal()"><div class="ad-photo" id="adPhotoBox"><img id="adPhotoImg" alt="Реклама InSort"></div><div class="ad-content"><div class="ad-title" id="adTitle">Рекламне поле</div><div class="ad-text" id="adText">Тут буде головна акція, товар дня або банер. Додай фото і товари через Офіс.</div><div class="ad-products-preview" id="adProductsPreview"></div></div></div></section>
@@ -289,6 +304,18 @@
 
 <div class="modal" id="productModal"><div class="modal-card"><button class="modal-close" onclick="closeProduct()">×</button><div class="product-view"><div class="view-image"><div class="view-gallery-wrap"><button type="button" id="viewPrevBtn" class="view-gallery-arrow left" onclick="changeViewImage(-1);event.stopPropagation()">‹</button><img id="viewImg" alt=""><button type="button" id="viewNextBtn" class="view-gallery-arrow right" onclick="changeViewImage(1);event.stopPropagation()">›</button><div id="viewPhotoCounter" class="view-photo-counter"></div></div><div id="viewThumbs" class="view-thumbs"></div></div><div class="view-info"><div class="view-cat" id="viewCat"></div><h2 id="viewTitle"></h2><div class="view-desc" id="viewDesc"></div><div class="view-price" id="viewPrice"></div><div class="view-actions"><button class="big-btn primary order-btn" id="viewCartBtn">Додати в кошик</button><button type="button" class="big-btn secondary" id="viewDirectOrderBtn" style="background:#101512;color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" onclick="orderDirectCurrent()">Замовити одразу</button></div></div></div></div></div>
 <div class="modal ad-modal" id="adModal"><div class="modal-card"><button class="modal-close" onclick="closeAdModal()">×</button><h2 id="adModalTitle">Реклама</h2><p id="adModalText" style="color:#66736b;line-height:1.5"></p><img class="ad-modal-image" id="adModalImg" alt="Реклама" style="display:none"><h3>Прикріплені товари</h3><div class="ad-linked-products" id="adLinkedProducts"></div></div></div>
+
+<div class="modal tiktok-modal" id="tiktokModal"><div class="modal-card"><button class="modal-close" onclick="closeTikTokModal()">×</button><h2>TikTok канали</h2><p class="tiktok-modal-sub">Оберіть канал, який хочете відкрити.</p><div class="tiktok-channel-list">
+  <a class="tiktok-channel-card" href="https://www.tiktok.com/@insort_official?_r=1&_t=ZS-97Lx3r2i6VQ" target="_blank" rel="noopener">
+    <div class="tiktok-channel-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></div>
+    <div><div class="tiktok-channel-title">Офіційний канал сайту</div><div class="tiktok-channel-link">tiktok.com/@insort_official</div><span class="tiktok-open-label">Відкрити TikTok</span></div>
+  </a>
+  <a class="tiktok-channel-card" href="https://www.tiktok.com/@grandtool?_r=1&_t=ZS-97Lx5970qc0" target="_blank" rel="noopener">
+    <div class="tiktok-channel-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></div>
+    <div><div class="tiktok-channel-title">Канал магазину</div><div class="tiktok-channel-link">tiktok.com/@grandtool</div><span class="tiktok-open-label">Відкрити TikTok</span></div>
+  </a>
+</div></div></div>
+
 <div class="modal support-modal" id="supportModal"><div class="modal-card"><button class="modal-close" onclick="closeSupport()">×</button><h2>Підтримка</h2>
   <div class="support-block">
     <p>Якщо з'явилися питання по товару, або є якісь проблеми — пишіть.</p>
@@ -1192,10 +1219,12 @@ function orderDirectCurrent(){
 }
 function openSupport(){$('supportModal').classList.add('show');document.body.style.overflow='hidden'}
 function closeSupport(){$('supportModal').classList.remove('show');document.body.style.overflow=''}
+function openTikTokModal(){const m=$('tiktokModal');if(!m)return; m.classList.add('show');document.body.style.overflow='hidden'}
+function closeTikTokModal(){const m=$('tiktokModal');if(!m)return; m.classList.remove('show');document.body.style.overflow=''}
 function showToast(msg){let t=$('toast'); if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)} t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 function showInfo(title,msg){$('infoTitle').textContent=title;$('infoText').textContent=msg;$('infoModal').classList.add('show');document.body.style.overflow='hidden'}
 function closeInfoModal(){$('infoModal').classList.remove('show');document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeProduct();closeSupport();closeCart();closeMenu();closeAuthBox();closeProfileModal();closeOrderHistoryModal();closeInfoModal();closeAdModal();closeOfficePanel()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeProduct();closeSupport();closeCart();closeMenu();closeAuthBox();closeProfileModal();closeOrderHistoryModal();closeInfoModal();closeAdModal();closeTikTokModal();closeOfficePanel()}});
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m){m.classList.remove('show');document.body.style.overflow=''}}));
 
 function toggleMenu(force){const open=typeof force==='boolean'?force:!$('sideMenu').classList.contains('show');$('menuOverlay').classList.toggle('show',open);$('sideMenu').classList.toggle('show',open);document.body.style.overflow=open?'hidden':''}
