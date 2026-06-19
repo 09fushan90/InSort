@@ -1941,10 +1941,24 @@ subsFor=function(m){
   insortApplyDeletedCategoryFilter();
   const delM=insortDeletedMainSet(), delS=insortDeletedSubSet();
   if(delM.has(low(m)))return [];
+
   const realKey=Object.keys(subCategoriesMap||{}).find(k=>low(k)===low(m));
-  const fromMap=realKey?(subCategoriesMap[realKey]||[]):[];
-  if(insortCategoryManagerActive || realKey || (mainCategories||[]).some(x=>low(x)===low(m)))return uniq(fromMap.filter(s=>!delS.has(low(s))));
-  return uniq((products||[]).map(p=>pMain(p)&&low(pMain(p))===low(m)?pCat(p):'').filter(Boolean).filter(s=>!delS.has(low(s))));
+  const fromMap=realKey ? (subCategoriesMap[realKey] || []) : [];
+
+  // ВАЖЛИВО: підкатегорії беремо не тільки з карти subCategoriesMap,
+  // а й напряму з товарів. Раніше для основних категорій без запису
+  // у subCategoriesMap поверталась порожня відповідь, тому підкатегорії
+  // не відкривались під більшістю основних категорій.
+  const fromProducts = [];
+  (products || []).forEach(p => {
+    const pm = pMain(p);
+    const pc = pCat(p);
+    if(pc && low(pm) === low(m) && low(pc) !== low(m)){
+      fromProducts.push(pc);
+    }
+  });
+
+  return uniq([...fromMap, ...fromProducts].filter(Boolean).filter(s => !delS.has(low(s))));
 };
 
 const insortOriginalLoadData=loadData;
