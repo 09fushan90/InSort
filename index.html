@@ -1841,6 +1841,195 @@ window.addEventListener('load', ()=>{
 function submitOrder(){openCheckoutModal(cart,'cart')}
 async function saveOrderAndSupport(){return openCheckoutModal(cart,'cart')}
 
+
+
+/* ===== HARD FIX CATEGORIES DELETE v2: видалені категорії більше не повертаються з товарів/кешу ===== */
+let insortCategoryManagerActive=false;
+let insortDeletedMainCategories=[];
+let insortDeletedSubCategories=[];
+function insortListNames(v,fields){
+  return normalizeList(v).map(x=>typeof x==='string'?text(x):text((fields||[]).map(f=>x&&x[f]).find(Boolean)||x.name||x.title||x.category||x.mainCategory||x.subCategory)).filter(Boolean);
+}
+function insortDeletedMainSet(){return new Set((insortDeletedMainCategories||[]).map(x=>low(x)));}
+function insortDeletedSubSet(){return new Set((insortDeletedSubCategories||[]).map(x=>low(x)));}
+async function insortReadFirst(paths){
+  for(const p of paths){
+    try{const v=await readDb(p); if(v!==null && v!==undefined)return v;}catch(_){ }
+  }
+  return null;
+}
+async function insortLoadLiveCategoryState(){
+  try{
+    const [activeVal,mainVal,subVal,catsVal,delMainVal,delSubVal]=await Promise.all([
+      insortReadFirst(['catalog/categoryManagerActive','categoryManagerActive']),
+      insortReadFirst(['catalog/mainCategories','mainCategories']),
+      insortReadFirst(['catalog/subCategories','subCategories']),
+      insortReadFirst(['catalog/categories','categories']),
+      insortReadFirst(['catalog/deletedMainCategories','deletedMainCategories']),
+      insortReadFirst(['catalog/deletedSubCategories','deletedSubCategories'])
+    ]);
+    insortDeletedMainCategories=insortListNames(delMainVal,['name','title','mainCategory','category']);
+    insortDeletedSubCategories=insortListNames(delSubVal,['name','title','subCategory','category']);
+    const hasLiveCategoryPaths=(mainVal!==null&&mainVal!==undefined)||(subVal!==null&&subVal!==undefined)||(catsVal!==null&&catsVal!==undefined);
+    insortCategoryManagerActive=activeVal===true || String(activeVal).toLowerCase()==='true' || hasLiveCategoryPaths || insortDeletedMainCategories.length>0 || insortDeletedSubCategories.length>0;
+    if(insortCategoryManagerActive){
+      mainCategories=insortListNames(mainVal,['name','title','mainCategory','category']);
+      subCategoriesMap=normalizeSubCategories(subVal||{});
+      categories=insortListNames(catsVal,['name','title','category','mainCategory','subCategory']);
+      insortApplyDeletedCategoryFilter();
+    }
+  }catch(e){console.warn('Live category state skipped',e)}
+}
+function insortApplyDeletedCategoryFilter(){
+  const delM=insortDeletedMainSet(), delS=insortDeletedSubSet();
+  mainCategories=uniq((mainCategories||[]).filter(x=>!delM.has(low(x))));
+  categories=uniq((categories||[]).filter(x=>!delM.has(low(x))&&!delS.has(low(x))));
+  const fixed={};
+  Object.keys(subCategoriesMap||{}).forEach(k=>{
+    if(delM.has(low(k)))return;
+    const realMain=(mainCategories||[]).find(m=>low(m)===low(k)) || text(k);
+    if(!realMain)return;
+    fixed[realMain]=uniq((subCategoriesMap[k]||[]).filter(s=>!delS.has(low(s))));
+  });
+  subCategoriesMap=fixed;
+  if(activeMain && delM.has(low(activeMain))){activeMain='';activeSub='';}
+  if(activeSub && delS.has(low(activeSub)))activeSub='';
+}
+
+const insortOriginalMains=mains;
+mains=function(){
+  insortApplyDeletedCategoryFilter();
+  const explicit=uniq([...(mainCategories||[]),...Object.keys(subCategoriesMap||{})].filter(Boolean));
+  if(insortCategoryManagerActive)return explicit;
+  if(explicit.length)return explicit;
+  const delM=insortDeletedMainSet();
+  const pm=uniq((products||[]).map(pMain).filter(Boolean).filter(x=>!delM.has(low(x))));
+  return uniq([...pm, ...(pm.length?[]:(products||[]).map(pCat).filter(Boolean).filter(x=>!delM.has(low(x))))]);
+};
+const insortOriginalSubsFor=subsFor;
+subsFor=function(m){
+  insortApplyDeletedCategoryFilter();
+  const delM=insortDeletedMainSet(), delS=insortDeletedSubSet();
+  if(delM.has(low(m)))return [];
+  const realKey=Object.keys(subCategoriesMap||{}).find(k=>low(k)===low(m));
+  const fromMap=realKey?(subCategoriesMap[realKey]||[]):[];
+  if(insortCategoryManagerActive || realKey || (mainCategories||[]).some(x=>low(x)===low(m)))return uniq(fromMap.filter(s=>!delS.has(low(s))));
+  return uniq((products||[]).map(p=>pMain(p)&&low(pMain(p))===low(m)?pCat(p):'').filter(Boolean).filter(s=>!delS.has(low(s))));
+};
+
+const insortOriginalLoadData=loadData;
+loadData=async function(){
+  await insortOriginalLoadData();
+  await insortLoadLiveCategoryState();
+  insortApplyDeletedCategoryFilter();
+  build();
+};
+
+async function insortWriteCategoryState(extraUpdates){
+  insortCategoryManagerActive=true;
+  insortApplyDeletedCategoryFilter();
+  categories=uniq([...(mainCategories||[]),...Object.values(subCategoriesMap||{}).flat()]).filter(Boolean);
+  const updates={
+    'catalog/categoryManagerActive':true,
+    'categoryManagerActive':true,
+    'catalog/mainCategories':(mainCategories||[]).length?mainCategories:null,
+    'mainCategories':(mainCategories||[]).length?mainCategories:null,
+    'catalog/subCategories':Object.keys(subCategoriesMap||{}).length?subCategoriesMap:null,
+    'subCategories':Object.keys(subCategoriesMap||{}).length?subCategoriesMap:null,
+    'catalog/categories':categories.length?categories:null,
+    'categories':categories.length?categories:null,
+    'catalog/deletedMainCategories':(insortDeletedMainCategories||[]).length?uniq(insortDeletedMainCategories):null,
+    'deletedMainCategories':(insortDeletedMainCategories||[]).length?uniq(insortDeletedMainCategories):null,
+    'catalog/deletedSubCategories':(insortDeletedSubCategories||[]).length?uniq(insortDeletedSubCategories):null,
+    'deletedSubCategories':(insortDeletedSubCategories||[]).length?uniq(insortDeletedSubCategories):null,
+    [PUBLIC_SITE_CACHE_PATH]:null,
+    ...(extraUpdates||{})
+  };
+  const ok=await insortUpdatePaths(updates);
+  try{await db.ref(PUBLIC_SITE_CACHE_PATH).remove()}catch(_){ }
+  return ok;
+}
+
+saveOfficeCategories=async function(){
+  try{
+    insortCategoryManagerActive=true;
+    await insortWriteCategoryState();
+    build(); renderOfficeCategoryControls(); renderOfficeList();
+    showToast('Категорії збережено. Кеш очищено.');
+  }catch(e){console.error(e);showInfo('Помилка бази','Не вдалося зберегти категорії. Перевір правила Firebase або вхід в адмін-акаунт.')}
+};
+
+addOfficeMainCategory=function(){
+  const name=text($('officeNewMainCategory')?$('officeNewMainCategory').value:'');
+  if(!name){showInfo('Не додано','Вкажи назву основної категорії.');return}
+  insortDeletedMainCategories=(insortDeletedMainCategories||[]).filter(x=>low(x)!==low(name));
+  if(!mainCategories.some(x=>low(x)===low(name)))mainCategories.push(name);
+  subCategoriesMap[name]=subCategoriesMap[name]||[];
+  if($('officeNewMainCategory'))$('officeNewMainCategory').value='';
+  saveOfficeCategories();
+};
+addOfficeSubCategory=function(){
+  const main=text($('officeSubParent')?$('officeSubParent').value:'');
+  const sub=text($('officeNewSubCategory')?$('officeNewSubCategory').value:'');
+  if(!main||!sub){showInfo('Не додано','Обери основну категорію і напиши назву підкатегорії.');return}
+  insortDeletedSubCategories=(insortDeletedSubCategories||[]).filter(x=>low(x)!==low(sub));
+  subCategoriesMap[main]=subCategoriesMap[main]||[];
+  if(!subCategoriesMap[main].some(x=>low(x)===low(sub)))subCategoriesMap[main].push(sub);
+  if($('officeNewSubCategory'))$('officeNewSubCategory').value='';
+  saveOfficeCategories();
+};
+
+deleteOfficeMainCategory=async function(main){
+  main=text(main); if(!main)return;
+  if(!confirm('Видалити основну категорію "'+main+'" повністю з сайту? Товари НЕ видаляються, але категорія з них буде очищена.'))return;
+  const mainLow=low(main);
+  const oldSubs=[];
+  Object.keys(subCategoriesMap||{}).forEach(k=>{if(low(k)===mainLow){(subCategoriesMap[k]||[]).forEach(s=>oldSubs.push(s)); delete subCategoriesMap[k];}});
+  mainCategories=(mainCategories||[]).filter(x=>low(x)!==mainLow);
+  categories=(categories||[]).filter(x=>low(x)!==mainLow && !oldSubs.some(s=>low(s)===low(x)));
+  insortDeletedMainCategories=uniq([...(insortDeletedMainCategories||[]),main]);
+  insortDeletedSubCategories=uniq([...(insortDeletedSubCategories||[]),...oldSubs]);
+  const updates={};
+  (products||[]).forEach((p,i)=>{
+    const affectedMain=low(pMain(p))===mainLow || low(pCat(p))===mainLow;
+    const affectedSub=oldSubs.some(s=>low(s)===low(pCat(p)));
+    if(!(affectedMain||affectedSub))return;
+    ['mainCategory','main','type','category','subCategory','subcategory'].forEach(f=>{
+      if(p[f]!==undefined)p[f]='';
+      const key=insortProductDbKey(p,i); if(key){updates['catalog/products/'+key+'/'+f]=null;updates['products/'+key+'/'+f]=null;}
+    });
+  });
+  if(activeMain&&low(activeMain)===mainLow){activeMain='';activeSub='';}
+  await insortWriteCategoryState(updates);
+  build(); renderOfficeCategoryControls(); renderOfficeList();
+  showToast('Основну категорію видалено з сайту і кешу');
+};
+
+deleteOfficeSubCategory=async function(main,sub){
+  main=text(main); sub=text(sub); if(!main||!sub)return;
+  if(!confirm('Видалити підкатегорію "'+sub+'" повністю з сайту? Товари НЕ видаляються, але підкатегорія з них буде очищена.'))return;
+  const realMain=Object.keys(subCategoriesMap||{}).find(k=>low(k)===low(main))||main;
+  subCategoriesMap[realMain]=(subCategoriesMap[realMain]||[]).filter(x=>low(x)!==low(sub));
+  categories=(categories||[]).filter(x=>low(x)!==low(sub));
+  insortDeletedSubCategories=uniq([...(insortDeletedSubCategories||[]),sub]);
+  const updates={};
+  (products||[]).forEach((p,i)=>{
+    if(low(pCat(p))!==low(sub))return;
+    const key=insortProductDbKey(p,i); if(!key)return;
+    ['category','subCategory','subcategory'].forEach(f=>{if(p[f]!==undefined)p[f]=''; updates['catalog/products/'+key+'/'+f]=null; updates['products/'+key+'/'+f]=null;});
+  });
+  if(activeSub&&low(activeSub)===low(sub))activeSub='';
+  await insortWriteCategoryState(updates);
+  build(); renderOfficeCategoryControls(); renderOfficeList();
+  showToast('Підкатегорію видалено з сайту і кешу');
+};
+
+renderCategories=(function(original){
+  return function(){
+    insortApplyDeletedCategoryFilter();
+    return original();
+  };
+})(renderCategories);
 </script>
 </body>
 </html>
