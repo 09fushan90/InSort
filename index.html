@@ -1858,6 +1858,36 @@ async function insortReadFirst(paths){
   }
   return null;
 }
+
+async function insortUpdatePaths(updates){
+  try{
+    if(!updates || typeof updates!=='object')return true;
+    const clean={};
+    Object.keys(updates).forEach(k=>{
+      if(!k)return;
+      const key=String(k).replace(/^\/+/,'');
+      const val=updates[k];
+      if(val!==undefined)clean[key]=val;
+    });
+    if(!Object.keys(clean).length)return true;
+    if(typeof db!=='undefined' && db && db.ref){
+      await db.ref().update(clean);
+      try{clearPublicSiteCache&&clearPublicSiteCache()}catch(_){}
+      try{
+        Object.keys(localStorage||{}).forEach(key=>{
+          if(/insort|publicSnapshot|siteCache|categor/i.test(key)){
+            try{localStorage.removeItem(key)}catch(_){}
+          }
+        });
+      }catch(_){}
+      return true;
+    }
+    return false;
+  }catch(e){
+    console.error('insortUpdatePaths error', e);
+    throw e;
+  }
+}
 async function insortLoadLiveCategoryState(){
   try{
     const [activeVal,mainVal,subVal,catsVal,delMainVal,delSubVal]=await Promise.all([
