@@ -308,7 +308,7 @@
 </div></div>
 <div class="modal" id="cartModal"><div class="modal-card" style="width:min(620px,100%);padding:30px"><button class="modal-close" onclick="closeCart()">×</button><h2>Кошик</h2><div id="cartItems"></div><div class="view-price" id="cartTotal"></div><div class="checkout-buttons"><button class="big-btn primary" onclick="openCheckoutModal(cart, 'cart')">Оформити замовлення</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="clearCart()">Очистити кошик</button></div></div></div>
 
-<div class="modal form-modal" id="checkoutModal"><div class="modal-card"><button class="modal-close" onclick="closeCheckoutModal()">×</button><h2>Оформлення замовлення</h2><p>Заповніть дані на сайті. Після підтвердження система створить номер замовлення і код, скопіює текст та відкриє Telegram.</p><div class="form-field"><label>Ім’я та прізвище</label><input id="checkoutName" autocomplete="name" placeholder="Наприклад: Іван Петренко"></div><div class="form-field"><label>Номер телефону</label><input id="checkoutPhone" type="tel" autocomplete="tel" placeholder="Наприклад: 0991234567"></div><div class="form-field"><label>Ваш Telegram</label><input id="checkoutTelegram" placeholder="Наприклад: @username"></div><div class="form-field"><label>Місто / населений пункт</label><input id="checkoutCity" placeholder="Наприклад: Київ, Красилівка або Лісовий масив"></div><div class="form-field"><label>Спосіб отримання</label><select id="checkoutDelivery" onchange="toggleCheckoutDeliveryDetails()"><option value="">Оберіть спосіб отримання</option><option value="Нова пошта">Нова пошта</option><option value="Укрпошта">Укрпошта</option><option value="Поштомат">Поштомат</option><option value="Самовивіз">Самовивіз — тільки Красилівка / Лісовий масив</option></select></div><div class="form-field" id="checkoutDeliveryDetailsWrap"><label id="checkoutDeliveryDetailsLabel">Відділення / поштомат</label><input id="checkoutDeliveryDetails" placeholder="Наприклад: відділення №45 або поштомат №1234"></div><div class="checkout-summary" id="checkoutItemsPreview"></div><div class="view-price" id="checkoutTotalPreview"></div><div class="form-error" id="checkoutError"></div><button class="big-btn primary" onclick="submitCheckoutOrder()">Підтвердити замовлення</button></div></div>
+<div class="modal form-modal" id="checkoutModal"><div class="modal-card"><button class="modal-close" onclick="closeCheckoutModal()">×</button><h2>Оформлення замовлення</h2><p>Заповніть чек на сайті. Після натискання “Оформити замовлення” текст замовлення скопіюється і відкриється Telegram продавця.</p><div class="form-field"><label>Ім’я та прізвище</label><input id="checkoutName" autocomplete="name" placeholder="Наприклад: Іван Петренко"></div><div class="form-field"><label>Номер телефону</label><input id="checkoutPhone" type="tel" autocomplete="tel" placeholder="Наприклад: 0991234567"></div><div class="form-field"><label>Ваш Telegram</label><input id="checkoutTelegram" placeholder="Наприклад: @username"></div><div class="form-field"><label>Місцезнаходження</label><input id="checkoutCity" placeholder="Наприклад: Київ, Бровари, Красилівка"></div><div class="form-field"><label>Спосіб відправки</label><select id="checkoutDelivery" onchange="toggleCheckoutDeliveryDetails()"><option value="">Оберіть спосіб відправки</option><option value="Нова пошта">Нова пошта</option><option value="Укрпошта">Укрпошта</option><option value="Поштомат Нової пошти">Поштомат Нової пошти</option><option value="Самовивіз">Самовивіз</option></select></div><div class="form-field" id="checkoutDeliveryDetailsWrap" style="display:none"><label id="checkoutDeliveryDetailsLabel">Дані відправки</label><input id="checkoutDeliveryDetails" placeholder=""></div><div class="checkout-summary" id="checkoutItemsPreview"></div><div class="view-price" id="checkoutTotalPreview"></div><div class="form-error" id="checkoutError"></div><button class="big-btn primary" onclick="submitCheckoutOrder()">Оформити замовлення</button></div></div>
 
 <div class="modal form-modal" id="authModal"><div class="modal-card"><button class="modal-close" onclick="closeAuthBox()">×</button><h2 id="authTitle">Увійти</h2><p id="authHint">Введіть email та пароль.</p><div class="form-field" id="nameField" style="display:none"><label>Ім'я</label><input id="authName" autocomplete="name" placeholder="Ваше ім'я"></div><div class="form-field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="email@example.com"></div><div class="form-field"><label>Пароль</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Мінімум 6 символів"></div><div class="form-error" id="authError"></div><button class="big-btn primary" id="authSubmitBtn" onclick="submitAuth()">Увійти</button><button class="google-auth-btn" id="googleAuthBtn" onclick="googleAuth()"><svg width="20" height="20" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px">
 <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
@@ -1096,13 +1096,26 @@ function toggleCheckoutDeliveryDetails(){
   const label=$('checkoutDeliveryDetailsLabel');
   const input=$('checkoutDeliveryDetails');
   if(!wrap||!label||!input)return;
-  if(delivery==='Самовивіз'){
+  input.value='';
+  if(!delivery||delivery==='Самовивіз'){
     wrap.style.display='none';
-    input.value='';
+    input.required=false;
+    return;
+  }
+  wrap.style.display='flex';
+  input.required=true;
+  if(delivery==='Нова пошта'){
+    label.textContent='Номер відділення Нової пошти';
+    input.placeholder='Наприклад: відділення №45';
+  }else if(delivery==='Укрпошта'){
+    label.textContent='Номер або адреса Укрпошти';
+    input.placeholder='Наприклад: відділення №12 або адреса відділення';
+  }else if(delivery==='Поштомат Нової пошти'){
+    label.textContent='Номер поштомату Нової пошти';
+    input.placeholder='Наприклад: поштомат №1234';
   }else{
-    wrap.style.display='flex';
-    label.textContent=delivery==='Поштомат'?'Номер поштомату':'Відділення / адреса отримання';
-    input.placeholder=delivery==='Поштомат'?'Наприклад: поштомат №1234':'Наприклад: відділення №45';
+    label.textContent='Дані відправки';
+    input.placeholder='Вкажіть потрібні дані для відправки';
   }
 }
 function checkoutError(msg){const e=$('checkoutError');if(e){e.textContent=msg;e.classList.add('show')}else showInfo('Помилка',msg)}
@@ -1116,15 +1129,15 @@ function buildFinalOrderMessage(order,includeHeader=true){
   if(order.name)lines.push('👤 Ім’я: '+order.name);
   if(order.phone)lines.push('📞 Телефон: '+order.phone);
   if(order.telegram)lines.push('💬 Telegram покупця: '+order.telegram);
-  if(order.city)lines.push('🏙 Місто / населений пункт: '+order.city);
-  if(order.delivery)lines.push('🚚 Отримання: '+order.delivery);
-  if(order.deliveryDetails)lines.push('📍 Відділення / поштомат: '+order.deliveryDetails);
+  if(order.city)lines.push('📍 Місцезнаходження: '+order.city);
+  if(order.delivery)lines.push('🚚 Спосіб відправки: '+order.delivery);
+  if(order.deliveryDetails)lines.push('🏤 Дані відправки: '+order.deliveryDetails);
   lines.push('', '🛍 Товари:');
   items.forEach((x,i)=>lines.push((i+1)+'. '+x.name+' — '+x.qty+' шт.'+(x.price?' — '+money(x.price):'')));
   lines.push('', '💰 Разом: '+money(total));
   return lines.join('\n');
 }
-function telegramShareUrl(text){return 'https://t.me/share/url?url=&text='+encodeURIComponent(text)}
+function telegramShareUrl(text){return 'https://t.me/Fushan90?text='+encodeURIComponent(text)}
 async function submitCheckoutOrder(){
   const items=normalizeOrderItems(checkoutPendingItems.length?checkoutPendingItems:cart);
   if(!items.length){checkoutError('Товари не обрані. Додайте товар у кошик.');return false}
@@ -1138,16 +1151,15 @@ async function submitCheckoutOrder(){
   if(!phone)return checkoutError('Вкажіть номер телефону.');
   if(!telegram)return checkoutError('Вкажіть Telegram, щоб з вами можна було зв’язатися.');
   if(telegram && telegram[0]!=='@')telegram='@'+telegram.replace(/^https?:\/\/t\.me\//i,'').replace(/^t\.me\//i,'');
-  if(!city)return checkoutError('Вкажіть місто або населений пункт.');
-  if(!delivery)return checkoutError('Оберіть спосіб отримання.');
-  if(delivery==='Самовивіз'&&!isPickupAllowed(city))return checkoutError('Самовивіз доступний тільки для села Красилівка та Лісового масиву.');
-  if(delivery!=='Самовивіз'&&!deliveryDetails)return checkoutError('Вкажіть відділення або номер поштомату.');
+  if(!city)return checkoutError('Вкажіть місцезнаходження.');
+  if(!delivery)return checkoutError('Оберіть спосіб відправки.');
+  if(delivery!=='Самовивіз'&&!deliveryDetails)return checkoutError('Вкажіть дані для відправки.');
   const order={createdAt:new Date().toISOString(),source:checkoutPendingSource||'site',orderNumber:makePublicOrderNumber(),confirmCode:makeConfirmCode(),name,phone,telegram,city,delivery,deliveryDetails,items};
   const message=buildFinalOrderMessage(order,true);
   const orders=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]');
   orders.unshift({date:new Date().toLocaleString('uk-UA'),count:items.reduce((s,x)=>s+x.qty,0),items,orderNumber:order.orderNumber,confirmCode:order.confirmCode,customer:{name,phone,telegram,city,delivery,deliveryDetails}});
   localStorage.setItem('insort_orders_v4',JSON.stringify(orders.slice(0,30)));
-  try{await navigator.clipboard.writeText(message);showToast('Текст замовлення скопійовано. Вставте його в Telegram.')}catch(_){showToast('Замовлення створено. Відкриваємо Telegram.')} 
+  try{await navigator.clipboard.writeText(message);showToast('Текст замовлення скопійовано. Відкриваємо Telegram продавця.')}catch(_){showToast('Замовлення створено. Відкриваємо Telegram продавця.')} 
   try{await db.ref('orders_site/'+order.orderNumber).set({...order,orderText:message})}catch(e){console.warn('orders_site save skipped',e)}
   closeCheckoutModal();
   window.location.href=telegramShareUrl(message);
@@ -1806,6 +1818,25 @@ function logoutUser(){logoutAccount()}
 firebase.auth().onAuthStateChanged(user=>{
   updateAuthUI(user);
   startInsortAppOnce();
+});
+
+// Захист від вічної загрузки: якщо Firebase Auth довго не відповів, сайт все одно запускається.
+setTimeout(()=>{
+  try{
+    startInsortAppOnce();
+    const loaderEl=document.getElementById('loader');
+    if(loaderEl) loaderEl.classList.add('hide');
+  }catch(e){
+    console.warn('Fallback запуск сайту:', e);
+    const loaderEl=document.getElementById('loader');
+    if(loaderEl) loaderEl.classList.add('hide');
+  }
+}, 3500);
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    const loaderEl=document.getElementById('loader');
+    if(loaderEl) loaderEl.classList.add('hide');
+  }, 5000);
 });
 function submitOrder(){openCheckoutModal(cart,'cart')}
 async function saveOrderAndSupport(){return openCheckoutModal(cart,'cart')}
