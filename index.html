@@ -357,7 +357,7 @@
   <button type="button" class="office-tab-btn" data-office-tab="hero" onclick="switchOfficeTab('hero')">🏠 Головне поле</button>
 </div>
 <section class="office-section active" id="officeSectionProducts">
-<h3>Додавання товару</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><select id="officeMain" onchange="updateOfficeSubcategorySelect()"><option value="">Спочатку додай або обери категорію</option></select></div><div class="office-field"><label>Підкатегорія</label><select id="officeCat"><option value="">Спочатку обери основну категорію</option></select></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div>
+<h3>Додавання товару</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><select id="officeMain" onchange="updateOfficeSubcategorySelect()"><option value="">Спочатку додай або обери категорію</option></select></div><div class="office-field"><label>Підкатегорія</label><select id="officeCat"><option value="">Спочатку обери основну категорію</option></select></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" id="officeProductSaveBtn" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div>
 <h3>Товари з бази</h3><div class="office-product-search-box"><label for="officeProductSearch">Пошук товару для редагування</label><div class="office-product-search-row"><input id="officeProductSearch" type="search" placeholder="Введи назву, категорію, підкатегорію, ціну або ID товару" oninput="renderOfficeList()"><button type="button" onclick="clearOfficeProductSearch()">Очистити</button></div><div class="office-product-search-info" id="officeProductSearchInfo">Показано всі товари</div></div><div class="office-list" id="officeProductsList"></div>
 </section>
 <section class="office-section" id="officeSectionOfficeHits">
@@ -1653,7 +1653,21 @@ function syncOfficeDiscountFromPrice(){
     $('officeDiscountPercent').value=Math.round((1-sale/base)*100);
   }
 }
-function resetOfficeForm(){['officeEditId','officeName','officePrice','officeDiscountPrice','officeDiscountPercent','officeMain','officeCat','officePhoto','officeDesc'].forEach(id=>{if($(id))$(id).value=''});if($('officeIsHit'))$('officeIsHit').checked=false;selectedProductImages=[];if($('officeProductFile'))$('officeProductFile').value='';renderOfficeCategoryControls();renderOfficeProductPreviews();}
+function updateOfficeProductSaveButton(){
+  const btn=$('officeProductSaveBtn');
+  if(!btn)return;
+  const isEdit=!!text($('officeEditId')&&$('officeEditId').value);
+  btn.textContent=isEdit?'Редагувати товар':'Зберегти товар';
+}
+function resetOfficeForm(){
+  ['officeEditId','officeName','officePrice','officeDiscountPrice','officeDiscountPercent','officeMain','officeCat','officePhoto','officeDesc'].forEach(id=>{if($(id))$(id).value=''});
+  if($('officeIsHit'))$('officeIsHit').checked=false;
+  selectedProductImages=[];
+  if($('officeProductFile'))$('officeProductFile').value='';
+  renderOfficeCategoryControls();
+  renderOfficeProductPreviews();
+  updateOfficeProductSaveButton();
+}
 
 function openUnavailablePickerModal(){showInfo('Немає в асортименті','У цьому файлі окремого вікна вибору немає. Позначення можна робити через поле статусу товару в базі або додати поле outOfStock/status у товар.')}
 function closeUnavailablePickerModal(){closeInfoModal()}
@@ -1760,28 +1774,78 @@ function renderOfficeList(){
   updateBulkPriceInfo();
 }
 
-function editOfficeProduct(i){const p=products[i]; if(!p)return; switchOfficeTab('products'); renderOfficeCategoryControls(); selectedProductImages=productImages(p); const img=selectedProductImages[0]||pImg(p); $('officeEditId').value=p.id||i; $('officeName').value=pName(p); $('officePrice').value=pBasePrice(p)||pPrice(p); if($('officeDiscountPrice'))$('officeDiscountPrice').value=pManualDiscountPrice(p)||''; if($('officeDiscountPercent'))$('officeDiscountPercent').value=pDiscountPercent(p)||''; if($('officeIsHit'))$('officeIsHit').checked=pIsHit(p); $('officeMain').value=pMain(p); updateOfficeSubcategorySelect(); $('officeCat').value=pCat(p); $('officePhoto').value=img; $('officeDesc').value=pDesc(p); if($('officeProductFile'))$('officeProductFile').value=''; renderOfficeProductPreviews(); $('officeName').focus()}
+function officeProductDbKey(p,i){
+  // Ключ для шляху у Firebase має бути саме _dbKey/key, а не назва/артикул/id товару.
+  // Інакше при редагуванні товар може записатися як новий вузол у базі.
+  const realKey=text(p&&(p._dbKey||p.key));
+  if(realKey)return realKey;
+  if(Number.isInteger(i)&&i>=0)return String(i);
+  const fallbackId=text(p&&p.id);
+  return fallbackId;
+}
+function officeFindProductIndexByEditId(rawId){
+  const id=text(rawId);
+  if(!id)return -1;
+  let idx=products.findIndex((p,i)=>text(p&&p._dbKey)===id||text(p&&p.id)===id||text(p&&p.key)===id||text(getProductId(p,i))===id);
+  if(idx>=0)return idx;
+  if(/^\d+$/.test(id)&&products[Number(id)])return Number(id);
+  return -1;
+}
+function editOfficeProduct(i){
+  const p=products[i]; if(!p)return;
+  switchOfficeTab('products');
+  renderOfficeCategoryControls();
+  selectedProductImages=productImages(p);
+  const img=selectedProductImages[0]||pImg(p);
+  $('officeEditId').value=officeProductDbKey(p,i);
+  $('officeName').value=pName(p);
+  $('officePrice').value=pBasePrice(p)||pPrice(p);
+  if($('officeDiscountPrice'))$('officeDiscountPrice').value=pManualDiscountPrice(p)||'';
+  if($('officeDiscountPercent'))$('officeDiscountPercent').value=pDiscountPercent(p)||'';
+  if($('officeIsHit'))$('officeIsHit').checked=pIsHit(p);
+  $('officeMain').value=pMain(p);
+  updateOfficeSubcategorySelect();
+  $('officeCat').value=pCat(p);
+  $('officePhoto').value=img;
+  $('officeDesc').value=pDesc(p);
+  if($('officeProductFile'))$('officeProductFile').value='';
+  renderOfficeProductPreviews();
+  updateOfficeProductSaveButton();
+  $('officeName').focus();
+}
 async function saveOfficeProduct(){
-  const id=text($('officeEditId').value)||db.ref('catalog/products').push().key;
+  const editId=text($('officeEditId').value);
+  const existingIndex=officeFindProductIndexByEditId(editId);
+  const existingProduct=existingIndex>=0?products[existingIndex]:null;
+  const editing=!!editId;
+  const id=editing
+    ? (officeProductDbKey(existingProduct,existingIndex)||editId)
+    : db.ref('catalog/products').push().key;
   const manualImg=text($('officePhoto').value);
   let imgs=[...selectedProductImages];
   if(manualImg&&!imgs.includes(manualImg))imgs.unshift(manualImg);
   imgs=imgs.filter(Boolean).slice(0,6);
   const img=imgs[0]||'';
-  const discountPercent=toNum($('officeDiscountPercent')?$('officeDiscountPercent').value:0); const discountPrice=text($('officeDiscountPrice')?$('officeDiscountPrice').value:''); const basePrice=text($('officePrice').value); const product={id,title:text($('officeName').value),price:basePrice,discountPrice:discountPrice,discountPercent:(discountPrice?'' :(discountPercent>0?discountPercent:'')),isHit:!!($('officeIsHit')&&$('officeIsHit').checked),mainCategory:text($('officeMain').value),category:text($('officeCat').value),image:img,images:imgs,description:text($('officeDesc').value)};
+  const discountPercent=toNum($('officeDiscountPercent')?$('officeDiscountPercent').value:0);
+  const discountPrice=text($('officeDiscountPrice')?$('officeDiscountPrice').value:'');
+  const basePrice=text($('officePrice').value);
+  const product={...(existingProduct||{}),id:(text(existingProduct&&existingProduct.id)||id),_dbKey:id,title:text($('officeName').value),price:basePrice,discountPrice:discountPrice,discountPercent:(discountPrice?'' :(discountPercent>0?discountPercent:'')),isHit:!!($('officeIsHit')&&$('officeIsHit').checked),mainCategory:text($('officeMain').value),category:text($('officeCat').value),image:img,images:imgs,description:text($('officeDesc').value)};
   if(!product.title){showInfo('Не збережено','Вкажи назву товару.');return}
   if(imgs.some(u=>u.startsWith('data:image/')&&u.length>900000)){showInfo('Фото завелике','Одне з фото занадто велике для бази. Обери фото через кнопку вибору файлів, щоб сайт стиснув його.');return}
   try{
-    await db.ref('catalog/products/'+id).set(product);
-    const idx=products.findIndex(x=>text(x.id)===text(id)); if(idx>=0)products[idx]=product; else products.unshift(product);
-    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар збережено в базі')
+    const productForDb={...product};
+    delete productForDb._cartUid;
+    await db.ref('catalog/products/'+id).set(productForDb);
+    const idx=existingIndex>=0?existingIndex:officeFindProductIndexByEditId(id);
+    if(idx>=0)products[idx]=product; else products.unshift(product);
+    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeAdProducts(); showToast(editing?'Товар відредаговано в базі':'Товар збережено в базі')
   }catch(e){
     console.error(e);
     const msg=(e&&e.code==='PERMISSION_DENIED')?'База відхилила запис. Перевір правила Firebase або увійди в адмін-акаунт.':'Не вдалося зберегти товар у Firebase. Я зменшив фото перед збереженням; якщо помилка лишилась — перевір правила доступу до бази.';
     showInfo('Помилка бази',msg)
   }
 }
-async function deleteOfficeProduct(i){const p=products[i]; if(!p)return; if(!confirm('Видалити товар: '+pName(p)+'?'))return; try{if(p.id)await db.ref('catalog/products/'+p.id).remove(); products.splice(i,1); build(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити товар з Firebase.')}}
+async function deleteOfficeProduct(i){const p=products[i]; if(!p)return; if(!confirm('Видалити товар: '+pName(p)+'?'))return; try{const key=officeProductDbKey(p,i); if(key)await db.ref('catalog/products/'+key).remove(); products.splice(i,1); build(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити товар з Firebase.')}}
 
 function openEditModal(id){const i=products.findIndex((p,idx)=>String(getProductId(p,idx))===String(id));if(i>=0)editOfficeProduct(i)}
 function closeEditModal(){closeOfficePanel()}
