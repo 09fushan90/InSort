@@ -349,6 +349,7 @@
 <div class="modal office-modal" id="officeModal"><div class="modal-card"><button class="modal-close" onclick="closeOfficePanel()">×</button><h2>Офіс</h2><div class="office-note" id="officeNotice">Офіс доступний тільки адміну.</div>
 <div class="office-tabs">
   <button type="button" class="office-tab-btn active" data-office-tab="products" onclick="switchOfficeTab('products')">🛠️ Товари</button>
+  <button type="button" class="office-tab-btn" data-office-tab="officeHits" onclick="switchOfficeTab('officeHits')">🔥 Хіти продажів</button>
   <button type="button" class="office-tab-btn" data-office-tab="prices" onclick="switchOfficeTab('prices')">💰 Зміна цін</button>
   <button type="button" class="office-tab-btn" data-office-tab="excel" onclick="switchOfficeTab('excel')">📊 Excel</button>
   <button type="button" class="office-tab-btn" data-office-tab="ads" onclick="switchOfficeTab('ads')">📢 Реклама</button>
@@ -358,6 +359,13 @@
 <section class="office-section active" id="officeSectionProducts">
 <h3>Додавання товару</h3><div class="office-grid"><input id="officeEditId" type="hidden"><div class="office-field"><label>Назва товару</label><input id="officeName" placeholder="Наприклад: Шуруповерт Procraft"></div><div class="office-field"><label>Стара ціна</label><input id="officePrice" placeholder="Наприклад: 2000" oninput="recalculateOfficeDiscount()"></div><div class="office-field"><label>Нова точна ціна зі знижкою</label><input id="officeDiscountPrice" placeholder="Наприклад: 1700" oninput="syncOfficeDiscountFromPrice()"></div><div class="office-field"><label>Знижка (%)</label><input id="officeDiscountPercent" type="number" min="0" max="99" placeholder="Наприклад: 15" oninput="syncOfficeDiscountFromPercent()"></div><label class="office-check-row"><input id="officeIsHit" type="checkbox"> Хіт продажів</label><div class="office-field"><label>Основна категорія</label><select id="officeMain" onchange="updateOfficeSubcategorySelect()"><option value="">Спочатку додай або обери категорію</option></select></div><div class="office-field"><label>Підкатегорія</label><select id="officeCat"><option value="">Спочатку обери основну категорію</option></select></div><div class="office-field office-full"><label>Фото товару — файли з комп’ютера</label><input id="officeProductFile" type="file" accept="image/*" multiple onchange="handleProductFiles(event)"><div id="officeProductPreviewGrid" class="office-preview-grid"></div></div><div class="office-field office-full"><label>Або посилання / data:image для фото товару</label><input id="officePhoto" placeholder="https://... або вставлене посилання з бази"></div><div class="office-field office-full"><label>Опис</label><textarea id="officeDesc" placeholder="Опис, характеристики або комплектація"></textarea></div></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeProduct()">Зберегти товар</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="resetOfficeForm()">Очистити форму</button><button class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити список</button></div>
 <h3>Товари з бази</h3><div class="office-product-search-box"><label for="officeProductSearch">Пошук товару для редагування</label><div class="office-product-search-row"><input id="officeProductSearch" type="search" placeholder="Введи назву, категорію, підкатегорію, ціну або ID товару" oninput="renderOfficeList()"><button type="button" onclick="clearOfficeProductSearch()">Очистити</button></div><div class="office-product-search-info" id="officeProductSearchInfo">Показано всі товари</div></div><div class="office-list" id="officeProductsList"></div>
+</section>
+<section class="office-section" id="officeSectionOfficeHits">
+<h3>Хіти продажів</h3>
+<div class="office-note">Тут показані тільки товари, які позначені як хіт продажів. Натисни «Змінити», щоб одразу редагувати товар і прибрати або додати позначку хіта.</div>
+<div class="office-actions"><button type="button" class="big-btn secondary" style="background:#101512;color:#fff" onclick="renderOfficeList()">Оновити хіти</button></div>
+<div class="office-product-search-info" id="officeHitsInfo">Показано хіти продажів</div>
+<div class="office-list" id="officeHitsProductsList"></div>
 </section>
 <section class="office-section" id="officeSectionPrices">
 <h3>Окремий відділ для зміни цін</h3>
@@ -1549,11 +1557,12 @@ function closeOfficePanel(){$('officeModal').classList.remove('show');document.b
 
 function switchOfficeTab(tab){
   document.querySelectorAll('.office-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.officeTab===tab));
-  const map={products:'officeSectionProducts',prices:'officeSectionPrices',excel:'officeSectionExcel',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
+  const map={products:'officeSectionProducts',officeHits:'officeSectionOfficeHits',prices:'officeSectionPrices',excel:'officeSectionExcel',ads:'officeSectionAds',categories:'officeSectionCategories',hero:'officeSectionHero'};
   Object.values(map).forEach(id=>{const el=$(id); if(el)el.classList.remove('active')});
   if($(map[tab]))$(map[tab]).classList.add('active');
   if(tab==='categories')renderOfficeCategoriesList();
   if(tab==='products')renderOfficeCategoryControls();
+  if(tab==='officeHits')renderOfficeList();
   if(tab==='prices')renderOfficeList();
   if(tab==='excel')renderExcelPreview();
 }
@@ -1725,10 +1734,16 @@ function clearOfficeProductSearch(){
   renderOfficeList();
   if(input)input.focus();
 }
+function officeHitProductRowHtml(p,i){
+  const img=pImg(p);
+  const thumb=img?'<img src="'+esc(img)+'" onerror="this.remove();this.parentElement.textContent=&quot;🛠️&quot;">':'🛠️';
+  return '<div class="office-item" style="grid-template-columns:58px 1fr auto"><div class="office-thumb">'+thumb+'</div><div><div class="office-item-title">🔥 '+esc(pName(p))+'</div><div class="office-item-meta">'+esc([pMain(p),pCat(p)].filter(Boolean).join(' / ')||'Без категорії')+' • '+esc(money(pPrice(p)))+' • ХІТ</div></div><div class="office-actions" style="margin:0"><button class="cart-btn" onclick="editOfficeProduct('+i+')">Змінити</button><button class="cart-btn danger-btn" onclick="deleteOfficeProduct('+i+')">Видалити</button></div></div>';
+}
 function renderOfficeList(){
   const box=$('officeProductsList');
   const priceBox=$('officePriceProductsList');
-  if(!box&&!priceBox)return;
+  const hitBox=$('officeHitsProductsList');
+  if(!box&&!priceBox&&!hitBox)return;
   const valid=new Set(products.map((p,i)=>bulkProductDbId(p,i)).filter(Boolean));
   bulkSelectedProductIds=new Set([...bulkSelectedProductIds].filter(id=>valid.has(id)));
   const query=text($('officeProductSearch')&&$('officeProductSearch').value).trim().toLowerCase();
@@ -1736,8 +1751,12 @@ function renderOfficeList(){
   if($('officeProductSearchInfo'))$('officeProductSearchInfo').textContent=query?('Знайдено: '+filtered.length+' з '+products.length):('Показано всі товари: '+products.length);
   const editHtml=products.length?(filtered.length?filtered.map(item=>officeProductRowHtml(item.p,item.i)).join(''):'<div class="empty">За цим пошуком товарів не знайдено</div>'):'<div class="empty">Товарів поки немає</div>';
   const priceHtml=products.length?products.map((p,i)=>officeProductRowHtml(p,i)).join(''):'<div class="empty">Товарів поки немає</div>';
+  const hitItems=products.map((p,i)=>({p,i})).filter(item=>pIsHit(item.p));
+  const hitHtml=products.length?(hitItems.length?hitItems.map(item=>officeHitProductRowHtml(item.p,item.i)).join(''):'<div class="empty">Хітів продажів поки немає</div>'):'<div class="empty">Товарів поки немає</div>';
   if(box)box.innerHTML=editHtml;
   if(priceBox)priceBox.innerHTML=priceHtml;
+  if(hitBox)hitBox.innerHTML=hitHtml;
+  if($('officeHitsInfo'))$('officeHitsInfo').textContent='Хітів продажів: '+hitItems.length+' з '+products.length;
   updateBulkPriceInfo();
 }
 
