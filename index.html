@@ -1818,9 +1818,14 @@ async function saveOfficeProduct(){
   const existingIndex=officeFindProductIndexByEditId(editId);
   const existingProduct=existingIndex>=0?products[existingIndex]:null;
   const editing=!!editId;
+
+  // При редагуванні беремо саме ключ того товару, який відкрили через "Змінити".
+  // Раніше товар міг записатися не в той шлях або тільки в catalog/products,
+  // тому сайт показував повідомлення про успіх, але фактично лишав старі дані.
   const id=editing
-    ? (officeProductDbKey(existingProduct,existingIndex)||editId)
+    ? (text(editId)||officeProductDbKey(existingProduct,existingIndex))
     : db.ref('catalog/products').push().key;
+
   const manualImg=text($('officePhoto').value);
   let imgs=[...selectedProductImages];
   if(manualImg&&!imgs.includes(manualImg))imgs.unshift(manualImg);
@@ -1829,23 +1834,72 @@ async function saveOfficeProduct(){
   const discountPercent=toNum($('officeDiscountPercent')?$('officeDiscountPercent').value:0);
   const discountPrice=text($('officeDiscountPrice')?$('officeDiscountPrice').value:'');
   const basePrice=text($('officePrice').value);
-  const product={...(existingProduct||{}),id:(text(existingProduct&&existingProduct.id)||id),_dbKey:id,title:text($('officeName').value),price:basePrice,discountPrice:discountPrice,discountPercent:(discountPrice?'' :(discountPercent>0?discountPercent:'')),isHit:!!($('officeIsHit')&&$('officeIsHit').checked),mainCategory:text($('officeMain').value),category:text($('officeCat').value),image:img,images:imgs,description:text($('officeDesc').value)};
+  const isHitNow=!!($('officeIsHit')&&$('officeIsHit').checked);
+  const mainNow=text($('officeMain').value);
+  const subNow=text($('officeCat').value);
+
+  const product={
+    ...(existingProduct||{}),
+    id:(text(existingProduct&&existingProduct.id)||id),
+    _dbKey:id,
+    title:text($('officeName').value),
+    price:basePrice,
+    discountPrice:discountPrice,
+    discountPercent:(discountPrice?'' :(discountPercent>0?discountPercent:'')),
+    isHit:isHitNow,
+    hit:isHitNow,
+    bestSeller:isHitNow,
+    mainCategory:mainNow,
+    main:mainNow,
+    type:mainNow,
+    category:subNow,
+    subCategory:subNow,
+    subcategory:subNow,
+    image:img,
+    images:imgs,
+    description:text($('officeDesc').value)
+  };
+
+  // Якщо знижку прибрали, чистимо старі/резервні поля, інакше старий salePrice/discount міг залишати товар зі знижкою.
+  if(!discountPrice && !(discountPercent>0)){
+    ['newPrice','salePrice','sale','discount','salePercent','oldDiscountPrice'].forEach(f=>delete product[f]);
+  }
+
   if(!product.title){showInfo('Не збережено','Вкажи назву товару.');return}
   if(imgs.some(u=>u.startsWith('data:image/')&&u.length>900000)){showInfo('Фото завелике','Одне з фото занадто велике для бази. Обери фото через кнопку вибору файлів, щоб сайт стиснув його.');return}
   try{
     const productForDb={...product};
     delete productForDb._cartUid;
-    await db.ref('catalog/products/'+id).set(productForDb);
-    const idx=existingIndex>=0?existingIndex:officeFindProductIndexByEditId(id);
-    if(idx>=0)products[idx]=product; else products.unshift(product);
-    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeAdProducts(); showToast(editing?'Товар відредаговано в базі':'Товар збережено в базі')
+
+    const nextProducts=[...products];
+    if(existingIndex>=0)nextProducts[existingIndex]=product; else nextProducts.unshift(product);
+
+    // Синхронізуємо повний список у catalog/products, щоб після перезавантаження не бралася стара база.
+    const catalogProductsPayload={};
+    nextProducts.forEach((p,i)=>{
+      const key=officeProductDbKey(p,i)||text(p&&p._dbKey)||text(p&&p.id)||String(i);
+      const copy={...p,_dbKey:key,id:(text(p&&p.id)||key)};
+      delete copy._cartUid;
+      catalogProductsPayload[key]=copy;
+    });
+
+    const updates={};
+    updates['catalog/products']=catalogProductsPayload;
+    updates['products/'+id]=productForDb;
+    if(typeof PUBLIC_SITE_CACHE_PATH!=='undefined')updates[PUBLIC_SITE_CACHE_PATH]=null;
+
+    await db.ref().update(updates);
+    products=nextProducts;
+    prepareProductIds();
+    resetOfficeForm(); build(); renderOfficeCategoryControls(); renderOfficeList(); renderOfficeAdProducts();
+    showToast(editing?'Товар реально відредаговано в базі':'Товар збережено в базі')
   }catch(e){
     console.error(e);
     const msg=(e&&e.code==='PERMISSION_DENIED')?'База відхилила запис. Перевір правила Firebase або увійди в адмін-акаунт.':'Не вдалося зберегти товар у Firebase. Я зменшив фото перед збереженням; якщо помилка лишилась — перевір правила доступу до бази.';
     showInfo('Помилка бази',msg)
   }
 }
-async function deleteOfficeProduct(i){const p=products[i]; if(!p)return; if(!confirm('Видалити товар: '+pName(p)+'?'))return; try{const key=officeProductDbKey(p,i); if(key)await db.ref('catalog/products/'+key).remove(); products.splice(i,1); build(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити товар з Firebase.')}}
+async function deleteOfficeProduct(i){const p=products[i]; if(!p)return; if(!confirm('Видалити товар: '+pName(p)+'?'))return; try{const key=officeProductDbKey(p,i); const updates={}; if(key){updates['catalog/products/'+key]=null;updates['products/'+key]=null;} if(typeof PUBLIC_SITE_CACHE_PATH!=='undefined')updates[PUBLIC_SITE_CACHE_PATH]=null; await db.ref().update(updates); products.splice(i,1); build(); renderOfficeList(); renderOfficeAdProducts(); showToast('Товар видалено')}catch(e){console.error(e);showInfo('Помилка бази','Не вдалося видалити товар з Firebase.')}}
 
 function openEditModal(id){const i=products.findIndex((p,idx)=>String(getProductId(p,idx))===String(id));if(i>=0)editOfficeProduct(i)}
 function closeEditModal(){closeOfficePanel()}
