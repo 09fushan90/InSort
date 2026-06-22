@@ -26,24 +26,31 @@
   <script type="application/ld+json" id="insort-seo-schema">
   {
     "@context": "https://schema.org",
-    "@type": "Store",
-    "name": "InSort",
-    "logo": "https://insort.kyiv.ua/logo.png",
-    "image": "https://insort.kyiv.ua/logo.png",
-    "url": "https://insort.kyiv.ua/",
-    "description": "InSort — інтернет-магазин електроінструментів Procraft в Україні. Шуруповерти, дрилі, болгарки, перфоратори, пили, шліфмашини, зварювальні апарати та інші інструменти з доставкою.",
-    "sameAs": [
-      "https://t.me/shop_insort",
-      "https://www.tiktok.com/@insort_official"
-    ],
-    "makesOffer": {
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Product",
-        "brand": "Procraft",
-        "name": "Електроінструменти Procraft"
+    "@graph": [
+      {
+        "@type": "Store",
+        "@id": "https://insort.kyiv.ua/#store",
+        "name": "InSort",
+        "logo": "https://insort.kyiv.ua/logo.png",
+        "image": "https://insort.kyiv.ua/logo.png",
+        "url": "https://insort.kyiv.ua/",
+        "description": "InSort — інтернет-магазин електроінструментів Procraft в Україні. Шуруповерти, дрилі, болгарки, перфоратори, пили, шліфмашини, зварювальні апарати та інші інструменти з доставкою.",
+        "sameAs": [
+          "https://t.me/shop_insort",
+          "https://www.tiktok.com/@insort_official"
+        ],
+        "priceRange": "₴₴"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://insort.kyiv.ua/#website",
+        "name": "InSort",
+        "url": "https://insort.kyiv.ua/",
+        "publisher": {
+          "@id": "https://insort.kyiv.ua/#store"
+        }
       }
-    }
+    ]
   }
   </script>
 
@@ -760,14 +767,17 @@ function updateDynamicSeo(){
           "item":{
             "@type":"Product",
             "name":pName(p),
-            "brand":"Procraft",
+            "brand":{"@type":"Brand","name":"Procraft"},
             "category":pMain(p)||pCat(p)||"Електроінструменти",
             "description":pDesc(p),
+            "image":(pImages(p)[0]||"https://insort.kyiv.ua/logo.png"),
+            "sku":getProductId(p,i),
             "offers":{
               "@type":"Offer",
               "priceCurrency":"UAH",
               "price":String(pPrice(p)).replace(/[^0-9.]/g,'')||"0",
-              "availability":"https://schema.org/InStock",
+              "availability":(text(p.stockStatus||p.status).toLowerCase().includes('немає')||p.outOfStock)?"https://schema.org/OutOfStock":"https://schema.org/InStock",
+              "itemCondition":"https://schema.org/NewCondition",
               "url":"https://insort.kyiv.ua/"
             }
           }
