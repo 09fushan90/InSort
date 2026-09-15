@@ -942,8 +942,11 @@ function updateDiscountButtons(){
   const inDiscounts=currentView==='discounts';
   document.querySelectorAll('.discount-inline-btn, .home-nav-btn').forEach(btn=>{
     const text=(btn.textContent||'').trim();
-    const isDiscountBtn=btn.classList.contains('discount-inline-btn') || text.includes('Товари зі знижкою') || (inDiscounts && text.includes('Повернутися') && btn.getAttribute('onclick')==='toggleDiscounts()');
-    if(!isDiscountBtn || btn.getAttribute('onclick')!=='toggleDiscounts()') return;
+    // Кнопку знижок визначаємо насамперед по її дії, а не по поточному тексту.
+    // Інакше після заміни тексту на «Повернутися» головна кнопка вже не знаходилась
+    // і не відновлювалась при поверненні на головний екран.
+    const isDiscountBtn=btn.getAttribute('onclick')==='toggleDiscounts()';
+    if(!isDiscountBtn) return;
     if(inDiscounts){
       btn.innerHTML='<span class="nav-icon" aria-hidden="true">←</span><span>Повернутися</span>';
       btn.classList.add('active');
