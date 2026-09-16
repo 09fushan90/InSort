@@ -1,0 +1,17 @@
+{
+  "name": "InSort — електроінструменти Procraft",
+  "short_name": "InSort",
+  "description": "Інтернет-магазин електроінструментів Procraft в Україні",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f5",
+  "theme_color": "#3a463f",
+  "orientation": "portrait-primary",
+  "lang": "uk",
+  "icons": [
+    { "src": "https://insort.kyiv.ua/logo.png.jpg", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "https://insort.kyiv.ua/logo.png.jpg", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "https://insort.kyiv.ua/logo.png.jpg", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
