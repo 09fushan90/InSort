@@ -294,6 +294,62 @@
 })();
 </script>
 
+
+  <style id="insort-home-size-fix">
+    /* Головний екран: поле логотипа завжди квадратне */
+    .hero-visual{
+      width:min(350px, 100%) !important;
+      aspect-ratio:1 / 1 !important;
+      min-height:0 !important;
+      align-self:center !important;
+      justify-self:center !important;
+    }
+    .hero-photo{
+      width:100% !important;
+      height:100% !important;
+      object-fit:contain !important;
+    }
+
+    /* Реклама: зменшена по висоті ТІЛЬКИ на комп’ютері */
+    @media(min-width:1001px){
+      .ad-card.has-ad-photo .ad-photo{
+        height:190px !important;
+      }
+      .ad-card.has-ad-photo .ad-photo img{
+        width:100% !important;
+        height:100% !important;
+        object-fit:contain !important;
+        object-position:center !important;
+      }
+    }
+
+    /* Комп’ютер: підтягуємо логотип ближче до тексту, без великого пустого проміжку */
+    @media(min-width:1001px){
+      .hero-card{
+        grid-template-columns:minmax(0,760px) 350px !important;
+        justify-content:center !important;
+        column-gap:55px !important;
+      }
+
+      /* Рекламне фото заповнює весь контур рекламного поля */
+      .ad-card.has-ad-photo .ad-photo{
+        width:100% !important;
+        height:190px !important;
+      }
+      .ad-card.has-ad-photo .ad-photo img{
+        width:100% !important;
+        height:100% !important;
+        object-fit:cover !important;
+        object-position:center !important;
+        display:block !important;
+      }
+    }
+
+    @media(max-width:620px){
+      .hero-visual{width:min(230px,100%) !important;aspect-ratio:1 / 1 !important;min-height:0 !important;}
+    }
+  </style>
+
 </head>
 <body>
 <div class="loader" id="loader"><div class="insort-loader-wrap" aria-label="Завантаження InSort"><svg class="insort-loader-svg" viewBox="0 0 104 104" role="img" aria-hidden="true"><rect class="insort-loader-track" x="10" y="10" width="84" height="84" rx="24" ry="24"></rect><rect class="insort-loader-fill" x="10" y="10" width="84" height="84" rx="24" ry="24"></rect><text class="insort-loader-letter" x="52" y="68" text-anchor="middle">I</text></svg></div><div class="insort-loader-text"></div></div>
