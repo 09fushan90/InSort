@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-  <title>InSort — купити електроінструменти Procraft в Україні | Шуруповерти, дрилі, болгарки</title>
-  <meta name="description" content="InSort — інтернет-магазин електроінструментів Procraft в Україні. Шуруповерти, дрилі, болгарки, перфоратори, пили, шліфмашини, зварювальні апарати та інші інструменти з доставкою." />
+  <title>InSort | Інтернет-магазин електроінструментів Procraft в Україні</title>
+  <meta name="description" content="InSort (insort.kyiv.ua) — офіційний сайт інтернет-магазину електроінструментів Procraft в Україні. Каталог, ціни, знижки, доставка та відгуки." />
   <link rel="canonical" href="https://insort.kyiv.ua/" />
   <link rel="icon" type="image/png" href="https://insort.kyiv.ua/logo.png.jpg" />
   <link rel="apple-touch-icon" href="https://insort.kyiv.ua/logo.png.jpg" />
@@ -15,7 +15,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="InSort" />
 
-  <meta name="keywords" content="InSort, Procraft, електроінструменти Procraft, шуруповерт Procraft, дриль Procraft, болгарка Procraft, перфоратор Procraft, пила Procraft, зварювальний апарат Procraft, магазин інструментів Україна, купити електроінструмент Київ" />
+  <meta name="keywords" content="InSort, insort, ІнСорт, insort.kyiv.ua, магазин InSort, Procraft, електроінструменти Procraft, магазин інструментів Україна" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="author" content="InSort" />
   <meta property="og:title" content="InSort — електроінструменти Procraft в Україні" />
@@ -37,6 +37,7 @@
         "@type": "Store",
         "@id": "https://insort.kyiv.ua/#store",
         "name": "InSort",
+        "alternateName": ["insort", "ІнСорт", "In Sort"],
         "logo": "https://insort.kyiv.ua/logo.png.jpg",
         "image": "https://insort.kyiv.ua/logo.png.jpg",
         "url": "https://insort.kyiv.ua/",
@@ -51,6 +52,7 @@
         "@type": "WebSite",
         "@id": "https://insort.kyiv.ua/#website",
         "name": "InSort",
+        "alternateName": ["insort", "ІнСорт"],
         "url": "https://insort.kyiv.ua/",
         "publisher": {
           "@id": "https://insort.kyiv.ua/#store"
@@ -352,6 +354,7 @@
 
 </head>
 <body>
+<div class="seo-text" aria-label="Про магазин InSort">InSort — інтернет-магазин електроінструментів Procraft в Україні. Офіційний сайт магазину: insort.kyiv.ua.</div>
 <div class="loader" id="loader"><div class="insort-loader-wrap" aria-label="Завантаження InSort"><svg class="insort-loader-svg" viewBox="0 0 104 104" role="img" aria-hidden="true"><rect class="insort-loader-track" x="10" y="10" width="84" height="84" rx="24" ry="24"></rect><rect class="insort-loader-fill" x="10" y="10" width="84" height="84" rx="24" ry="24"></rect><text class="insort-loader-letter" x="52" y="68" text-anchor="middle">I</text></svg></div><div class="insort-loader-text"></div></div>
 <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 <nav class="side-menu" id="sideMenu" aria-label="Меню сайту">
@@ -860,6 +863,17 @@ function normalizeSubCategories(src){
 function mains(){const pm=uniq(products.map(pMain).filter(Boolean)); return uniq([...mainCategories,...Object.keys(subCategoriesMap||{}),...pm, ...(mainCategories.length||pm.length?[]:products.map(pCat).filter(Boolean))])}
 function subsFor(m){const fromMap=(subCategoriesMap&&subCategoriesMap[m])||[]; const arr=[...fromMap];products.forEach(p=>{const pm=pMain(p),pc=pCat(p); if(pc&&low(pm)===low(m)&&low(pc)!==low(m)) arr.push(pc)});return uniq(arr)}
 
+function safeSchemaPrice(v){
+  const n=toNum(v);
+  return n>0?String(n):"0";
+}
+function safeReviewDateISO(ts){
+  const n=Number(ts);
+  if(!Number.isFinite(n)||n<=0)return undefined;
+  const d=new Date(n);
+  if(isNaN(d.getTime()))return undefined;
+  return d.toISOString().slice(0,10);
+}
 function updateDynamicSeo(){
   try{
     const schema=document.getElementById('insort-seo-schema');
@@ -876,7 +890,7 @@ function updateDynamicSeo(){
             const avgRating=productReviews.reduce((s,r)=>s+(Number(r.rating)||0),0)/productReviews.length;
             reviewBlock.aggregateRating={
               "@type":"AggregateRating",
-              "ratingValue":avgRating.toFixed(1),
+              "ratingValue":Number(avgRating.toFixed(1)),
               "reviewCount":productReviews.length,
               "bestRating":5,
               "worstRating":1
@@ -886,7 +900,7 @@ function updateDynamicSeo(){
               "reviewRating":{"@type":"Rating","ratingValue":Math.max(1,Math.min(5,Number(r.rating)||1)),"bestRating":5,"worstRating":1},
               "author":{"@type":"Person","name":text(r.name)||"Покупець InSort"},
               "reviewBody":text(r.text).slice(0,1200),
-              "datePublished":r.createdAt?new Date(Number(r.createdAt)).toISOString().slice(0,10):undefined
+              "datePublished":safeReviewDateISO(r.createdAt)
             }));
           }
           return {
@@ -904,7 +918,7 @@ function updateDynamicSeo(){
             "offers":{
               "@type":"Offer",
               "priceCurrency":"UAH",
-              "price":String(pPrice(p)).replace(/[^0-9.]/g,'')||"0",
+              "price":safeSchemaPrice(pPrice(p)),
               "availability":(text(p.stockStatus||p.status).toLowerCase().includes('немає')||p.outOfStock)?"https://schema.org/OutOfStock":"https://schema.org/InStock",
               "itemCondition":"https://schema.org/NewCondition",
               "url":"https://insort.kyiv.ua/",
