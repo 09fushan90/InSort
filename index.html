@@ -2722,13 +2722,20 @@ deleteOfficeMainCategory=async function(main){
     if(!(affectedMain||affectedSub))return;
     ['mainCategory','main','type','category','subCategory','subcategory'].forEach(f=>{
       if(p[f]!==undefined)p[f]='';
-      const key=insortProductDbKey(p,i); if(key){updates['catalog/products/'+key+'/'+f]=null;updates['products/'+key+'/'+f]=null;}
+      const key=officeProductDbKey(p,i); if(key){updates['catalog/products/'+key+'/'+f]=null;updates['products/'+key+'/'+f]=null;}
     });
   });
   if(activeMain&&low(activeMain)===mainLow){activeMain='';activeSub='';}
-  await insortWriteCategoryState(updates);
-  build(); renderOfficeCategoryControls(); renderOfficeList();
-  showToast('Основну категорію видалено з сайту і кешу');
+  try{
+    await insortWriteCategoryState(updates);
+    build(); renderOfficeCategoryControls(); renderOfficeList();
+    showToast('Основну категорію видалено з сайту і кешу');
+  }catch(e){
+    console.error('deleteOfficeMainCategory error',e);
+    build(); renderOfficeCategoryControls(); renderOfficeList();
+    const msg=(e&&e.code==='PERMISSION_DENIED')?'Firebase заборонив видалення (PERMISSION_DENIED). Перевір правила бази для шляхів catalog/mainCategories, catalog/deletedMainCategories, catalog/products.':'Категорію прибрано з екрана, але зберегти видалення в базі не вдалося: '+(e&&e.message?e.message:e)+'. Онови сторінку — якщо категорія повернеться, це підтверджує проблему з Firebase.';
+    showInfo('Помилка видалення',msg);
+  }
 };
 
 deleteOfficeSubCategory=async function(main,sub){
@@ -2741,13 +2748,20 @@ deleteOfficeSubCategory=async function(main,sub){
   const updates={};
   (products||[]).forEach((p,i)=>{
     if(low(pCat(p))!==low(sub))return;
-    const key=insortProductDbKey(p,i); if(!key)return;
+    const key=officeProductDbKey(p,i); if(!key)return;
     ['category','subCategory','subcategory'].forEach(f=>{if(p[f]!==undefined)p[f]=''; updates['catalog/products/'+key+'/'+f]=null; updates['products/'+key+'/'+f]=null;});
   });
   if(activeSub&&low(activeSub)===low(sub))activeSub='';
-  await insortWriteCategoryState(updates);
-  build(); renderOfficeCategoryControls(); renderOfficeList();
-  showToast('Підкатегорію видалено з сайту і кешу');
+  try{
+    await insortWriteCategoryState(updates);
+    build(); renderOfficeCategoryControls(); renderOfficeList();
+    showToast('Підкатегорію видалено з сайту і кешу');
+  }catch(e){
+    console.error('deleteOfficeSubCategory error',e);
+    build(); renderOfficeCategoryControls(); renderOfficeList();
+    const msg=(e&&e.code==='PERMISSION_DENIED')?'Firebase заборонив видалення (PERMISSION_DENIED). Перевір правила бази для шляхів catalog/subCategories, catalog/deletedSubCategories, catalog/products.':'Підкатегорію прибрано з екрана, але зберегти видалення в базі не вдалося: '+(e&&e.message?e.message:e)+'. Онови сторінку — якщо підкатегорія повернеться, це підтверджує проблему з Firebase.';
+    showInfo('Помилка видалення',msg);
+  }
 };
 
 renderCategories=(function(original){
