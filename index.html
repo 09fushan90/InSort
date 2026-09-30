@@ -6,6 +6,9 @@
   <title>InSort | Інтернет-магазин електроінструментів Procraft в Україні</title>
   <meta name="description" content="InSort (insort.kyiv.ua) — офіційний сайт інтернет-магазину електроінструментів Procraft в Україні. Каталог, ціни, знижки, доставка та відгуки." />
   <link rel="canonical" href="https://insort.kyiv.ua/" />
+  <link rel="preconnect" href="https://www.gstatic.com" />
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+  <link rel="dns-prefetch" href="https://vesinya-pratsya-shop-default-rtdb.firebaseio.com" />
   <link rel="icon" type="image/png" href="https://insort.kyiv.ua/logo.png.jpg" />
   <link rel="apple-touch-icon" href="https://insort.kyiv.ua/logo.png.jpg" />
   <link rel="manifest" href="/manifest.json" />
@@ -66,7 +69,10 @@
     :root{
       --bg:#f4f6f5;--card:#fff;--dark:#101512;--dark2:#18211c;--dark-btn:#3a463f;--green:#5cab49;--green2:#a9d99e;--muted:#66736b;--line:#e2e8e4;--red:#e2645c;--shadow:0 18px 55px rgba(12,22,15,.12);--radius:24px;
     }
-    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--dark);overflow-x:hidden} button,input{font-family:inherit} button{cursor:pointer;border:0}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--dark);overflow-x:hidden} button,input{font-family:inherit} button{cursor:pointer;border:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    a,button,.product,.cat-btn,.sub-btn,.mobile-main-btn,.mobile-sub-btn,.office-item,.cart-row,[onclick]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+    button:focus,a:focus{outline:none}
+    button:focus-visible,a:focus-visible{outline:2px solid var(--green);outline-offset:2px}
     .page{min-height:100vh}.topbar{position:sticky;top:0;z-index:50;background:rgba(244,246,245,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(16,21,18,.06)}
     .topbar-inner{max-width:1480px;margin:auto;padding:14px 22px;display:flex;align-items:center;gap:16px;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--green2),var(--green));display:grid;place-items:center;font-weight:1000;font-size:24px;color:#071007;box-shadow:0 12px 28px rgba(73,208,24,.25)}
     .brand-title{font-size:25px;font-weight:1000;letter-spacing:-.5px}.brand-title span{color:var(--green)}.brand-sub{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1.6px;white-space:nowrap}.top-actions{display:flex;align-items:center;gap:10px}.pill{border-radius:999px;padding:11px 15px;background:#fff;border:1px solid var(--line);font-weight:900;color:var(--dark)}.support-btn{background:var(--dark-btn);color:#fff;border-radius:999px;padding:12px 18px;font-weight:1000;box-shadow:0 12px 24px rgba(16,21,18,.18)}
@@ -396,7 +402,7 @@
     <button class="home-nav-btn nav-icon-btn" onclick="toggleDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#a9d99e" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button>
   </section>
   <section class="home-section" id="homeHitsSection"><div class="home-section-card"><div class="home-section-head"><div><div class="home-section-title">Хіти продажів</div><div class="home-section-sub" id="homeHitsSub">Товари, які адмін позначив як хіт</div></div><button class="home-nav-btn nav-icon-btn" style="width:auto;padding:13px 16px" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Хіти продажів</span></button></div><div class="products" id="homeHitsProducts"></div></div></section>
-  <main class="shop catalog-hidden" id="catalog"><aside class="sidebar"><div class="sidebar-head"><div class="sidebar-title">Категорії</div><div class="sidebar-small">Можна листати прямо тут</div></div><div class="category-list" id="categoryList"></div></aside><section class="content"><div class="catalog-panel"><div class="catalog-top"><div><div class="catalog-title">Каталог товарів</div><div class="catalog-sub" id="catalogSub">Усі товари з твоєї бази</div></div><div class="catalog-tools"><button class="saved-inline-btn nav-icon-btn" id="hitsInlineBtn" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Хіти продажів</span></button><button class="saved-inline-btn" id="savedInlineBtn" onclick="showSaved()">Збережене</button><button class="discount-inline-btn nav-icon-btn" onclick="toggleDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#a9d99e" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button><div class="search"><input id="searchInput" placeholder="Пошук за назвою, артикулом, категорією..." oninput="onSearchInput()"><button type="button" id="searchClearBtn" class="search-clear-btn" style="display:none" onclick="clearSearchInput()" aria-label="Очистити пошук">×</button></div></div><div class="catalog-extra-tools"><select id="sortSelect" onchange="onSortChange()"><option value="default">Сортування: за замовчуванням</option><option value="price_asc">Спочатку дешевші</option><option value="price_desc">Спочатку дорожчі</option><option value="new">Спочатку нові</option></select><div class="price-filter"><input id="priceMinInput" type="number" inputmode="numeric" min="0" placeholder="Ціна від" oninput="onPriceFilterInput()"><span class="price-filter-dash">—</span><input id="priceMaxInput" type="number" inputmode="numeric" min="0" placeholder="до" oninput="onPriceFilterInput()"><button type="button" id="priceFilterClearBtn" class="price-filter-clear" style="display:none" onclick="clearPriceFilter()">Скинути</button></div></div></div><div class="mobile-cats" id="mobileCats"></div><div class="products" id="products"></div></div></section></main>
+  <main class="shop catalog-hidden" id="catalog"><aside class="sidebar"><div class="sidebar-head"><div class="sidebar-title">Категорії</div><div class="sidebar-small">Можна листати прямо тут</div></div><div class="category-list" id="categoryList"></div></aside><section class="content"><div class="catalog-panel"><div class="catalog-top"><div><div class="catalog-title">Каталог товарів</div><div class="catalog-sub" id="catalogSub">Усі товари з твоєї бази</div></div><div class="catalog-tools"><button class="saved-inline-btn nav-icon-btn" id="hitsInlineBtn" onclick="showHits()"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span><span>Хіти продажів</span></button><button class="saved-inline-btn" id="savedInlineBtn" onclick="showSaved()">Збережене</button><button class="discount-inline-btn nav-icon-btn" id="discountInlineBtn" onclick="toggleDiscounts()"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#a9d99e" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span><span>Товари зі знижкою</span></button><div class="search"><input id="searchInput" placeholder="Пошук за назвою, артикулом, категорією..." oninput="onSearchInput()"><button type="button" id="searchClearBtn" class="search-clear-btn" style="display:none" onclick="clearSearchInput()" aria-label="Очистити пошук">×</button></div></div><div class="catalog-extra-tools"><select id="sortSelect" onchange="onSortChange()"><option value="default">Сортування: за замовчуванням</option><option value="price_asc">Спочатку дешевші</option><option value="price_desc">Спочатку дорожчі</option><option value="new">Спочатку нові</option></select><div class="price-filter"><input id="priceMinInput" type="number" inputmode="numeric" min="0" placeholder="Ціна від" oninput="onPriceFilterInput()"><span class="price-filter-dash">—</span><input id="priceMaxInput" type="number" inputmode="numeric" min="0" placeholder="до" oninput="onPriceFilterInput()"><button type="button" id="priceFilterClearBtn" class="price-filter-clear" style="display:none" onclick="clearPriceFilter()">Скинути</button></div></div></div><div class="mobile-cats" id="mobileCats"></div><div class="products" id="products"></div></div></section></main>
 </div>
 
 <div class="modal" id="productModal"><div class="modal-card"><button class="modal-close" onclick="closeProduct()">×</button><div class="product-view"><div class="view-image"><div class="view-gallery-wrap"><button type="button" id="viewPrevBtn" class="view-gallery-arrow left" onclick="changeViewImage(-1);event.stopPropagation()">‹</button><img id="viewImg" alt=""><button type="button" id="viewNextBtn" class="view-gallery-arrow right" onclick="changeViewImage(1);event.stopPropagation()">›</button><div id="viewPhotoCounter" class="view-photo-counter"></div></div><div id="viewThumbs" class="view-thumbs"></div></div><div class="view-info"><div class="view-cat" id="viewCat"></div><h2 id="viewTitle"></h2><div class="view-desc" id="viewDesc"></div><div class="view-price" id="viewPrice"></div><div class="view-actions"><button class="big-btn primary order-btn" id="viewCartBtn">Додати в кошик</button><button type="button" class="big-btn secondary" id="viewDirectOrderBtn" style="background:var(--dark-btn);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" onclick="orderDirectCurrent()">Замовити одразу</button><button type="button" class="big-btn secondary" style="background:#eef9ed;color:#20820d" onclick="shareCurrentProductLink()">Поділитись 🔗</button></div></div></div></div></div>
@@ -993,7 +999,10 @@ function build(){
 function applyPageView(){
   const home=currentView==='home';
   ['homeAdSection','homeNav','homeHitsSection'].forEach(id=>{const el=$(id);if(el)el.classList.toggle('home-hidden',!home)});
-  if($('mobileCats'))$('mobileCats').style.display=hitOnly?'none':'';
+  if($('mobileCats'))$('mobileCats').style.display=(hitOnly||discountOnly)?'none':'';
+  if($('hitsInlineBtn'))$('hitsInlineBtn').style.display=discountOnly?'none':'';
+  if($('discountInlineBtn'))$('discountInlineBtn').style.display=hitOnly?'none':'';
+  if($('savedInlineBtn'))$('savedInlineBtn').style.display=(discountOnly||hitOnly)?'none':'';
   const cat=$('catalog');
   if(cat)cat.classList.toggle('catalog-hidden',home);
   updateDiscountButtons();
@@ -1100,14 +1109,55 @@ function clearPriceFilter(){
   updatePriceFilterClearVisibility();
   renderProducts();
 }
+const CATALOG_PAGE_SIZE=30;
+let catalogFullList=[];
+let catalogRenderLimit=0;
+let catalogProductsIO=null;
 function renderProducts(){
   const q=text($('searchInput')?$('searchInput').value:'');
   updateSearchClearVisibility();
-  const arr=filtered();
-  $('catalogSub').textContent=(savedOnly?'Збережене':hitOnly?'Хіти продажів':discountOnly?'Товари зі знижкою':activeSub||activeMain||'Усі товари з твоєї бази')+' • '+arr.length+' шт.';
+  catalogFullList=filtered();
+  catalogRenderLimit=Math.min(CATALOG_PAGE_SIZE,catalogFullList.length);
+  $('catalogSub').textContent=(savedOnly?'Збережене':hitOnly?'Хіти продажів':discountOnly?'Товари зі знижкою':activeSub||activeMain||'Усі товари з твоєї бази')+' • '+catalogFullList.length+' шт.';
   updateSavedButtonState();
   updateHitsButtonState();
-  $('products').innerHTML=arr.length?arr.map((p,i)=>card(p,products.indexOf(p))).join(''):(q?'<div class="empty">За запитом «'+esc(q)+'» нічого не знайдено. Спробуй іншу назву, артикул або категорію.</div>':'<div class="empty">Товарів у цьому розділі поки немає</div>');
+  const box=$('products');
+  if(catalogProductsIO){catalogProductsIO.disconnect();catalogProductsIO=null;}
+  if(!box)return;
+  if(!catalogFullList.length){
+    box.innerHTML=q?'<div class="empty">За запитом «'+esc(q)+'» нічого не знайдено. Спробуй іншу назву, артикул або категорію.</div>':'<div class="empty">Товарів у цьому розділі поки немає</div>';
+    return;
+  }
+  const visibleHtml=catalogFullList.slice(0,catalogRenderLimit).map(p=>card(p,products.indexOf(p))).join('');
+  const needsSentinel=catalogRenderLimit<catalogFullList.length;
+  box.innerHTML=visibleHtml+(needsSentinel?'<button type="button" id="productsLoadSentinel" onclick="loadMoreCatalogProducts()" style="grid-column:1/-1;padding:16px;border:1px dashed #cbd7ce;border-radius:18px;background:#fbfdfb;color:var(--muted);font-weight:900">Завантажити ще ('+(catalogFullList.length-catalogRenderLimit)+' лишилось)</button>':'');
+  if(needsSentinel)setupCatalogInfiniteScroll();
+}
+function loadMoreCatalogProducts(){
+  if(catalogRenderLimit>=catalogFullList.length)return;
+  const prevLimit=catalogRenderLimit;
+  catalogRenderLimit=Math.min(catalogRenderLimit+CATALOG_PAGE_SIZE,catalogFullList.length);
+  const nextItems=catalogFullList.slice(prevLimit,catalogRenderLimit);
+  const sentinel=$('productsLoadSentinel');
+  const html=nextItems.map(p=>card(p,products.indexOf(p))).join('');
+  if(sentinel){
+    sentinel.insertAdjacentHTML('beforebegin',html);
+    if(catalogRenderLimit>=catalogFullList.length){
+      if(catalogProductsIO){catalogProductsIO.disconnect();catalogProductsIO=null;}
+      sentinel.remove();
+    }else{
+      sentinel.textContent='Завантажити ще ('+(catalogFullList.length-catalogRenderLimit)+' лишилось)';
+    }
+  }
+}
+function setupCatalogInfiniteScroll(){
+  const sentinel=$('productsLoadSentinel');
+  if(!sentinel||typeof IntersectionObserver==='undefined')return;
+  if(catalogProductsIO)catalogProductsIO.disconnect();
+  catalogProductsIO=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{if(entry.isIntersecting)loadMoreCatalogProducts();});
+  },{rootMargin:'700px 0px'});
+  catalogProductsIO.observe(sentinel);
 }
 function getProductId(p,i){return String((p&&p._cartUid)||'product_'+i)}
 function isInCart(id){return cart.some(x=>String(x.id)===String(id))}
@@ -1118,7 +1168,7 @@ function card(p,i){
   const id=getProductId(p,i);
   const inCart=isInCart(id);
   const imgBox=photo
-    ? '<img loading="lazy" src="'+esc(pImg(p))+'" alt="'+esc(pName(p))+'" onerror="this.parentElement.classList.add(&quot;missing-photo&quot;);this.outerHTML=noPhotoHtml()">'
+    ? '<img loading="lazy" decoding="async" src="'+esc(pImg(p))+'" alt="'+esc(pName(p))+'" onerror="this.parentElement.classList.add(&quot;missing-photo&quot;);this.outerHTML=noPhotoHtml()">'
     : noPhotoHtml();
 
   return '<article class="product '+(inCart?'selected':'')+'" data-id="'+esc(id)+'" data-index="'+i+'" onclick="openProduct('+i+')" title="Відкрити товар">'
