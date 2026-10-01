@@ -852,7 +852,7 @@ async function loadData(){
     if($('searchInput')) $('searchInput').value='';
     build();
     if(isAdminUser())startHeroRealtime();
-    startReviewsSchemaSync();
+    setTimeout(startReviewsSchemaSync, 1500);
     openProductFromHashIfAny();
   }catch(e){
     console.error(e);
@@ -898,9 +898,16 @@ function updateDynamicSeo(){
         "@context":"https://schema.org",
         "@type":"ItemList",
         "name":"Каталог електроінструментів InSort",
-        "itemListElement":products.slice(0,100).map((p,i)=>{
+        "itemListElement":(()=>{
+          const reviewsByProduct={};
+          (allReviews||[]).forEach(r=>{
+            if(!(Number(r.rating)>0 && text(r.text)))return;
+            const pid=text(r.productId); if(!pid)return;
+            (reviewsByProduct[pid]=reviewsByProduct[pid]||[]).push(r);
+          });
+          return products.slice(0,100).map((p,i)=>{
           const pid=getProductId(p,i);
-          const productReviews=(allReviews||[]).filter(r=>text(r.productId)===text(pid) && Number(r.rating)>0 && text(r.text));
+          const productReviews=reviewsByProduct[text(pid)]||[];
           const reviewBlock={};
           if(productReviews.length){
             const avgRating=productReviews.reduce((s,r)=>s+(Number(r.rating)||0),0)/productReviews.length;
@@ -975,7 +982,8 @@ function updateDynamicSeo(){
               }
             }
           }
-        }})
+        }});
+        })()
       };
       const extra=document.createElement('script');
       extra.type='application/ld+json';
@@ -990,21 +998,26 @@ function updateDynamicSeo(){
 
 function build(){
   if(currentView==='home'){activeMain='';activeSub='';discountOnly=false;savedOnly=false;hitOnly=false;}
+  // Найважливіше спочатку: хіти на головній екран має побачити людина першими.
   renderCategories();
-  renderProducts();
   renderHomeHits();
-  renderAd();
-  startAdsSlider();
-  renderHeroSettings();
-  updateDynamicSeo();
   updateCart();
   updateSavedUI();
+  applyPageView();
+  updateOfficeButtonVisibility();
   const statProducts=$('statProducts');
   const statCats=$('statCats');
   if(statProducts)statProducts.textContent=products.length;
   if(statCats)statCats.textContent=mains().length;
-  applyPageView();
-  updateOfficeButtonVisibility();
+  // Каталог (перші 30 товарів) — одразу наступним кадром, щоб браузер встиг намалювати хіти без затримки.
+  requestAnimationFrame(()=>{
+    renderProducts();
+    renderAd();
+    startAdsSlider();
+    renderHeroSettings();
+  });
+  // SEO-розмітка не видима користувачу — відкладаємо, щоб вона не затримувала показ товарів.
+  setTimeout(()=>{ try{ updateDynamicSeo(); }catch(e){console.warn('updateDynamicSeo deferred run failed',e)} }, 400);
 }
 function applyPageView(){
   const home=currentView==='home';
