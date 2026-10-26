@@ -532,6 +532,19 @@
   .loc-links a:hover{color:var(--green)}.loc-links .ic{width:18px;height:18px}
   @media(max-width:900px){.home-bottom{grid-template-columns:1fr}}
   @media(max-width:420px){.home-bottom .soc2-cta{display:none}}
+  /* ===== Шапка по центру + інфо-поле ===== */
+  .topbar-inner{position:relative;min-height:76px}
+  .topbar .brand{position:absolute;inset:0;padding-left:0!important;justify-content:center;pointer-events:none}
+  .topbar .brand>*{pointer-events:auto}
+  @media(max-width:620px){.topbar-inner{min-height:68px}}
+  .info-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px 18px;box-shadow:0 14px 32px rgba(12,22,15,.06)}
+  .info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .info-title{font-size:14px;font-weight:900;color:var(--dark);margin-bottom:4px}
+  .info-col p{margin:0 0 8px;font-size:13px;line-height:1.45;color:var(--muted)}
+  .info-links{display:flex;flex-wrap:wrap;gap:6px 18px}
+  .info-links a,.info-links button,.info-links span{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:13px;color:var(--dark);text-decoration:none;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+  .info-links a:hover,.info-links button:hover{color:var(--green)}.info-links .ic{width:16px;height:16px}
+  @media(max-width:900px){.info-grid{grid-template-columns:1fr;gap:14px}}
   /* ===== Темна тема: графітово-зелений фон + м'ятно-зелений акцент ===== */
   html[data-theme="dark"]{color-scheme:dark;
     --bg:#0d1210;--card:#151c18;--dark:#eaf1ec;--dark2:#e0e9e3;--dark-btn:#2c4636;--green:#6fcf5a;--green2:#9fe28f;--muted:#97a69c;--line:#26312b;--red:#ff7a72;--shadow:0 18px 45px rgba(0,0,0,.5)}
@@ -637,16 +650,7 @@ function IC(n,c){return '<svg class="ic'+(c?' '+c:'')+'" aria-hidden="true"><use
   <button id="loginMenuBtn" class="menu-register-btn" onclick="openAuthBox('login')"><svg class="ic sp" aria-hidden="true"><use href="#i-key"/></svg>Увійти</button>
   <button class="menu-register-btn menu-cart-line" onclick="closeMenu();openCart()"><svg class="ic sp" aria-hidden="true"><use href="#i-cart"/></svg>Кошик <span id="cartCountMenu" style="margin-left:auto">0 товарів</span></button>
   <button type="button" class="menu-register-btn" onclick="closeMenu();openReviewsModal()"><svg class="ic sp" aria-hidden="true"><use href="#i-star"/></svg><span>Відгуки</span></button>
-  <button class="menu-copy-btn" onclick="toggleOwnersMenu()"><svg class="ic sp" aria-hidden="true"><use href="#i-phone"/></svg>Номери власників</button>
-  <div class="submenu" id="ownersMenu">
-    <button class="submenu-toggle" onclick="toggleOwnerSection('shopOwnerSection')">Власник магазину</button>
-    <div class="owner-section" id="shopOwnerSection"><button class="owner-contact-btn" onclick="copyPhone('0730510544')"><svg class="ic sp" aria-hidden="true"><use href="#i-phone"/></svg>0730510544</button><a class="owner-telegram-btn" href="https://t.me/Neffoc" rel="noopener" target="_blank">Telegram: @Neffoc</a></div>
-    <button class="submenu-toggle" onclick="toggleOwnerSection('siteOwnerSection')">Власник сайту</button>
-    <div class="owner-section" id="siteOwnerSection"><button class="owner-contact-btn" onclick="copyPhone('0632270785')"><svg class="ic sp" aria-hidden="true"><use href="#i-phone"/></svg>0632270785</button><a class="owner-telegram-btn" href="https://t.me/Fushan90" rel="noopener" target="_blank">Telegram: @Fushan90</a></div>
-  </div>
-  <button class="menu-register-btn" onclick="closeMenu();openSupport()"><svg class="ic sp" aria-hidden="true"><use href="#i-chat"/></svg>Підтримка</button>
   <button class="menu-register-btn" onclick="openOrderHistoryModal()"><svg class="ic sp" aria-hidden="true"><use href="#i-box"/></svg>Історія замовлень</button>
-  <a class="menu-location-btn" href="https://maps.app.goo.gl/ZGbhuZCJgETar49n8?g_st=atm" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-pin"/></svg>Місцезнаходження магазину</a>
   <button class="menu-register-btn" id="officeMenuBtn" onclick="openOffice()" style="display:none; margin-top:auto;"><svg class="ic sp" aria-hidden="true"><use href="#i-building"/></svg>Офіс</button>
   <button id="logoutMenuBtn" class="menu-register-btn" onclick="logoutAccount()" style="display:none"><svg class="ic sp" aria-hidden="true"><use href="#i-logout"/></svg>Вийти</button>
   <p class="menu-copy-message" id="copyMessage"></p>
@@ -660,11 +664,12 @@ function IC(n,c){return '<svg class="ic'+(c?' '+c:'')+'" aria-hidden="true"><use
 </section>
 
 <div class="page">
-  <header class="topbar"><div class="topbar-inner"><div class="brand"><button class="menu-btn" onclick="openMenu()" aria-label="Меню"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button><div class="logo" onclick="showHome()" title="На головну" style="cursor:pointer">I</div><div><div class="brand-title" onclick="openHeroModal()" title="Про InSort" style="cursor:pointer">In<span>Sort</span></div><div class="brand-sub">професійний інструмент</div></div></div><div class="top-actions"><button class="install-app-btn" id="installAppBtn" onclick="installApp()" style="display:none" aria-label="Встановити застосунок"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span class="install-app-btn-label"> Встановити застосунок</span></button><button class="cart-menu-btn" onclick="openCart()"><svg class="ic sp" aria-hidden="true"><use href="#i-cart"/></svg><span>Кошик</span><span class="cart-count" id="cartCount">0</span></button></div></div></header>
+  <header class="topbar"><div class="topbar-inner"><div class="brand"><button class="menu-btn" onclick="openMenu()" aria-label="Меню"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button><div class="logo" onclick="showHome()" title="На головну" style="cursor:pointer">I</div><div><div class="brand-title" onclick="openHeroModal()" title="Про InSort" style="cursor:pointer">In<span>Sort</span></div></div></div><div class="top-actions"><button class="install-app-btn" id="installAppBtn" onclick="installApp()" style="display:none" aria-label="Встановити застосунок"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span class="install-app-btn-label"> Встановити застосунок</span></button><button class="cart-menu-btn" onclick="openCart()"><svg class="ic sp" aria-hidden="true"><use href="#i-cart"/></svg><span>Кошик</span><span class="cart-count" id="cartCount">0</span></button></div></div></header>
   <div class="modal hero-modal" id="heroModal"><div class="modal-card" style="max-width:1120px;padding:0;background:transparent;box-shadow:none;overflow:visible"><button class="modal-close" onclick="closeHeroModal()" style="z-index:3">×</button><div class="hero-card"><div><div class="hero-kicker" id="heroKicker">Продаж електроінструментів</div><h1 id="heroTitle">Вітаю на сайті</h1><p id="heroText">Новий чистий дизайн для магазину: зліва категорії, справа каталог, зверху рекламна пропозиція, а картка товару відкривається красиво й зрозуміло.</p><div class="hero-buttons"><button class="primary nav-icon-btn" onclick="closeHeroModal();showCatalog()"><span class="nav-icon shelf-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="4" rx="2" fill="#101512"/><rect x="7" y="12" width="5" height="12" rx="1.6" fill="#5cab49"/><rect x="14" y="12" width="5" height="12" rx="1.6" fill="#a9d99e"/><rect x="21" y="12" width="4" height="12" rx="1.4" fill="#5cab49"/><rect x="4" y="24" width="24" height="4" rx="2" fill="#101512"/></svg></span><span>Весь каталог</span></button></div></div><div class="hero-visual" id="heroVisual"><img class="hero-photo" id="heroPhotoImg" alt="InSort"><div class="hero-badge" id="heroBadge">Procraft / InSort</div><div class="tool-shape"></div></div></div></div></div>
   <section class="ad-section" id="homeAdSection"><div class="ad-card" id="adCard" onclick="openAdModal()"><div class="ad-photo" id="adPhotoBox"><img id="adPhotoImg" alt="Реклама InSort"></div><div class="ad-content"><div class="ad-title" id="adTitle">Рекламне поле</div><div class="ad-text" id="adText">Тут буде головна акція, товар дня або банер. Додай фото і товари через Офіс.</div><div class="ad-products-preview" id="adProductsPreview"></div></div></div></section>
   <section class="home-section" id="homeHitsSection"><div class="home-split"><div class="home-section-card home-panel"><div class="home-section-head"><div><div class="home-section-title">Хіти</div></div><button type="button" class="more-btn" onclick="showHits()">Більше<svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div class="products" id="homeHitsProducts"></div></div><div class="home-section-card home-panel"><div class="home-section-head"><div><div class="home-section-title">Каталог</div></div><button type="button" class="more-btn" onclick="showCatalog()">Більше<svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div class="products" id="homeRandomProducts"></div></div></div></section>
-<section class="home-section" id="homeSocialSection"><div class="home-bottom"><div class="home-social-grid soc-col"><button type="button" class="soc2 soc2-tt" onclick="openTikTokModal()"><span class="soc2-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></span><span class="soc2-text"><b>Ми в ТікТок</b><small>Відео, огляди та новинки інструменту</small></span><span class="soc2-cta">Дивитись</span></button><a class="soc2 soc2-tg" href="https://t.me/shop_insort" target="_blank" rel="noopener"><span class="soc2-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9.04 15.52 8.7 20.2c.5 0 .72-.21.98-.47l2.35-2.25 4.87 3.56c.9.5 1.53.24 1.77-.83l3.2-15.01c.28-1.31-.48-1.82-1.35-1.5L1.72 10.96c-1.28.5-1.26 1.22-.22 1.54l4.81 1.5L17.48 7c.53-.35 1.02-.16.62.2L9.04 15.52z"/></svg></span><span class="soc2-text"><b>Наш офіційний телеграм канал</b><small>Акції, новинки та швидкі відповіді</small></span><span class="soc2-cta">Підписатись</span></a></div><div class="loc-card"><div class="loc-map-wrap"><iframe class="loc-frame" title="Місцезнаходження магазину InSort" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=%D0%B2%D1%83%D0%BB.%20%D0%AE%D0%BD%D0%BE%D1%81%D1%82%D1%96%2C%20%D0%9A%D0%B8%D1%97%D0%B2&amp;hl=uk&amp;z=16&amp;output=embed"></iframe></div><div class="loc-links"><a href="https://maps.app.goo.gl/ZGbhuZCJgETar49n8?g_st=atm" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-pin"/></svg>Відкрити в Google Maps</a><a href="https://t.me/shop_insort" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-send"/></svg>Написати в Telegram</a></div></div></div></section>
+<section class="home-section" id="homeSocialSection"><div class="home-bottom"><div class="home-social-grid soc-col"><button type="button" class="soc2 soc2-tt" onclick="openTikTokModal()"><span class="soc2-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 5.82c1.02.73 2.25 1.16 3.56 1.2v3.5a8.7 8.7 0 0 1-3.63-.82v5.4c0 3.42-2.78 6.2-6.2 6.2s-6.2-2.78-6.2-6.2 2.78-6.2 6.2-6.2c.35 0 .7.03 1.03.09v3.72a2.54 2.54 0 1 0 1.77 2.42V2.7h3.47c.13 1.28.83 2.39 1.9 3.12z"/></svg></span><span class="soc2-text"><b>Ми в ТікТок</b><small>Відео, огляди та новинки інструменту</small></span><span class="soc2-cta">Дивитись</span></button><a class="soc2 soc2-tg" href="https://t.me/shop_insort" target="_blank" rel="noopener"><span class="soc2-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9.04 15.52 8.7 20.2c.5 0 .72-.21.98-.47l2.35-2.25 4.87 3.56c.9.5 1.53.24 1.77-.83l3.2-15.01c.28-1.31-.48-1.82-1.35-1.5L1.72 10.96c-1.28.5-1.26 1.22-.22 1.54l4.81 1.5L17.48 7c.53-.35 1.02-.16.62.2L9.04 15.52z"/></svg></span><span class="soc2-text"><b>Наш офіційний телеграм канал</b><small>Акції, новинки та швидкі відповіді</small></span><span class="soc2-cta">Підписатись</span></a></div><div class="loc-card"><div class="loc-map-wrap"><iframe class="loc-frame" id="locFrame" title="Місцезнаходження магазину InSort" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=%D0%B2%D1%83%D0%BB.%20%D0%AE%D0%BD%D0%BE%D1%81%D1%82%D1%96%2C%20%D0%9A%D0%B8%D1%97%D0%B2&amp;hl=uk&amp;z=16&amp;output=embed"></iframe></div><div class="loc-links"><a href="https://maps.app.goo.gl/ZGbhuZCJgETar49n8?g_st=atm" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-pin"/></svg>Відкрити в Google Maps</a><a href="https://t.me/shop_insort" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-send"/></svg>Написати в Telegram</a></div></div></div></section>
+<section class="home-section" id="homeInfoSection"><div class="info-card"><div class="info-grid"><div class="info-col"><div class="info-title">Власник</div><p>Якщо з’явилися питання по товару або є якісь проблеми — пишіть.</p><div class="info-links"><a href="https://t.me/Neffoc" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-send"/></svg>Написати в Telegram</a><button type="button" onclick="copyPhone('+380730510544')"><svg class="ic sp" aria-hidden="true"><use href="#i-phone"/></svg>+380730510544</button></div></div><div class="info-col"><div class="info-title">Менеджер</div><p>Питання по сайту, по рекламі на сайті або проблеми з сайтом — пишіть.</p><div class="info-links"><a href="https://t.me/Fushan90" target="_blank" rel="noopener"><svg class="ic sp" aria-hidden="true"><use href="#i-send"/></svg>Написати в Telegram</a><button type="button" onclick="copyPhone('+380632270785')"><svg class="ic sp" aria-hidden="true"><use href="#i-phone"/></svg>+380632270785</button></div></div><div class="info-col"><div class="info-title">Доставка по Україні</div><p>Надсилаємо замовлення по всій Україні: Нова пошта, Укрпошта, поштомат Нової пошти або самовивіз.</p><div class="info-links"><span><svg class="ic sp" aria-hidden="true"><use href="#i-truck"/></svg>Доставка по Україні</span></div></div></div></div></section>
   <main class="shop catalog-hidden" id="catalog"><aside class="sidebar"><div class="sidebar-head"><div class="sidebar-title">Категорії</div><div class="sidebar-small">Можна листати прямо тут</div></div><div class="category-list" id="categoryList"></div></aside><section class="content"><div class="catalog-panel"><div class="catalog-top"><div><div class="catalog-title">Каталог товарів</div><div class="catalog-sub" id="catalogSub">Усі товари з твоєї бази</div></div><div class="catalog-tools"><button class="icon-square-btn" id="hitsInlineBtn" onclick="showHits()" title="Хіти продажів" aria-label="Хіти продажів"><span class="nav-icon fire-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 29c-5.1 0-9-3.5-9-8.4 0-3.7 2.2-6.2 5.1-9.1 1.5-1.5 2.8-3.6 2.7-6.5 4.8 2.7 8.9 7 8.9 12.3 1.1-1 1.7-2.4 1.9-3.8 2 2 3.1 4.2 3.1 7.1 0 4.9-3.7 8.4-8.9 8.4z" fill="#ff6b00"/><path d="M16.2 28.8c-2.8 0-5.1-1.9-5.1-4.7 0-2.2 1.5-3.7 3.1-5.3 1-1 1.8-2.2 1.9-4 2.9 2 5 4.5 5 7.7.6-.5 1-1.2 1.2-2 1.2 1.2 1.7 2.3 1.7 3.7 0 2.7-2.2 4.6-4.9 4.6z" fill="#ffd447"/></svg></span></button><button class="icon-square-btn" id="discountInlineBtn" onclick="toggleDiscounts()" title="Товари зі знижкою" aria-label="Товари зі знижкою"><span class="nav-icon ticket-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 9.5 23.7 5.8c1.5-.3 2.9.6 3.2 2.1l.6 2.8a3.1 3.1 0 0 0-1.8 3.6 3.1 3.1 0 0 0 3.1 2.4l.6 2.9c.3 1.5-.6 2.9-2.1 3.2L10.6 26.5c-1.5.3-2.9-.6-3.2-2.1l-.6-2.9a3.1 3.1 0 0 0 1.8-3.6 3.1 3.1 0 0 0-3.1-2.4L4.9 12.7C4.6 11.2 5.5 9.8 7 9.5z" fill="#a9d99e" stroke="#101512" stroke-width="2"/><text x="16.7" y="19.8" text-anchor="middle" class="ticket-percent">%</text></svg></span></button><button class="icon-square-btn heart-btn" id="savedInlineBtn" onclick="showSaved()" title="Збережене" aria-label="Збережене"><span class="nav-icon heart-icon-char" aria-hidden="true"><svg class="ic ic-fill" aria-hidden="true"><use href="#i-heart"/></svg></span></button><button type="button" class="filters-toggle-btn" id="filtersToggleBtn" onclick="toggleCatalogFiltersPanel()"><span aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg></span><span>Сортування</span></button><div class="search"><input id="searchInput" placeholder="Пошук за назвою, артикулом, категорією..." oninput="onSearchInput()"><button type="button" id="searchClearBtn" class="search-clear-btn" style="display:none" onclick="clearSearchInput()" aria-label="Очистити пошук">×</button></div></div><div class="catalog-filters-panel" id="catalogFiltersPanel"><div class="mobile-cats" id="mobileCats"></div><div class="catalog-extra-tools"><select id="sortSelect" onchange="onSortChange()"><option value="default">Сортування: за замовчуванням</option><option value="price_asc">Спочатку дешевші</option><option value="price_desc">Спочатку дорожчі</option><option value="new">Спочатку нові</option></select><div class="price-filter"><input id="priceMinInput" type="number" inputmode="numeric" min="0" placeholder="Ціна від" oninput="onPriceFilterInput()"><span class="price-filter-dash">—</span><input id="priceMaxInput" type="number" inputmode="numeric" min="0" placeholder="до" oninput="onPriceFilterInput()"><button type="button" id="priceFilterClearBtn" class="price-filter-clear" style="display:none" onclick="clearPriceFilter()">Скинути</button></div></div></div><div class="products" id="products"></div></div></section></main>
 </div>
 
@@ -843,8 +848,16 @@ const firebaseConfig={apiKey:"AIzaSyCPEYu_S1qn9dwCkh22QzyX4-hB4_ecM0A",authDomai
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
 const ADMIN_EMAIL='09fushan90@gmail.com';
 const PUBLIC_SITE_CACHE_PATH='siteCache/publicSnapshot6h';
+/* ===== Швидкий старт: локальна копія каталогу (IndexedDB) ===== */
+const INSORT_FAST_DB='insort-fast',INSORT_FAST_KEY='catalog';
+function fastDb(){return new Promise((res,rej)=>{try{const r=indexedDB.open(INSORT_FAST_DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+async function fastGet(){try{const d=await fastDb();return await new Promise(res=>{const q=d.transaction('kv').objectStore('kv').get(INSORT_FAST_KEY);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}}
+async function fastSet(v){try{const d=await fastDb();await new Promise(res=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,INSORT_FAST_KEY);t.oncomplete=t.onerror=t.onabort=()=>res()})}catch(e){}}
+async function fastDel(){try{const d=await fastDb();await new Promise(res=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').delete(INSORT_FAST_KEY);t.oncomplete=t.onerror=t.onabort=()=>res()})}catch(e){}}
+function catalogSig(data){try{const j=JSON.stringify([data.products,data.categories,data.mainCategories,data.subCategories,data.ads]);let h=0;for(let i=0;i<j.length;i+=5)h=(h*31+j.charCodeAt(i))|0;return j.length+':'+h}catch(e){return ''}}
+let insortInstantSig='';
 const PUBLIC_SITE_CACHE_TTL=6*60*60*1000;
-function clearPublicSiteCache(){
+function clearPublicSiteCache(){try{fastDel()}catch(_){}
   try{
     if(typeof db!=='undefined' && db && db.ref){
       db.ref(PUBLIC_SITE_CACHE_PATH).remove().catch(e=>console.warn('Не вдалося очистити кеш сайту:',e));
@@ -1136,27 +1149,34 @@ async function readCatalogWithSixHourPublicCache(){
   return fresh;
 }
 
-async function loadData(){
-  try{
-    let data=await readCatalogWithSixHourPublicCache();
-
-    heroSettings=mergeHeroSettings(data.heroSettings||{});
-    products=normalizeList(data.products);
-    prepareProductIds();
-    categories=normalizeList(data.categories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.category)).filter(Boolean);
-    mainCategories=normalizeList(data.mainCategories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.mainCategory)).filter(Boolean);
-    subCategoriesMap=normalizeSubCategories(data.subCategories||data.subs||{});
-    ads=normalizeList(data.ads||data.advertisements);
+function applyCatalogData(data,soft){
+  heroSettings=mergeHeroSettings(data.heroSettings||{});
+  products=normalizeList(data.products);
+  prepareProductIds();
+  categories=normalizeList(data.categories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.category)).filter(Boolean);
+  mainCategories=normalizeList(data.mainCategories).map(c=>typeof c==='string'?c:text(c.name||c.title||c.mainCategory)).filter(Boolean);
+  subCategoriesMap=normalizeSubCategories(data.subCategories||data.subs||{});
+  ads=normalizeList(data.ads||data.advertisements);
+  if(!soft){
     currentAdIndex=0;
     activeMain=''; activeSub=''; discountOnly=false; savedOnly=false; hitOnly=false; currentView='home';
     if($('searchInput')) $('searchInput').value='';
-    build();
+  }
+  build();
+}
+async function loadData(){
+  try{
+    let data=await readCatalogWithSixHourPublicCache();
+    const sig=catalogSig(data);
+    const same=!!insortInstantSig&&sig===insortInstantSig;
+    if(!same)applyCatalogData(data,!!insortInstantSig);
+    if(!isAdminUser())fastSet({savedAt:Date.now(),sig,data});
     if(isAdminUser())startHeroRealtime();
     setTimeout(startReviewsSchemaSync, 1500);
-    openProductFromHashIfAny();
+    if(!insortInstantSig)openProductFromHashIfAny();
   }catch(e){
     console.error(e);
-    $('products').innerHTML='<div class="empty">Не вдалося завантажити базу. Перевір Firebase або інтернет.</div>';
+    if(!insortInstantSig)$('products').innerHTML='<div class="empty">Не вдалося завантажити базу. Перевір Firebase або інтернет.</div>';
   }finally{
     $('loader').classList.add('hide');
   }
@@ -1321,7 +1341,7 @@ function build(){
 }
 function applyPageView(){
   const home=currentView==='home';
-  ['homeAdSection','homeNav','homeHitsSection','homeSocialSection'].forEach(id=>{const el=$(id);if(el)el.classList.toggle('home-hidden',!home)});
+  ['homeAdSection','homeNav','homeHitsSection','homeSocialSection','homeInfoSection'].forEach(id=>{const el=$(id);if(el)el.classList.toggle('home-hidden',!home)});
   if($('mobileCats'))$('mobileCats').style.display='';
   if($('hitsInlineBtn'))$('hitsInlineBtn').style.display=discountOnly?'none':'';
   if($('discountInlineBtn'))$('discountInlineBtn').style.display=hitOnly?'none':'';
@@ -2331,6 +2351,8 @@ let PC_FEED=null,PC_PLAN=null;
 function pcInert(html){try{return text(new DOMParser().parseFromString(String(html||''),'text/html').body.textContent).replace(/\s+/g,' ')}catch(e){return ''}}
 function pcCut(t,max){if(!max||t.length<=max)return t;const c=t.slice(0,max);const k=Math.max(c.lastIndexOf('. '),c.lastIndexOf('! '));return (k>max*.5?c.slice(0,k+1):c.replace(/\s+\S*$/,'')+'…')}
 function pcParseFeed(xml){
+  const st=xml.search(/<yml_catalog|<\?xml/);if(st>0)xml=xml.slice(st);const en=xml.lastIndexOf('</yml_catalog>');if(en>0)xml=xml.slice(0,en+14);
+  xml=xml.replace(/<param name="([^\n]*?)">/g,(m,n)=>'<param name="'+n.replace(/"/g,'&quot;')+'">').replace(/<(?![A-Za-z\/!?])/g,'&lt;').replace(/&(?!(?:[a-zA-Z]+|#\d+|#x[0-9a-fA-F]+);)/g,'&amp;');
   const doc=new DOMParser().parseFromString(xml,'text/xml');
   if(doc.querySelector('parsererror')||!doc.querySelector('offers'))throw new Error('Файл не схожий на XML-фід товарів (немає блоку offers).');
   const cats={};doc.querySelectorAll('categories > category').forEach(c=>{cats[c.getAttribute('id')]={name:text(c.textContent),parent:c.getAttribute('parentId')||''}});
@@ -3429,6 +3451,25 @@ renderCategories=(function(original){
   input.addEventListener('input',function(){if(input.value)stop();else start()});
   document.addEventListener('visibilitychange',function(){if(!document.hidden&&!timer&&!idle())start()});
   setTimeout(start,1200);
+})();
+
+/* Координати магазину: впиши сюди широту і довготу, наприклад '50.4501, 30.5234' (Google Maps → правий клік по мітці → верхній рядок) */
+const SHOP_COORDS='50.470000, 30.619861';
+(function(){const c=String(SHOP_COORDS).replace(/\s+/g,'');if(!/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(c))return;
+ const f=document.getElementById('locFrame');if(f)f.src='https://maps.google.com/maps?q='+c+'&hl=uk&z=18&output=embed';
+ const a=document.querySelector('.loc-links a');if(a)a.href='https://www.google.com/maps/search/?api=1&query='+c})();
+
+/* Миттєвий старт: показуємо збережену копію каталогу, поки Firebase ще підключається; свіжі дані підтягуються у фоні. */
+(async function instantBoot(){
+  try{
+    const snap=await fastGet();
+    if(!snap||!snap.data||Date.now()-(snap.savedAt||0)>30*24*60*60*1000)return;
+    if(products.length)return; // справжні дані вже прийшли
+    insortInstantSig=snap.sig||catalogSig(snap.data);
+    applyCatalogData(snap.data,false);
+    const l=document.getElementById('loader');if(l)l.classList.add('hide');
+    openProductFromHashIfAny();
+  }catch(e){insortInstantSig=''}
 })();
 </script>
 </body>
