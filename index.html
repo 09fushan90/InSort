@@ -7,6 +7,10 @@
   <meta name="description" content="InSort (insort.kyiv.ua) — офіційний сайт інтернет-магазину електроінструментів Procraft в Україні. Каталог, ціни, знижки, доставка та відгуки." />
   <link rel="canonical" href="https://insort.kyiv.ua/" />
   <link rel="preconnect" href="https://www.gstatic.com" />
+  <link rel="preconnect" href="https://wsrv.nl" crossorigin />
+  <link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" />
+  <link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js" />
+  <link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" />
   <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
   <link rel="dns-prefetch" href="https://vesinya-pratsya-shop-default-rtdb.firebaseio.com" />
   <link rel="icon" type="image/png" href="https://insort.kyiv.ua/logo.png.jpg" />
@@ -964,6 +968,58 @@ function IC(n,c){return '<svg class="ic'+(c?' '+c:'')+'" aria-hidden="true"><use
 </div></div>
 <div class="modal form-modal" id="infoModal"><div class="modal-card"><button class="modal-close" onclick="closeInfoModal()">×</button><h2 id="infoTitle">Повідомлення</h2><p id="infoText"></p><button class="big-btn primary" onclick="closeInfoModal()">Зрозуміло</button></div></div>
 
+<script>
+/* Миттєва оболонка: малює товари з локальної копії/раннього запиту ще до завантаження Firebase і основного коду */
+(function(){
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+  window.insortThumb=function(u,w){
+    try{
+      if(!u||!/^https?:\/\//i.test(u)||/^https?:\/\/(wsrv\.nl|images\.weserv\.nl)\//i.test(u))return u;
+      w=Math.round((w||360)*DPR);
+      return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&h='+w+'&fit=inside&we&output=webp&q=72';
+    }catch(e){return u}
+  };
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function firstImg(p){
+    var v=p.image||p.photo||p.img||p.imageUrl||p.photoUrl||p.mainImage;
+    if(!v&&p.images){v=Array.isArray(p.images)?p.images[0]:p.images[Object.keys(p.images)[0]]}
+    return typeof v==='string'?v:'';
+  }
+  function num(v){var n=parseFloat(String(v==null?'':v).replace(/\s/g,'').replace(',','.'));return isFinite(n)&&n>0?n:0}
+  function isHit(p){return p.isHit===true||p.isHit==='true'||p.hit===true||p.bestSeller===true}
+  function cardHtml(p,i){
+    var t=p.title||p.name||'Товар',pr=num(p.price),dp=num(p.discountPrice),shown=(dp&&pr&&dp<pr)?dp:pr;
+    var img=firstImg(p),th=img?window.insortThumb(img,360):'';
+    var imgTag=th?'<img '+(i<4?'fetchpriority="high"':'loading="lazy"')+' decoding="async" src="'+esc(th)+'" data-orig="'+esc(img)+'" alt="'+esc(t)+'" onerror="if(this.dataset.orig&&!this.dataset.tried){this.dataset.tried=1;this.src=this.dataset.orig}">':'';
+    return '<article class="product shell-card"><div class="product-img">'+imgTag+'</div><div class="product-body"><div class="product-name">'+esc(t)+'</div><div class="product-meta">&nbsp;</div><div class="price-row"><div><div class="price">'+(shown?shown.toLocaleString('uk-UA')+' грн':'')+'</div></div></div><div class="card-actions" style="min-height:82px"></div></div></article>';
+  }
+  function render(data){
+    if(!data||window.__appRendered)return;
+    var src=data.products,list=[];
+    if(Array.isArray(src))list=src.filter(Boolean);else if(src&&typeof src==='object')list=Object.keys(src).map(function(k){return src[k]}).filter(Boolean);
+    list=list.filter(function(p){return p&&(p.title||p.name)});
+    if(!list.length)return;
+    var hits=list.filter(isHit).slice(0,12);
+    var rest=list.slice();for(var i=rest.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=rest[i];rest[i]=rest[j];rest[j]=x}
+    var a=document.getElementById('homeHitsProducts'),b=document.getElementById('homeRandomProducts');
+    if(a&&!a.children.length)a.innerHTML=hits.map(cardHtml).join('');
+    if(b&&!b.children.length)b.innerHTML=rest.slice(0,6).map(cardHtml).join('');
+    var l=document.getElementById('loader');if(l)l.classList.add('hide');
+  }
+  function idbRead(cb){
+    try{
+      var r=indexedDB.open('insort-fast',1);
+      r.onupgradeneeded=function(){r.result.createObjectStore('kv')};
+      r.onsuccess=function(){try{var q=r.result.transaction('kv').objectStore('kv').get('catalog');q.onsuccess=function(){cb(q.result||null)};q.onerror=function(){cb(null)}}catch(e){cb(null)}};
+      r.onerror=function(){cb(null)};
+    }catch(e){cb(null)}
+  }
+  idbRead(function(snap){
+    if(snap&&snap.data){render(snap.data);return}
+    if(window.__insortEarly)window.__insortEarly.then(function(c){if(c&&c.data)render(c.data)}).catch(function(){});
+  });
+})();
+</script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -1324,6 +1380,7 @@ async function readCatalogWithSixHourPublicCache(){
 }
 
 function applyCatalogData(data,soft){
+  window.__appRendered=true;
   if(data._srcPath)insortSrcPath=data._srcPath;
   heroSettings=mergeHeroSettings(data.heroSettings||{});
   products=normalizeList(data.products);
@@ -1706,6 +1763,11 @@ function setupCatalogInfiniteScroll(){
 }
 function getProductId(p,i){return String((p&&p._cartUid)||'product_'+i)}
 function isInCart(id){return cart.some(x=>String(x.id)===String(id))}
+const thumb=(u,w)=>window.insortThumb?window.insortThumb(u,w):u;
+function imgFallback(img){
+  if(img.dataset.orig&&!img.dataset.tried&&img.src!==img.dataset.orig){img.dataset.tried='1';img.src=img.dataset.orig;return}
+  const par=img.parentElement;if(par)par.classList.add('missing-photo');img.outerHTML=noPhotoHtml();
+}
 function card(p,i){
   const old=pOld(p);
   const out=text(p.stockStatus||p.status).toLowerCase().includes('немає')||p.outOfStock;
@@ -1713,7 +1775,7 @@ function card(p,i){
   const id=getProductId(p,i);
   const inCart=isInCart(id);
   const imgBox=photo
-    ? '<img loading="lazy" decoding="async" src="'+esc(pImg(p))+'" alt="'+esc(pName(p))+'" onerror="this.parentElement.classList.add(&quot;missing-photo&quot;);this.outerHTML=noPhotoHtml()">'
+    ? '<img loading="lazy" decoding="async" src="'+esc(thumb(pImg(p),360))+'" data-orig="'+esc(pImg(p))+'" alt="'+esc(pName(p))+'" onerror="imgFallback(this)">'
     : noPhotoHtml();
 
   return '<article class="product '+(inCart?'selected':'')+'" data-id="'+esc(id)+'" data-index="'+i+'" onclick="openProduct('+i+')" title="Відкрити товар">'
@@ -2352,7 +2414,7 @@ function renderAd(){
   if(!ad){try{renderAdSide([])}catch(_){}card.classList.remove('has-ad-photo');if(img)img.removeAttribute('src');$('adTitle').textContent='Рекламне поле';$('adText').textContent='Тут буде головна акція, товар дня або банер. Додай фото і товари через Офіс.';if(preview)preview.innerHTML='';dots.innerHTML='';return}
   const title=text(ad.title)||'Рекламне поле';const body=text(ad.text||ad.description)||'Натисни, щоб переглянути прикріплені товари.';const photo=pickUrl(ad.image||ad.photo||ad.img);
   $('adTitle').textContent=title;$('adText').textContent=body;
-  if(photo){card.classList.add('has-ad-photo');img.src=photo;const pb=$('adPhotoBox');if(pb)pb.style.setProperty('--ad-bg','url("'+String(photo).replace(/["\\\n]/g,'')+'")')}else{card.classList.remove('has-ad-photo');if(img)img.removeAttribute('src')}
+  if(photo){card.classList.add('has-ad-photo');img.onerror=function(){img.onerror=null;img.src=photo};img.src=thumb(photo,1000);const pb=$('adPhotoBox');if(pb)pb.style.setProperty('--ad-bg','url("'+String(photo).replace(/["\\\n]/g,'')+'")')}else{card.classList.remove('has-ad-photo');if(img)img.removeAttribute('src')}
   const ids=Array.isArray(ad.productIds)?ad.productIds:[];
   const names=ids.map(productByKey).filter(Boolean).slice(0,4).map(p=>'<span class="ad-mini-product">'+esc(pName(p))+'</span>').join('');
   if(preview)preview.innerHTML=names+(ids.length>4?'<span class="ad-mini-product">+'+(ids.length-4)+'</span>':'');
