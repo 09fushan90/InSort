@@ -7,7 +7,7 @@
 <title>InSort — адмінка</title>
 <style>
 /* сірий інтерфейс з білим текстом */
-:root{--bg:#646b67;--card:#717975;--side:#555c58;--ink:#fff;--mut:#dfe5e1;--line:rgba(255,255,255,.22);--g:#8fd17f;--g2:#b4e8a6;--dark:#3f4542;--red:#e0584c;--amber:#e8b100;--blue:#6aa6f0;--hover:rgba(255,255,255,.1);--sel:rgba(143,209,127,.3)}
+:root{--bg:#3a3d3c;--card:#454948;--side:#2f3231;--ink:#fff;--mut:#d3d8d5;--line:rgba(255,255,255,.22);--g:#8fd17f;--g2:#b4e8a6;--dark:#262827;--red:#e0584c;--amber:#e8b100;--blue:#6aa6f0;--hover:rgba(255,255,255,.1);--sel:rgba(143,209,127,.3)}
 *{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
 /* вхід */
@@ -16,7 +16,7 @@ button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!im
 .brand{font-weight:900;font-size:24px;letter-spacing:-.5px}.brand b{color:var(--g)}
 h1{font-size:20px;margin:14px 0 4px}.sub{color:var(--mut);margin:0 0 18px}
 label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}
-input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#585f5b;color:#fff;outline:none}input::placeholder{color:#cdd4cf}input:focus,select:focus{border-color:var(--g)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#303332;color:#fff;outline:none}input::placeholder{color:#cdd4cf}input:focus,select:focus{border-color:var(--g)}
 .pw{position:relative}.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--mut);padding:8px;cursor:pointer;font-size:13px}
 .btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--g2),var(--g));color:#14240f;text-decoration:none;display:inline-block}
 .btn.dark{background:var(--dark);color:#fff}.btn.line{background:none;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:7px 11px;border-radius:10px;font-size:13px}.btn.red{background:var(--red);color:#fff}.btn:disabled{opacity:.55;cursor:default}
@@ -202,12 +202,24 @@ function showTool(tab) {
 window.addEventListener('message', function (e) {
   if (e.origin !== location.origin || !e.data) return;
   if (e.data.insort === 'ready') {
-    toolsReady = true; $('toolsLoading').hidden = true;
+    skinTools(); toolsReady = true; $('toolsLoading').hidden = true;
     var it = ITEMS[cur]; if (it && it.kind === TOOL) $('tools').contentWindow.postMessage({ insortTab: it.tab }, location.origin);
   }
   if (e.data.insort === 'noauth') { setTok(''); showApp(false); }
 });
 
+
+/* Стилі для вікон інструментів (iframe того ж сайту): вставляємо самі, щоб вигляд був однаковий навіть зі старою версією index.html */
+var EMBED_CSS = "/* \u0440\u0435\u0436\u0438\u043c \u0432\u0431\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u0445 \u0456\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0456\u0432 \u0434\u043b\u044f \u0430\u0434\u043c\u0456\u043d\u043a\u0438: ?embed=<\u0440\u043e\u0437\u0434\u0456\u043b> */\nhtml.embed-office body>:not(.modal):not(script):not(style):not(link):not(noscript){display:none!important}\nhtml.embed-office body{overflow:auto!important;background:transparent!important}\nhtml.embed-office #officeModal{display:block!important;position:static!important;inset:auto!important;background:transparent!important;padding:0!important}\nhtml.embed-office #officeModal .modal-card{width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important;background:transparent!important;padding:16px 18px 70px!important;transform:none!important;border-radius:0!important}\nhtml.embed-office{--line:rgba(255,255,255,.22)!important;--muted:#dfe5e1!important}\nhtml.embed-office body{background:#3a3d3c!important}\nhtml.embed-office #officeModal :not(button):not(button *):not(svg *):not(option){color:#fff!important}\nhtml.embed-office #officeModal .office-item-meta,html.embed-office #officeModal .office-product-search-info,html.embed-office #officeModal .office-note{opacity:.88}\nhtml.embed-office #officeModal :is(.office-ad-box,.office-ad-products,.office-ads-list,.office-list,.office-product-search-box,.bulk-price-box,.office-cat-card,.office-hero-preview,.office-category-manager){background:#454948!important;border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal :is(.office-ad-row,.office-cat-row,.office-check-row,.office-note){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important}\nhtml.embed-office #officeModal .office-item{background:transparent!important;border-color:rgba(255,255,255,.18)!important}\nhtml.embed-office #officeModal .office-item.bulk-selected{background:rgba(143,209,127,.28)!important}\nhtml.embed-office #officeModal :is(input,select,textarea){background:#303332!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important}\nhtml.embed-office #officeModal ::placeholder{color:#cdd4cf!important;opacity:1}\nhtml.embed-office #officeModal select option{background:#303332;color:#fff}\nhtml.embed-office #officeModal :is(th,td,table){border-color:rgba(255,255,255,.2)!important;background:transparent!important}\nhtml.embed-office #officeModal .office-check-row input{accent-color:#8fd17f}\nhtml.embed-office #officeModal .empty,html.embed-office #officeModal [class*=\"empty\"]{background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important;color:#fff!important}\nhtml.embed-office #officeModal :is(.office-ad-product-check,.office-ad-check,.office-cat-chip,.office-cat-subs,.office-preview-grid){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal [class*=\"office-ad\"]:not(.office-ad-preview),html.embed-office #officeModal [class*=\"office-cat\"]{border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal .office-category-manager{background:transparent!important;border-color:transparent!important}\nhtml.embed-office #officeModal .modal-close,html.embed-office #officeModal h2,html.embed-office #officeModal .office-tabs,html.embed-office #officeNotice{display:none!important}\n";
+function skinTools() {
+  var f = $('tools'), d; try { d = f.contentDocument; } catch (e) { return; }
+  if (!d || !d.documentElement) return;
+  var root = d.documentElement; root.classList.add('embed-office');
+  if (!d.getElementById('adm-skin')) { var st = d.createElement('style'); st.id = 'adm-skin'; st.textContent = EMBED_CSS; (d.head || root).appendChild(st); }
+  if (root.getAttribute('data-theme') !== 'light') root.setAttribute('data-theme', 'light');
+  if (!root.__lock) { root.__lock = 1; new MutationObserver(function () { if (root.getAttribute('data-theme') !== 'light') root.setAttribute('data-theme', 'light'); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] }); }
+}
+$('tools').addEventListener('load', skinTools);
 /* ---------- вхід ---------- */
 function showApp(auth) {
   $('loginView').hidden = auth; $('appView').hidden = !auth;
