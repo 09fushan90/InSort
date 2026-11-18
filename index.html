@@ -280,7 +280,10 @@ window.INSORT_ENGINE_URL = 'https://insort-engine.onrender.com';
   var cur = null, listeners = [];
   function mkUser() { return { uid: 'admin', email: ADMIN_EMAIL, displayName: 'Власник', photoURL: '', updateProfile: function () { return Promise.resolve(); } }; }
   function setUser(u) { cur = u; listeners.slice().forEach(function (cb) { try { cb(u); } catch (e) { console.error(e); } }); }
-  if (getTok()) cur = mkUser();
+  var PK = 'insort_user_v1';
+  function loadPK() { try { var o = JSON.parse(localStorage.getItem(PK) || 'null'); if (o && o.email && o.exp > Date.now()) return { uid: o.email, email: o.email, displayName: o.name, photoURL: o.photo || '', updateProfile: function () { return Promise.resolve(); } }; } catch (e) {} return null; }
+  function savePK(u) { try { if (u) localStorage.setItem(PK, JSON.stringify({ email: u.email, name: u.displayName, photo: u.photoURL, exp: Date.now() + 30 * 86400e3 })); else localStorage.removeItem(PK); } catch (e) {} }
+  if (getTok()) cur = mkUser(); else cur = loadPK();
   var authObj = {
     get currentUser() { return cur; },
     onAuthStateChanged: function (cb) { listeners.push(cb); setTimeout(function () { cb(cur); }, 0); return function () { listeners = listeners.filter(function (x) { return x !== cb; }); }; },
@@ -291,13 +294,81 @@ window.INSORT_ENGINE_URL = 'https://insort-engine.onrender.com';
       }, function (er) { var e = new Error(er.message); e.code = er.status === 429 ? 'auth/too-many-requests' : 'auth/wrong-password'; throw e; });
     },
     createUserWithEmailAndPassword: function () { var e = new Error('Реєстрація покупців вимкнена'); e.code = 'auth/operation-not-allowed'; return Promise.reject(e); },
-    signInWithPopup: function () { var e = new Error('Вхід через Google вимкнено'); e.code = 'auth/operation-not-allowed'; return Promise.reject(e); },
-    signOut: function () { setTok(''); dropMemo(); setUser(null); return Promise.resolve(); }
+    signInWithPopup: function () {
+      return loadFb().then(function (real) {
+        return real.auth().signInWithPopup(new real.auth.GoogleAuthProvider()).then(function (cred) {
+          return cred.user.getIdToken().then(function (idToken) {
+            real.auth().signOut().catch(function () {});
+            return api('POST', '/api/auth/google', { idToken: idToken }, { noAuth: true });
+          });
+        });
+      }).then(function (r) {
+        var u;
+        if (r.admin && r.token) { setTok(r.token); dropMemo(); u = mkUser(); u.displayName = r.name || u.displayName; u.photoURL = r.picture || ''; savePK(null); }
+        else { u = { uid: r.email, email: r.email, displayName: r.name, photoURL: r.picture || '', updateProfile: function () { return Promise.resolve(); } }; savePK(u); }
+        setUser(u); return { user: u };
+      });
+    },
+    signOut: function () { setTok(''); savePK(null); dropMemo(); setUser(null); return Promise.resolve(); }
   };
   var auth = function () { return authObj; };
   auth.GoogleAuthProvider = function () {};
 
-  window.firebase = { initializeApp: function () {}, database: database, auth: auth };
+  var shimFb = { initializeApp: function () {}, database: database, auth: auth }, realFb = null, useReal = false;
+  Object.defineProperty(window, 'firebase', { configurable: true, get: function () { return useReal ? realFb : shimFb; }, set: function (v) { realFb = v; } });
+  // прихований вхід власника: відкрийте сайт з #owner в кінці адреси
+  function ownerGate() {
+    if (!/[#?&]owner\b/.test(location.hash + location.search) || cur) return;
+    try { if (typeof openAuthBox === 'function') openAuthBox('login'); } catch (e) {}
+  }
+  window.addEventListener('load', function () { setTimeout(ownerGate, 300); });
+  window.addEventListener('hashchange', ownerGate);
+  // адреса з #office відкриває редактор товарів (для власника, який уже увійшов в адмінці)
+  window.addEventListener('load', function () {
+    if (!/#office/.test(location.hash) || !getTok()) return;
+    var n = 0, iv = setInterval(function () {
+      if ((typeof products !== 'undefined' && products.length) || ++n > 25) { clearInterval(iv); try { openOffice(); } catch (e) {} }
+    }, 400);
+  });
+  // вбудовані інструменти адмінки (iframe): показуємо лише Офіс, розділ перемикає батьківська сторінка
+  var EMB = /[?&]embed=([A-Za-z]+)/.exec(location.search);
+  if (EMB) {
+    document.documentElement.classList.add('embed-office');
+    window.addEventListener('message', function (e) {
+      if (e.origin !== location.origin || !e.data) return;
+      if (e.data.insortTheme) { document.documentElement.setAttribute('data-theme', e.data.insortTheme === 'dark' ? 'dark' : 'light'); return; }
+      if (!e.data.insortTab) return;
+      try { switchOfficeTab(e.data.insortTab); window.scrollTo(0, 0); } catch (er) {}
+    });
+    window.addEventListener('load', function () {
+      if (!getTok()) { parent.postMessage({ insort: 'noauth' }, location.origin); return; }
+      var n = 0, iv = setInterval(function () {
+        if ((typeof products !== 'undefined' && products.length) || ++n > 40) {
+          clearInterval(iv);
+          try { openOffice(); switchOfficeTab(EMB[1]); } catch (er) {}
+          parent.postMessage({ insort: 'ready' }, location.origin);
+        }
+      }, 300);
+    });
+  }
+  var fbLoad = null;
+  function loadFb() {
+    if (fbLoad) return fbLoad;
+    function add(src) { return new Promise(function (res, rej) { var sc = document.createElement('script'); sc.src = src; sc.onload = res; sc.onerror = function () { rej(new Error('Не вдалося завантажити вхід через Google')); }; document.head.appendChild(sc); }); }
+    fbLoad = add('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js').then(function () {
+      useReal = true;
+      return add('https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js').then(function () { useReal = false; });
+    }).then(function () {
+      realFb.initializeApp({ apiKey: 'AIzaSyCPEYu_S1qn9dwCkh22QzyX4-hB4_ecM0A', authDomain: 'vesinya-pratsya-shop.firebaseapp.com', projectId: 'vesinya-pratsya-shop', appId: '1:352467558248:web:fd2c80d6be6d837cff80dd' });
+      return realFb;
+    }).catch(function (e) { useReal = false; fbLoad = null; throw e; });
+    return fbLoad;
+  }
+  // готуємо вхід через Google заздалегідь: коли відкривають вікно входу
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[onclick*="openAuthBox"],[onclick*="openLoginModal"]') : null;
+    if (t) loadFb().catch(function () {});
+  }, true);
 
   /* ---------- швидкий старт: каталог вантажиться ще до решти сторінки ---------- */
   window.__insortEarly = fetch(ENGINE + '/api/site').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
@@ -590,7 +661,13 @@ window.INSORT_ENGINE_URL = 'https://insort-engine.onrender.com';
 .review-star-picker{display:flex;gap:7px;margin:8px 0 16px}.review-star-btn{background:transparent;color:#c8cec9;font-size:38px;line-height:1;padding:0 2px;transition:.14s}.review-star-btn.active{color:#ffb300;transform:scale(1.1)}
 @media(max-width:620px){.reviews-modal .modal-card{min-height:88vh}.reviews-hero{padding:27px 22px 24px}.reviews-title-icon{width:50px;height:50px;border-radius:16px;font-size:25px}.reviews-head h2{font-size:27px}.reviews-body{padding:18px 16px 20px;min-height:470px}.reviews-list,.review-empty{min-height:370px;max-height:58vh}.review-form-modal .modal-card{padding:23px}.review-card{grid-template-columns:46px 1fr}.review-avatar{width:46px;height:46px}.review-write-btn{width:100%}}
 
-#registerMenuBtn,#authModal [onclick*="googleAuth"],#authModal [onclick*="openAuthBox('register')"]{display:none!important}
+#userBadge,#registerMenuBtn,#loginMenuBtn,#authModal [onclick*="googleAuth"],#authModal [onclick*="openAuthBox('register')"]{display:none!important}
+/* режим вбудованих інструментів для адмінки: ?embed=<розділ> */
+html.embed-office body>:not(.modal):not(script):not(style):not(link):not(noscript){display:none!important}
+html.embed-office body{overflow:auto!important;background:transparent!important}
+html.embed-office #officeModal{display:block!important;position:static!important;inset:auto!important;background:transparent!important;padding:0!important}
+html.embed-office #officeModal .modal-card{width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important;background:transparent!important;padding:16px 18px 70px!important;transform:none!important;border-radius:0!important}
+html.embed-office #officeModal .modal-close,html.embed-office #officeModal h2,html.embed-office #officeModal .office-tabs,html.embed-office #officeNotice{display:none!important}
 </style>
 
 <script>
