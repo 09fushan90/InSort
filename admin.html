@@ -5,21 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>InSort — адмінка</title>
-<script>(function(){var t=null;try{t=localStorage.getItem('insort_theme')}catch(e){}if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light')})()</script>
 <style>
-:root{--bg:#f2f5f1;--card:#fff;--side:#fff;--ink:#162016;--mut:#6a766a;--line:#dde5db;--g:#4f9a42;--g2:#8fd17f;--dark:#33403a;--red:#c8453a;--amber:#e0a100;--blue:#3b78c9;--hover:#eef4ec;--sel:#e3f1df}
-html[data-theme=dark]{--bg:#101412;--card:#1a201c;--side:#151a17;--ink:#eef3ec;--mut:#9aa89a;--line:#2a332d;--dark:#2c3a32;--hover:#1f2823;--sel:#23362a}
+/* сірий інтерфейс з білим текстом */
+:root{--bg:#646b67;--card:#717975;--side:#555c58;--ink:#fff;--mut:#dfe5e1;--line:rgba(255,255,255,.22);--g:#8fd17f;--g2:#b4e8a6;--dark:#3f4542;--red:#e0584c;--amber:#e8b100;--blue:#6aa6f0;--hover:rgba(255,255,255,.1);--sel:rgba(143,209,127,.3)}
 *{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
 /* вхід */
 .login{min-height:100vh;display:grid;place-items:center;padding:16px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,.08)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
 .brand{font-weight:900;font-size:24px;letter-spacing:-.5px}.brand b{color:var(--g)}
 h1{font-size:20px;margin:14px 0 4px}.sub{color:var(--mut);margin:0 0 18px}
 label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}
-input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--bg);outline:none}input:focus,select:focus{border-color:var(--g)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#585f5b;color:#fff;outline:none}input::placeholder{color:#cdd4cf}input:focus,select:focus{border-color:var(--g)}
 .pw{position:relative}.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--mut);padding:8px;cursor:pointer;font-size:13px}
-.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--g2),var(--g));color:#10200c;text-decoration:none;display:inline-block}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--g2),var(--g));color:#14240f;text-decoration:none;display:inline-block}
 .btn.dark{background:var(--dark);color:#fff}.btn.line{background:none;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:7px 11px;border-radius:10px;font-size:13px}.btn.red{background:var(--red);color:#fff}.btn:disabled{opacity:.55;cursor:default}
 .full{width:100%;margin-top:18px}.err{color:var(--red);font-weight:700;margin-top:12px;min-height:20px}
 /* каркас */
@@ -96,8 +95,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:7px 6px;border-bottom:1p
     <nav class="nav" id="nav"></nav>
     <div class="foot">
       <a class="btn line sm" href="index.html">На сайт</a>
-      <button class="btn line sm" id="theme">Тема</button>
-      <button class="btn line sm" id="logout">Вийти</button>
+            <button class="btn line sm" id="logout">Вийти</button>
     </div>
   </aside>
   <div class="main">
@@ -132,7 +130,7 @@ function api(method, path, body) {
     return r.text().then(function (t) {
       var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
       if (r.status === 401 && path.indexOf('/login') < 0) { setTok(''); showApp(false); throw new Error('Сеанс завершився. Увійдіть знову.'); }
-      if (!r.ok) throw new Error((j && j.error) || 'Помилка ' + r.status);
+      if (!r.ok) { var er = new Error((j && j.error) || 'Помилка ' + r.status); er.status = r.status; throw er; }
       return j;
     });
   });
@@ -205,7 +203,6 @@ window.addEventListener('message', function (e) {
   if (e.origin !== location.origin || !e.data) return;
   if (e.data.insort === 'ready') {
     toolsReady = true; $('toolsLoading').hidden = true;
-    var th = document.documentElement.getAttribute('data-theme'); $('tools').contentWindow.postMessage({ insortTheme: th }, location.origin);
     var it = ITEMS[cur]; if (it && it.kind === TOOL) $('tools').contentWindow.postMessage({ insortTab: it.tab }, location.origin);
   }
   if (e.data.insort === 'noauth') { setTok(''); showApp(false); }
@@ -226,11 +223,6 @@ $('loginForm').onsubmit = function (e) {
     .then(function () { $('go').disabled = false; $('go').textContent = 'Увійти'; });
 };
 $('logout').onclick = function () { setTok(''); showApp(false); };
-$('theme').onclick = function () {
-  var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', t); try { localStorage.setItem('insort_theme', t); } catch (e) {}
-  if (toolsReady) $('tools').contentWindow.postMessage({ insortTheme: t }, location.origin);
-};
 $('burger').onclick = function () {
   $('side').classList.add('open'); var sh = document.createElement('div'); sh.className = 'shade';
   sh.onclick = function () { $('side').classList.remove('open'); sh.remove(); }; document.body.appendChild(sh);
@@ -286,8 +278,12 @@ function loadAnalytics(view) {
   var box = $('native');
   if (STATS && STATS_DAYS === anDays && Date.now() - STATS.t < 20000) { return drawAn(view); }
   box.innerHTML = '<div class="empty">Завантаження…</div>';
-  api('GET', '/api/admin/stats?days=' + anDays).then(function (s) { STATS = s; STATS.t = Date.now(); STATS_DAYS = anDays; if (cur && ITEMS[cur].view === view) drawAn(view); })
-    .catch(function (e) { box.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+  var want = anDays;
+  api('GET', '/api/admin/stats?days=' + want).catch(function (e) {
+    if (e.status === 404 || e.status === 400) return legacyStats(want);   // двигун ще не оновлено — рахуємо зі старих даних
+    throw e;
+  }).then(function (s) { STATS = s; STATS.t = Date.now(); STATS_DAYS = want; if (cur && ITEMS[cur].view === view) drawAn(view); })
+    .catch(function (e) { box.innerHTML = '<div class="empty">Не вдалося завантажити аналітику: ' + esc(e.message) + '<br><br><button class="btn sm" onclick="loadAnalytics(ITEMS[cur].view)">Спробувати ще раз</button></div>'; });
 }
 function tile(l, v, s) { return '<div class="stat"><span>' + l + '</span><b>' + v + '</b>' + (s ? '<i>' + s + '</i>' : '') + '</div>'; }
 function pct(a, b) { return b ? Math.round(a / b * 1000) / 10 : 0; }
@@ -308,6 +304,29 @@ function ptable(list, cols) {
   if (!list || !list.length) return '<div class="empty">Поки немає даних</div>';
   return '<table><tr><th>Товар</th>' + cols.map(function (c) { return '<th class="n">' + c[0] + '</th>'; }).join('') + '</tr>' +
     list.map(function (r) { return '<tr><td>' + esc(r.title) + (r.article ? ' <span class="mut">' + esc(r.article) + '</span>' : '') + '</td>' + cols.map(function (c) { return '<td class="n">' + c[1](r) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>';
+}
+/* запасний варіант, якщо на сервері ще старий двигун: рахуємо з замовлень і загальних лічильників */
+function legacyStats(days) {
+  return Promise.all([api('GET', '/api/admin/orders'), api('GET', '/api/admin/analytics').catch(function () { return null; })]).then(function (r) {
+    var now = Date.now(), since = now - days * 86400e3, day = function (t) { return new Date(t).toLocaleDateString('sv-SE'); };
+    var orders = (r[0] || []).filter(function (o) { return o.created_at >= since; }), valid = orders.filter(function (o) { return o.status !== 'cancelled'; });
+    var dm = {}; for (var i = days - 1; i >= 0; i--) { var d = day(now - i * 86400e3); dm[d] = { day: d, views: 0, cartAdds: 0, orders: 0, revenue: 0 }; }
+    valid.forEach(function (o) { var d = dm[day(o.created_at)]; if (d) { d.orders++; d.revenue += o.total; } });
+    var revenue = valid.reduce(function (s, o) { return s + o.total; }, 0), byStatus = { new: 0, accepted: 0, done: 0, cancelled: 0 }, sold = {}, hours = []; for (i = 0; i < 24; i++) hours.push(0);
+    var wd = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 }, WN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], phones = {};
+    orders.forEach(function (o) { byStatus[o.status] = (byStatus[o.status] || 0) + 1; });
+    valid.forEach(function (o) {
+      (o.items || []).forEach(function (it) { var x = sold[it.id] || (sold[it.id] = { id: it.id, title: it.title, article: it.article, qty: 0, sum: 0 }); x.qty += it.qty; x.sum += (it.price || 0) * it.qty; });
+      var dt = new Date(o.created_at); hours[dt.getHours()]++; wd[WN[dt.getDay()]]++; var p = String(o.phone).replace(/\D/g, ''); if (p) phones[p] = (phones[p] || 0) + 1;
+    });
+    var a = r[1] || { topViews: [], topCartAdds: [], totals: { products: 0, views: 0, cartAdds: 0 } };
+    var tv = a.totals.views || 0, tc = a.totals.cartAdds || 0;
+    return { legacy: true, days: days, daily: Object.values(dm),
+      sales: { orders: orders.length, validOrders: valid.length, revenue: revenue, avgCheck: valid.length ? Math.round(revenue / valid.length) : 0, byStatus: byStatus, topSold: Object.values(sold).sort(function (x, y) { return y.qty - x.qty; }).slice(0, 20), hours: hours, weekdays: wd, customers: Object.keys(phones).length, repeatCustomers: Object.values(phones).filter(function (n) { return n > 1; }).length },
+      funnel: { views: tv, cartAdds: tc, orders: valid.length, viewToCart: pct(tc, tv), cartToOrder: pct(valid.length, tc) },
+      products: { total: a.totals.products || 0, viewsAll: tv, cartAll: tc, topViews: a.topViews || [], topCart: a.topCartAdds || [], hot: [], lookNoBuy: [], dead: [], deadCount: 0 },
+      categories: [], groups: { hits: { c: 0, v: 0, a: 0 }, discounted: { c: 0, v: 0, a: 0 } } };
+  });
 }
 var DD = function (d) { var p = d.split('-'); return p[2] + '.' + p[1]; };
 
@@ -357,6 +376,7 @@ function drawAn(view) {
     h += '<div class="card"><h3>Найстаріші товари без переглядів</h3><div class="mut" style="margin-bottom:6px">Такі товари ніхто не відкривав. Перевірте категорію, фото й назву, або приберіть їх з каталогу.</div>' +
       (D.dead.length ? '<table><tr><th>Товар</th><th>Категорія</th></tr>' + D.dead.map(function (r) { return '<tr><td>' + esc(r.title) + (r.article ? ' <span class="mut">' + esc(r.article) + '</span>' : '') + '</td><td>' + esc(r.mainCategory || '—') + '</td></tr>'; }).join('') + '</table>' : '<div class="empty">Усі товари мали перегляди</div>') + '</div>';
   }
+  if (S.legacy) h = '<div class="card" style="border-color:var(--amber)"><b>Показано неповні дані.</b> <span class="mut">На сервері ще старий двигун. Завантажте на GitHub оновлені server.js, db.js і новий stats.js, і з’являться всі розділи: динаміка по днях, категорії, товари без руху.</span></div>' + h;
   box.innerHTML = h;
 }
 
