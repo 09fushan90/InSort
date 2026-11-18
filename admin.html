@@ -5,44 +5,73 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>InSort — адмінка</title>
+<script>(function(){var t=null;try{t=localStorage.getItem('insort_theme')}catch(e){}if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light')})()</script>
 <style>
-:root{--bg:#f2f5f1;--card:#fff;--ink:#162016;--mut:#6a766a;--line:#dde5db;--g:#5a9e4d;--g2:#8fd17f;--dark:#33403a;--red:#c8453a;--amber:#e0a100;--blue:#3b78c9}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101412;--card:#1a201c;--ink:#eef3ec;--mut:#9aa89a;--line:#2a332d;--dark:#2c3a32}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-button,input,select,textarea{font:inherit;color:inherit}
-.wrap{max-width:980px;margin:0 auto;padding:16px}
+:root{--bg:#f2f5f1;--card:#fff;--side:#fff;--ink:#162016;--mut:#6a766a;--line:#dde5db;--g:#4f9a42;--g2:#8fd17f;--dark:#33403a;--red:#c8453a;--amber:#e0a100;--blue:#3b78c9;--hover:#eef4ec;--sel:#e3f1df}
+html[data-theme=dark]{--bg:#101412;--card:#1a201c;--side:#151a17;--ink:#eef3ec;--mut:#9aa89a;--line:#2a332d;--dark:#2c3a32;--hover:#1f2823;--sel:#23362a}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
+/* вхід */
 .login{min-height:100vh;display:grid;place-items:center;padding:16px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,.08)}
-.brand{font-weight:900;font-size:26px;letter-spacing:-.5px}.brand b{color:var(--g)}
+.brand{font-weight:900;font-size:24px;letter-spacing:-.5px}.brand b{color:var(--g)}
 h1{font-size:20px;margin:14px 0 4px}.sub{color:var(--mut);margin:0 0 18px}
 label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}
-input,select,textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);outline:none}
-input:focus,textarea:focus,select:focus{border-color:var(--g)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--bg);outline:none}input:focus,select:focus{border-color:var(--g)}
 .pw{position:relative}.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--mut);padding:8px;cursor:pointer;font-size:13px}
-.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--g2),var(--g));color:#10200c}
-.btn.dark{background:var(--dark);color:#fff}.btn.line{background:none;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:8px 12px;border-radius:10px;font-size:13px}
-.btn.red{background:var(--red);color:#fff}.btn:disabled{opacity:.55;cursor:default}
-.full{width:100%;margin-top:18px}
-.err{color:var(--red);font-weight:700;margin-top:12px;min-height:20px}
-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}header .sp{flex:1}
-.tabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}.tab{padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-weight:700}.tab.on{background:var(--dark);color:#fff;border-color:var(--dark)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:13px;font-weight:700}.chip.on{border-color:var(--g);color:var(--g)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--g2),var(--g));color:#10200c;text-decoration:none;display:inline-block}
+.btn.dark{background:var(--dark);color:#fff}.btn.line{background:none;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:7px 11px;border-radius:10px;font-size:13px}.btn.red{background:var(--red);color:#fff}.btn:disabled{opacity:.55;cursor:default}
+.full{width:100%;margin-top:18px}.err{color:var(--red);font-weight:700;margin-top:12px;min-height:20px}
+/* каркас */
+.app{display:grid;grid-template-columns:236px 1fr;height:100vh}
+.side{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.side .top{padding:16px 16px 10px}.side .top .mut{font-size:11px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+.nav{flex:1;overflow:auto;padding:4px 8px 10px}
+.nav .grp{margin:0}
+.nav button.it{display:flex;width:100%;align-items:center;gap:8px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--ink);font-weight:600}
+.nav button.it:hover{background:var(--hover)}
+.nav button.it.on{background:var(--sel);color:var(--ink);font-weight:800}
+.nav .chev{margin-left:auto;transition:transform .15s;color:var(--mut);font-size:11px}
+.nav .grp.open>button.it .chev{transform:rotate(90deg)}
+.nav .sub{display:none;margin:1px 0 4px 14px;padding-left:8px;border-left:1px solid var(--line)}
+.nav .grp.open .sub{display:block}
+.nav .sub button.it{font-size:12.5px;font-weight:500;padding:6px 9px;color:var(--mut)}
+.nav .sub button.it.on{color:var(--ink);font-weight:800}
+.nav .sep{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);padding:12px 10px 4px}
+.side .foot{border-top:1px solid var(--line);padding:10px;display:flex;gap:6px;flex-wrap:wrap}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.bar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--side)}
+.bar h2{margin:0;font-size:16px}.bar .sp{flex:1}.burger{display:none}
+.content{flex:1;overflow:auto;padding:18px;min-height:0;position:relative}
+iframe#tools{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+.mut{color:var(--mut)}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{position:fixed;inset:0 auto 0 0;width:260px;z-index:30;transform:translateX(-100%);transition:transform .2s;box-shadow:6px 0 30px rgba(0,0,0,.25)}.side.open{transform:none}.burger{display:inline-block}.shade{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}}
+/* картки/таблиці */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px}.stat span{color:var(--mut);font-size:12px}.stat b{display:block;font-size:24px;margin-top:2px}.stat i{font-style:normal;font-size:12px;color:var(--mut)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:900px){.two{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse}td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.03em}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}td.n{font-weight:700}
+.empty{color:var(--mut);text-align:center;padding:26px}
 .row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
-.num{font-weight:900}.mut{color:var(--mut);font-size:13px}
-.st{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;color:#fff}
-.st.new{background:var(--amber)}.st.accepted{background:var(--blue)}.st.done{background:var(--g)}.st.cancelled{background:var(--red)}
+.period{display:flex;gap:6px}.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:12.5px;font-weight:700}.chip.on{border-color:var(--g);color:var(--g)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.st{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;color:#fff}.st.new{background:var(--amber)}.st.accepted{background:var(--blue)}.st.done{background:var(--g)}.st.cancelled{background:var(--red)}
 .items{margin:10px 0;padding:0;list-style:none;border-top:1px solid var(--line)}.items li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.msg{display:flex;gap:8px;margin-top:10px}.msg input{flex:1}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}.stat b{display:block;font-size:26px}
-table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{color:var(--mut);font-size:12px;text-transform:uppercase}td.n{text-align:right;font-weight:800}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.two{grid-template-columns:1fr}}
-.empty{color:var(--mut);text-align:center;padding:30px}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
-[hidden]{display:none!important}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.msg{display:flex;gap:8px;margin-top:10px}.msg input{flex:1}
+.bars{display:flex;align-items:flex-end;gap:2px;height:150px;padding-top:8px}
+.bars .c{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative}
+.bars .c i{display:block;background:var(--g);border-radius:3px 3px 0 0;min-height:1px}.bars .c i.b{background:var(--blue);opacity:.85}
+.bars .c:hover::after{content:attr(data-t);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:3px 7px;border-radius:6px;font-size:11px;white-space:nowrap;z-index:2}
+.axis{display:flex;justify-content:space-between;color:var(--mut);font-size:11px;margin-top:4px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:4px}.legend s{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--g);margin-right:5px;text-decoration:none}.legend s.b{background:var(--blue)}
+.hbar{display:grid;grid-template-columns:minmax(90px,170px) 1fr 70px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+.hbar .t{height:12px;background:var(--hover);border-radius:6px;overflow:hidden}.hbar .t i{display:block;height:100%;background:var(--g);border-radius:6px}.hbar .t i.b{background:var(--blue)}.hbar .t i.a{background:var(--amber)}
+.hbar span:last-child{text-align:right;font-weight:700}.hbar span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fun{display:flex;flex-direction:column;gap:10px}.fun .step{background:var(--hover);border-radius:12px;padding:12px 16px;position:relative;overflow:hidden}.fun .step i{position:absolute;inset:0 auto 0 0;background:var(--sel);z-index:0}.fun .step div{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.fun .step b{font-size:20px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:99}.toast.show{opacity:1}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--mut);background:var(--bg);z-index:1}
 </style>
 </head>
 <body>
@@ -61,32 +90,36 @@ table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1p
   </form>
 </div>
 
-<div class="wrap" id="appView" hidden>
-  <header>
-    <div class="brand">In<b>Sort</b> <span class="mut" style="font-weight:600;font-size:14px">адмінка</span></div>
-    <div class="sp"></div>
-    <a class="btn dark sm" href="index.html#office" style="text-decoration:none">Редактор товарів</a>
-    <a class="btn line sm" href="index.html" style="text-decoration:none">На сайт</a>
-    <button class="btn line sm" id="logout">Вийти</button>
-  </header>
-  <div class="tabs"><button class="tab on" data-tab="orders">Замовлення</button><button class="tab" data-tab="stats">Статистика</button></div>
-  <section id="tabOrders">
-    <div class="filters" id="filters"></div>
-    <div id="orders"></div>
-  </section>
-  <section id="tabStats" hidden></section>
+<div class="app" id="appView" hidden>
+  <aside class="side" id="side">
+    <div class="top"><div class="brand">In<b>Sort</b></div><div class="mut">адмінка</div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="foot">
+      <a class="btn line sm" href="index.html">На сайт</a>
+      <button class="btn line sm" id="theme">Тема</button>
+      <button class="btn line sm" id="logout">Вийти</button>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="bar"><button class="btn line sm burger" id="burger">☰</button><h2 id="title"></h2><div class="sp"></div><div id="barRight"></div></div>
+    <div class="content" id="content">
+      <div id="native"></div>
+      <iframe id="tools" title="Інструменти" hidden></iframe>
+      <div class="loading" id="toolsLoading" hidden>Завантаження інструменту…</div>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 /* Адреса двигуна. '' = двигун на тій самій адресі, що й ця сторінка. */
 var ENGINE = 'https://insort-engine.onrender.com';
-var TK = 'insort_admin_token_v1';   // той самий ключ, що й на сайті: після входу редактор товарів уже відкритий
+var TK = 'insort_admin_token_v1';   // той самий ключ, що й на сайті
 var $ = function (id) { return document.getElementById(id); };
 var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
-var money = function (n) { return (Number(n) || 0).toLocaleString('uk-UA') + ' грн'; };
+var num = function (n) { return (Number(n) || 0).toLocaleString('uk-UA'); };
+var money = function (n) { return num(Math.round(n)) + ' грн'; };
 var STATUS = { new: 'Нове', accepted: 'Прийнято', done: 'Виконано', cancelled: 'Скасовано' };
-var ORDERS = [], filter = 'all';
 
 function tok() { try { var o = JSON.parse(localStorage.getItem(TK) || 'null'); if (o && o.t && o.exp > Date.now()) return o.t; } catch (e) {} return ''; }
 function setTok(t) { try { if (t) localStorage.setItem(TK, JSON.stringify({ t: t, exp: Date.now() + 11.5 * 3600e3 })); else localStorage.removeItem(TK); } catch (e) {} }
@@ -98,58 +131,136 @@ function api(method, path, body) {
   return fetch(ENGINE + path, { method: method, headers: h, body: body !== undefined ? JSON.stringify(body) : undefined }).then(function (r) {
     return r.text().then(function (t) {
       var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
-      if (r.status === 401 && path.indexOf('/login') < 0) { setTok(''); show(false); throw new Error('Сеанс завершився. Увійдіть знову.'); }
+      if (r.status === 401 && path.indexOf('/login') < 0) { setTok(''); showApp(false); throw new Error('Сеанс завершився. Увійдіть знову.'); }
       if (!r.ok) throw new Error((j && j.error) || 'Помилка ' + r.status);
       return j;
     });
   });
 }
 
-function show(auth) { $('loginView').hidden = auth; $('appView').hidden = !auth; if (auth) loadOrders(); }
+/* ---------- структура меню ---------- */
+var TOOL = 'tool';
+var MENU = [
+  { id: 'orders', t: 'Замовлення', kind: 'orders' },
+  { sep: 'Інструменти' },
+  { id: 'g-products', t: 'Товари', sub: [
+    { id: 'products', t: 'Додавання та редагування', kind: TOOL, tab: 'products' },
+    { id: 'prices', t: 'Зміна цін', kind: TOOL, tab: 'prices' },
+    { id: 'procraft', t: 'Імпорт Procraft', kind: TOOL, tab: 'procraft' },
+    { id: 'excel', t: 'Імпорт / експорт Excel', kind: TOOL, tab: 'excel' }
+  ] },
+  { id: 'hits', t: 'Хіти продажів', kind: TOOL, tab: 'officeHits' },
+  { id: 'ads', t: 'Реклама', kind: TOOL, tab: 'ads' },
+  { id: 'categories', t: 'Категорії', kind: TOOL, tab: 'categories' },
+  { id: 'hero', t: 'Головне поле', kind: TOOL, tab: 'hero' },
+  { sep: 'Статистика' },
+  { id: 'g-an', t: 'Аналітика сайту', sub: [
+    { id: 'an-sales', t: 'Продажі та замовлення', kind: 'an', view: 'sales' },
+    { id: 'an-products', t: 'Товари: перегляди й кошик', kind: 'an', view: 'products' },
+    { id: 'an-funnel', t: 'Воронка та динаміка', kind: 'an', view: 'funnel' },
+    { id: 'an-cats', t: 'Категорії', kind: 'an', view: 'cats' },
+    { id: 'an-time', t: 'Коли замовляють', kind: 'an', view: 'time' },
+    { id: 'an-dead', t: 'Товари без руху', kind: 'an', view: 'dead' }
+  ] }
+];
+var ITEMS = {};
+function buildNav() {
+  var h = '';
+  MENU.forEach(function (m) {
+    if (m.sep) { h += '<div class="sep">' + esc(m.sep) + '</div>'; return; }
+    if (m.sub) {
+      m.sub.forEach(function (s) { ITEMS[s.id] = s; s.parent = m.id; });
+      h += '<div class="grp" id="' + m.id + '"><button class="it" data-grp="' + m.id + '">' + esc(m.t) + '<span class="chev">▶</span></button><div class="sub">' +
+        m.sub.map(function (s) { return '<button class="it" data-go="' + s.id + '">' + esc(s.t) + '</button>'; }).join('') + '</div></div>';
+    } else { ITEMS[m.id] = m; h += '<button class="it" data-go="' + m.id + '">' + esc(m.t) + '</button>'; }
+  });
+  $('nav').innerHTML = h;
+  $('nav').querySelectorAll('[data-grp]').forEach(function (b) { b.onclick = function () { $(b.dataset.grp).classList.toggle('open'); }; });
+  $('nav').querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(b.dataset.go); $('side').classList.remove('open'); var sh = document.querySelector('.shade'); if (sh) sh.remove(); }; });
+}
 
+var cur = null, toolsReady = false, toolsTab = null, anDays = 30, ordersFilter = 'all', ORDERS = [];
+
+function go(id) {
+  var it = ITEMS[id]; if (!it) return; cur = id;
+  document.querySelectorAll('#nav .it').forEach(function (b) { b.classList.toggle('on', b.dataset.go === id); });
+  if (it.parent) $(it.parent).classList.add('open');
+  $('title').textContent = it.t; $('barRight').innerHTML = '';
+  try { location.hash = id; } catch (e) {}
+  if (it.kind === TOOL) { showTool(it.tab); return; }
+  $('tools').hidden = true; $('toolsLoading').hidden = true; $('native').hidden = false;
+  if (it.kind === 'orders') loadOrders(); else if (it.kind === 'an') loadAnalytics(it.view);
+}
+
+function showTool(tab) {
+  $('native').hidden = true; $('tools').hidden = false;
+  var f = $('tools');
+  if (!toolsReady && !f.dataset.loading) {
+    f.dataset.loading = '1'; $('toolsLoading').hidden = false; toolsTab = tab;
+    f.src = 'index.html?embed=' + tab;
+  } else if (toolsReady) { f.contentWindow.postMessage({ insortTab: tab }, location.origin); }
+  else toolsTab = tab;
+}
+window.addEventListener('message', function (e) {
+  if (e.origin !== location.origin || !e.data) return;
+  if (e.data.insort === 'ready') {
+    toolsReady = true; $('toolsLoading').hidden = true;
+    var th = document.documentElement.getAttribute('data-theme'); $('tools').contentWindow.postMessage({ insortTheme: th }, location.origin);
+    var it = ITEMS[cur]; if (it && it.kind === TOOL) $('tools').contentWindow.postMessage({ insortTab: it.tab }, location.origin);
+  }
+  if (e.data.insort === 'noauth') { setTok(''); showApp(false); }
+});
+
+/* ---------- вхід ---------- */
+function showApp(auth) {
+  $('loginView').hidden = auth; $('appView').hidden = !auth;
+  if (auth) { if (!$('nav').children.length) buildNav(); var h = (location.hash || '').slice(1); go(ITEMS[h] ? h : 'orders'); }
+  else { var f = $('tools'); f.removeAttribute('src'); delete f.dataset.loading; toolsReady = false; }
+}
 $('eye').onclick = function () { var p = $('pw'); var s = p.type === 'password'; p.type = s ? 'text' : 'password'; this.textContent = s ? 'сховати' : 'показати'; };
 $('loginForm').onsubmit = function (e) {
   e.preventDefault(); $('loginErr').textContent = ''; $('go').disabled = true; $('go').textContent = 'Заходимо…';
   api('POST', '/api/admin/login', { email: $('em').value.trim(), password: $('pw').value }).then(function (r) {
-    setTok(r.token); $('pw').value = ''; show(true);
+    setTok(r.token); $('pw').value = ''; showApp(true);
   }).catch(function (er) { $('loginErr').textContent = er.message; })
     .then(function () { $('go').disabled = false; $('go').textContent = 'Увійти'; });
 };
-$('logout').onclick = function () { setTok(''); show(false); };
-
-document.querySelectorAll('.tab').forEach(function (b) {
-  b.onclick = function () {
-    document.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('on', x === b); });
-    $('tabOrders').hidden = b.dataset.tab !== 'orders'; $('tabStats').hidden = b.dataset.tab !== 'stats';
-    if (b.dataset.tab === 'stats') loadStats(); else loadOrders();
-  };
-});
+$('logout').onclick = function () { setTok(''); showApp(false); };
+$('theme').onclick = function () {
+  var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t); try { localStorage.setItem('insort_theme', t); } catch (e) {}
+  if (toolsReady) $('tools').contentWindow.postMessage({ insortTheme: t }, location.origin);
+};
+$('burger').onclick = function () {
+  $('side').classList.add('open'); var sh = document.createElement('div'); sh.className = 'shade';
+  sh.onclick = function () { $('side').classList.remove('open'); sh.remove(); }; document.body.appendChild(sh);
+};
 
 /* ---------- замовлення ---------- */
 function loadOrders() {
-  $('orders').innerHTML = '<div class="empty">Завантаження…</div>';
+  $('native').innerHTML = '<div class="empty">Завантаження…</div>';
   api('GET', '/api/admin/orders').then(function (list) { ORDERS = list || []; renderOrders(); })
-    .catch(function (e) { $('orders').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+    .catch(function (e) { $('native').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
 }
 function renderOrders() {
   var cnt = { all: ORDERS.length }; Object.keys(STATUS).forEach(function (k) { cnt[k] = ORDERS.filter(function (o) { return o.status === k; }).length; });
-  $('filters').innerHTML = [['all', 'Усі']].concat(Object.keys(STATUS).map(function (k) { return [k, STATUS[k]]; })).map(function (f) {
-    return '<button class="chip' + (filter === f[0] ? ' on' : '') + '" data-f="' + f[0] + '">' + f[1] + ' · ' + (cnt[f[0]] || 0) + '</button>';
-  }).join('');
-  $('filters').querySelectorAll('.chip').forEach(function (c) { c.onclick = function () { filter = c.dataset.f; renderOrders(); }; });
-  var list = ORDERS.filter(function (o) { return filter === 'all' || o.status === filter; });
-  if (!list.length) { $('orders').innerHTML = '<div class="empty">Замовлень немає</div>'; return; }
-  $('orders').innerHTML = list.map(function (o) {
-    var d = new Date(o.created_at || o.createdAt || 0).toLocaleString('uk-UA');
+  var h = '<div class="filters">' + [['all', 'Усі']].concat(Object.keys(STATUS).map(function (k) { return [k, STATUS[k]]; })).map(function (f) {
+    return '<button class="chip' + (ordersFilter === f[0] ? ' on' : '') + '" data-f="' + f[0] + '">' + f[1] + ' · ' + (cnt[f[0]] || 0) + '</button>';
+  }).join('') + '</div>';
+  var list = ORDERS.filter(function (o) { return ordersFilter === 'all' || o.status === ordersFilter; });
+  h += list.length ? list.map(function (o) {
+    var d = new Date(o.created_at || 0).toLocaleString('uk-UA');
     var items = (o.items || []).map(function (i) { return '<li><span>' + esc(i.title) + ' × ' + i.qty + (i.article ? ' <span class="mut">(' + esc(i.article) + ')</span>' : '') + '</span><b>' + (i.price ? money(i.price * i.qty) : '') + '</b></li>'; }).join('');
-    return '<div class="card" data-id="' + o.id + '"><div class="row"><div><span class="num">№ ' + esc(o.number) + '</span> <span class="st ' + esc(o.status) + '">' + esc(STATUS[o.status] || o.status) + '</span><div class="mut">' + esc(d) + '</div></div><div style="text-align:right"><b style="font-size:18px">' + money(o.total) + '</b></div></div>' +
+    return '<div class="card" data-id="' + o.id + '"><div class="row"><div><b>№ ' + esc(o.number) + '</b> <span class="st ' + esc(o.status) + '">' + esc(STATUS[o.status] || o.status) + '</span><div class="mut">' + esc(d) + '</div></div><div style="text-align:right"><b style="font-size:18px">' + money(o.total) + '</b></div></div>' +
       '<div style="margin-top:8px"><b>' + esc(o.customer) + '</b> · <a href="tel:' + esc(o.phone) + '">' + esc(o.phone) + '</a>' + (o.email ? ' · ' + esc(o.email) : '') + '</div>' +
       (o.comment ? '<div class="mut" style="white-space:pre-line;margin-top:4px">' + esc(o.comment) + '</div>' : '') +
-      '<ul class="items">' + items + '</ul>' +
-      '<div class="acts">' + ['accepted', 'done', 'cancelled'].filter(function (s) { return s !== o.status; }).map(function (s) { return '<button class="btn sm ' + (s === 'cancelled' ? 'red' : s === 'done' ? '' : 'dark') + '" data-st="' + s + '">' + (s === 'accepted' ? 'Прийняти' : s === 'done' ? 'Виконано' : 'Скасувати') + '</button>'; }).join('') + '</div>' +
+      '<ul class="items">' + items + '</ul><div class="acts">' +
+      ['accepted', 'done', 'cancelled'].filter(function (s) { return s !== o.status; }).map(function (s) { return '<button class="btn sm ' + (s === 'cancelled' ? 'red' : s === 'done' ? '' : 'dark') + '" data-st="' + s + '">' + (s === 'accepted' ? 'Прийняти' : s === 'done' ? 'Виконано' : 'Скасувати') + '</button>'; }).join('') + '</div>' +
       (o.email ? '<div class="msg"><input placeholder="Повідомлення клієнту на пошту…" value="' + esc(o.message || '') + '"><button class="btn line sm" data-send="1">Надіслати</button></div>' : '') + '</div>';
-  }).join('');
-  $('orders').querySelectorAll('.card').forEach(function (card) {
+  }).join('') : '<div class="empty">Замовлень немає</div>';
+  var box = $('native'); box.innerHTML = h;
+  box.querySelectorAll('.chip').forEach(function (c) { c.onclick = function () { ordersFilter = c.dataset.f; renderOrders(); }; });
+  box.querySelectorAll('.card').forEach(function (card) {
     var id = card.dataset.id;
     card.querySelectorAll('[data-st]').forEach(function (b) {
       b.onclick = function () {
@@ -160,26 +271,96 @@ function renderOrders() {
     });
     var s = card.querySelector('[data-send]');
     if (s) s.onclick = function () {
-      var t = card.querySelector('.msg input').value.trim(); if (!t) return;
-      s.disabled = true;
+      var t = card.querySelector('.msg input').value.trim(); if (!t) return; s.disabled = true;
       api('PUT', '/api/admin/orders/' + id, { message: t }).then(function () { toast('Повідомлення надіслано'); s.disabled = false; }).catch(function (e) { toast(e.message); s.disabled = false; });
     };
   });
 }
 
-/* ---------- статистика ---------- */
-function loadStats() {
-  var box = $('tabStats'); box.innerHTML = '<div class="empty">Завантаження…</div>';
-  api('GET', '/api/admin/analytics').then(function (a) {
-    var o = {}; (a.orders || []).forEach(function (r) { o[r.status] = r.c; });
-    var total = (a.orders || []).reduce(function (s, r) { return s + r.c; }, 0);
-    function tbl(list) { return list && list.length ? '<table>' + list.slice(0, 15).map(function (r) { return '<tr><td>' + esc(r.title) + (r.article ? ' <span class="mut">' + esc(r.article) + '</span>' : '') + '</td><td class="n">' + r.n + '</td></tr>'; }).join('') + '</table>' : '<div class="empty">Поки немає даних</div>'; }
-    box.innerHTML = '<div class="grid"><div class="stat"><span class="mut">Товарів</span><b>' + a.totals.products + '</b></div><div class="stat"><span class="mut">Переглядів</span><b>' + a.totals.views + '</b></div><div class="stat"><span class="mut">Додавань у кошик</span><b>' + a.totals.cartAdds + '</b></div><div class="stat"><span class="mut">Замовлень</span><b>' + total + '</b></div><div class="stat"><span class="mut">Нових</span><b>' + (o.new || 0) + '</b></div></div>' +
-      '<div class="two"><div class="card"><b>Найбільше переглядів</b>' + tbl(a.topViews) + '</div><div class="card"><b>Найчастіше в кошику</b>' + tbl(a.topCartAdds) + '</div></div>';
-  }).catch(function (e) { box.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+/* ---------- аналітика ---------- */
+var STATS = null, STATS_DAYS = 0;
+function loadAnalytics(view) {
+  var bar = '<div class="period">' + [7, 30, 90, 365].map(function (d) { return '<button class="chip' + (anDays === d ? ' on' : '') + '" data-d="' + d + '">' + (d === 365 ? 'Рік' : d + ' днів') + '</button>'; }).join('') + '</div>';
+  $('barRight').innerHTML = bar;
+  $('barRight').querySelectorAll('.chip').forEach(function (c) { c.onclick = function () { anDays = +c.dataset.d; loadAnalytics(view); }; });
+  var box = $('native');
+  if (STATS && STATS_DAYS === anDays && Date.now() - STATS.t < 20000) { return drawAn(view); }
+  box.innerHTML = '<div class="empty">Завантаження…</div>';
+  api('GET', '/api/admin/stats?days=' + anDays).then(function (s) { STATS = s; STATS.t = Date.now(); STATS_DAYS = anDays; if (cur && ITEMS[cur].view === view) drawAn(view); })
+    .catch(function (e) { box.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+}
+function tile(l, v, s) { return '<div class="stat"><span>' + l + '</span><b>' + v + '</b>' + (s ? '<i>' + s + '</i>' : '') + '</div>'; }
+function pct(a, b) { return b ? Math.round(a / b * 1000) / 10 : 0; }
+function chart(rows, key1, key2, fmt) {
+  var max = Math.max.apply(null, rows.map(function (r) { return Math.max(r[key1] || 0, key2 ? r[key2] || 0 : 0); }).concat([1]));
+  return '<div class="bars">' + rows.map(function (r) {
+    var t = esc(r.label) + ': ' + (fmt ? fmt(r[key1]) : r[key1]) + (key2 ? ' / ' + (fmt ? fmt(r[key2]) : r[key2]) : '');
+    var inner = '<i style="height:' + Math.max(1, (r[key1] || 0) / max * 100) + '%"></i>';
+    if (key2) inner = '<div style="display:flex;gap:1px;align-items:flex-end;height:100%">' + '<i style="flex:1;height:' + Math.max(1, (r[key1] || 0) / max * 100) + '%"></i><i class="b" style="flex:1;height:' + Math.max(1, (r[key2] || 0) / max * 100) + '%"></i></div>';
+    return '<div class="c" data-t="' + t + '">' + inner + '</div>';
+  }).join('') + '</div><div class="axis"><span>' + esc(rows[0].label) + '</span><span>' + esc(rows[rows.length - 1].label) + '</span></div>';
+}
+function hbars(rows, cls, fmt) {
+  var max = Math.max.apply(null, rows.map(function (r) { return r.v; }).concat([1]));
+  return rows.map(function (r) { return '<div class="hbar"><span title="' + esc(r.l) + '">' + esc(r.l) + '</span><div class="t"><i class="' + (cls || '') + '" style="width:' + (r.v / max * 100) + '%"></i></div><span>' + (fmt ? fmt(r.v) : num(r.v)) + '</span></div>'; }).join('') || '<div class="empty">Поки немає даних</div>';
+}
+function ptable(list, cols) {
+  if (!list || !list.length) return '<div class="empty">Поки немає даних</div>';
+  return '<table><tr><th>Товар</th>' + cols.map(function (c) { return '<th class="n">' + c[0] + '</th>'; }).join('') + '</tr>' +
+    list.map(function (r) { return '<tr><td>' + esc(r.title) + (r.article ? ' <span class="mut">' + esc(r.article) + '</span>' : '') + '</td>' + cols.map(function (c) { return '<td class="n">' + c[1](r) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>';
+}
+var DD = function (d) { var p = d.split('-'); return p[2] + '.' + p[1]; };
+
+function drawAn(view) {
+  var S = STATS, box = $('native'), h = '';
+  var daily = S.daily.map(function (d) { return { label: DD(d.day), views: d.views, cartAdds: d.cartAdds, orders: d.orders, revenue: d.revenue }; });
+  if (view === 'sales') {
+    var s = S.sales;
+    h += '<div class="grid">' + tile('Замовлень', num(s.orders), 'без скасованих: ' + num(s.validOrders)) + tile('Виручка', money(s.revenue), 'без скасованих') + tile('Середній чек', money(s.avgCheck)) +
+      tile('Клієнтів', num(s.customers), 'повторних: ' + num(s.repeatCustomers)) + '</div>';
+    h += '<div class="card"><h3>Виручка по днях</h3>' + chart(daily, 'revenue', null, money) + '</div>';
+    h += '<div class="card"><h3>Замовлення по днях</h3>' + chart(daily, 'orders') + '</div>';
+    h += '<div class="two"><div class="card"><h3>Статуси замовлень</h3>' + hbars(Object.keys(STATUS).map(function (k) { return { l: STATUS[k], v: s.byStatus[k] || 0 }; }), '') + '</div>' +
+      '<div class="card"><h3>Найбільше купують</h3>' + ptable(s.topSold.slice(0, 10), [['К-сть', function (r) { return num(r.qty); }], ['Сума', function (r) { return r.sum ? money(r.sum) : '—'; }]]) + '</div></div>';
+  } else if (view === 'products') {
+    var P = S.products;
+    h += '<div class="grid">' + tile('Товарів у базі', num(P.total)) + tile('Переглядів товарів', num(P.viewsAll), 'за весь час') + tile('Додано в кошик', num(P.cartAll), 'за весь час') + '</div>';
+    h += '<div class="two"><div class="card"><h3>Найбільше переглядають</h3>' + ptable(P.topViews.slice(0, 12), [['Перегляди', function (r) { return num(r.n); }]]) + '</div>' +
+      '<div class="card"><h3>Найчастіше кладуть у кошик</h3>' + ptable(P.topCart.slice(0, 12), [['У кошику', function (r) { return num(r.n); }]]) + '</div></div>';
+    h += '<div class="two"><div class="card"><h3>Найкраща віддача (з перегляду в кошик)</h3>' + ptable(P.hot, [['Перегляди', function (r) { return num(r.views); }], ['Кошик', function (r) { return num(r.cartAdds); }], ['%', function (r) { return r.rate + '%'; }]]) + '</div>' +
+      '<div class="card"><h3>Дивляться, але не беруть</h3><div class="mut" style="margin-bottom:6px">Багато переглядів і жодного разу не додали в кошик — перевірте ціну, фото й опис.</div>' + ptable(P.lookNoBuy, [['Перегляди', function (r) { return num(r.views); }]]) + '</div></div>';
+    var g = S.groups;
+    h += '<div class="two"><div class="card"><h3>Хіти продажів</h3><div class="mut">Товарів: ' + num(g.hits.c) + ' · перегляди: ' + num(g.hits.v) + ' · кошик: ' + num(g.hits.a) + ' · віддача: ' + pct(g.hits.a, g.hits.v) + '%</div></div>' +
+      '<div class="card"><h3>Товари зі знижкою</h3><div class="mut">Товарів: ' + num(g.discounted.c) + ' · перегляди: ' + num(g.discounted.v) + ' · кошик: ' + num(g.discounted.a) + ' · віддача: ' + pct(g.discounted.a, g.discounted.v) + '%</div></div></div>';
+  } else if (view === 'funnel') {
+    var f = S.funnel, top = Math.max(f.views, 1);
+    function step(l, v, extra, w) { return '<div class="step"><i style="width:' + w + '%"></i><div><span>' + l + '</span><span><b>' + num(v) + '</b> ' + (extra || '') + '</span></div></div>'; }
+    h += '<div class="card"><h3>Воронка за ' + S.days + ' днів</h3><div class="fun">' + step('Переглянули товари', f.views, '', 100) + step('Додали в кошик', f.cartAdds, '· ' + f.viewToCart + '% від переглядів', Math.max(2, f.cartAdds / top * 100)) +
+      step('Оформили замовлення', f.orders, '· ' + f.cartToOrder + '% від кошика', Math.max(2, f.orders / top * 100)) + '</div></div>';
+    h += '<div class="card"><h3>Перегляди та додавання в кошик по днях</h3><div class="legend"><span><s></s>Перегляди</span><span><s class="b"></s>У кошик</span></div>' + chart(daily, 'views', 'cartAdds') + '</div>';
+    h += '<div class="mut">Лічильники по днях ведуться з моменту оновлення двигуна, раніше за цю дату дані будуть нульові.</div>';
+  } else if (view === 'cats') {
+    var C = S.categories;
+    h += '<div class="two"><div class="card"><h3>Перегляди по категоріях</h3>' + hbars(C.map(function (c) { return { l: c.name, v: c.views }; }).slice(0, 12), '') + '</div>' +
+      '<div class="card"><h3>Додавання в кошик</h3>' + hbars(C.slice().sort(function (a, b) { return b.cartAdds - a.cartAdds; }).map(function (c) { return { l: c.name, v: c.cartAdds }; }).slice(0, 12), 'b') + '</div></div>';
+    h += '<div class="card"><h3>Таблиця категорій</h3><table><tr><th>Категорія</th><th class="n">Товарів</th><th class="n">Перегляди</th><th class="n">Кошик</th><th class="n">Продано (за період)</th><th class="n">Сума</th></tr>' +
+      C.map(function (c) { return '<tr><td>' + esc(c.name) + '</td><td class="n">' + num(c.products) + '</td><td class="n">' + num(c.views) + '</td><td class="n">' + num(c.cartAdds) + '</td><td class="n">' + num(c.sold) + '</td><td class="n">' + (c.sum ? money(c.sum) : '—') + '</td></tr>'; }).join('') + '</table></div>';
+  } else if (view === 'time') {
+    var T = S.sales, hrs = T.hours.map(function (v, i) { return { label: (i < 10 ? '0' : '') + i + ':00', v: v }; });
+    var WD = [['Mon', 'Пн'], ['Tue', 'Вт'], ['Wed', 'Ср'], ['Thu', 'Чт'], ['Fri', 'Пт'], ['Sat', 'Сб'], ['Sun', 'Нд']];
+    h += '<div class="card"><h3>Замовлення за годинами доби</h3>' + chart(hrs, 'v') + '</div>';
+    h += '<div class="card"><h3>Замовлення за днями тижня</h3>' + hbars(WD.map(function (w) { return { l: w[1], v: T.weekdays[w[0]] || 0 }; }), 'a') + '</div>';
+    if (!T.validOrders) h += '<div class="mut">Поки замовлень немає — діаграми заповняться, коли вони з\'являться.</div>';
+  } else if (view === 'dead') {
+    var D = S.products;
+    h += '<div class="grid">' + tile('Без жодного перегляду', num(D.deadCount), 'з ' + num(D.total) + ' товарів') + '</div>';
+    h += '<div class="card"><h3>Найстаріші товари без переглядів</h3><div class="mut" style="margin-bottom:6px">Такі товари ніхто не відкривав. Перевірте категорію, фото й назву, або приберіть їх з каталогу.</div>' +
+      (D.dead.length ? '<table><tr><th>Товар</th><th>Категорія</th></tr>' + D.dead.map(function (r) { return '<tr><td>' + esc(r.title) + (r.article ? ' <span class="mut">' + esc(r.article) + '</span>' : '') + '</td><td>' + esc(r.mainCategory || '—') + '</td></tr>'; }).join('') + '</table>' : '<div class="empty">Усі товари мали перегляди</div>') + '</div>';
+  }
+  box.innerHTML = h;
 }
 
-show(!!tok());
+showApp(!!tok());
 </script>
 </body>
 </html>
