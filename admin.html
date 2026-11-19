@@ -145,6 +145,7 @@ var MENU = [
     { id: 'products', t: 'Додавання та редагування', kind: TOOL, tab: 'products' },
     { id: 'prices', t: 'Зміна цін', kind: TOOL, tab: 'prices' },
     { id: 'procraft', t: 'Імпорт Procraft', kind: TOOL, tab: 'procraft' },
+    { id: 'feed', t: 'Автооновлення Procraft', kind: 'feed' },
     { id: 'excel', t: 'Імпорт / експорт Excel', kind: TOOL, tab: 'excel' }
   ] },
   { id: 'hits', t: 'Хіти продажів', kind: TOOL, tab: 'officeHits' },
@@ -187,7 +188,7 @@ function go(id) {
   try { location.hash = id; } catch (e) {}
   if (it.kind === TOOL) { showTool(it.tab); return; }
   $('tools').hidden = true; $('toolsLoading').hidden = true; $('native').hidden = false;
-  if (it.kind === 'orders') loadOrders(); else if (it.kind === 'an') loadAnalytics(it.view);
+  if (it.kind === 'orders') loadOrders(); else if (it.kind === 'an') loadAnalytics(it.view); else if (it.kind === 'feed') loadFeed();
 }
 
 function showTool(tab) {
@@ -279,6 +280,47 @@ function renderOrders() {
       api('PUT', '/api/admin/orders/' + id, { message: t }).then(function () { toast('Повідомлення надіслано'); s.disabled = false; }).catch(function (e) { toast(e.message); s.disabled = false; });
     };
   });
+}
+
+
+/* ---------- автооновлення з файлу Procraft ---------- */
+var FEED_TIMER = null;
+function fmtDate(t) { return t ? new Date(t).toLocaleString('uk-UA') : 'ще не запускалось'; }
+function loadFeed() {
+  var box = $('native'); box.innerHTML = '<div class="empty">Завантаження…</div>';
+  api('GET', '/api/admin/feed').then(function (c) { drawFeed(c); })
+    .catch(function (e) { box.innerHTML = '<div class="empty">' + (e.status === 404 ? 'Двигун ще не оновлено. Завантажте на GitHub нові server.js і feed.js та дочекайтесь Live на Render.' : esc(e.message)) + '</div>'; });
+}
+function feedResult(r) {
+  if (!r) return '<div class="mut">Синхронізацій ще не було.</div>';
+  if (!r.ok) return '<div style="color:#ff9b91"><b>Помилка:</b> ' + esc(r.error) + '</div><div class="mut">' + esc(fmtDate(r.at)) + '</div>';
+  return '<div class="grid" style="margin:8px 0">' + tile('У файлі', num(r.total)) + tile('Додано нових', num(r.added)) + tile('Оновлено цін', num(r.updated)) + tile('Пропущено', num(r.skipped), 'без ціни або не в наявності') + tile('Нові категорії', num(r.newMains) + ' / ' + num(r.newSubs), 'головні / підкатегорії') + '</div>' +
+    '<div class="mut">' + esc(fmtDate(r.at)) + ' · ' + r.seconds + ' с' + (r.errors && r.errors.length ? ' · помилки: ' + esc(r.errors.join('; ')) : '') + '</div>';
+}
+function drawFeed(c) {
+  var iv = [[1, 'щогодини'], [3, 'кожні 3 години'], [6, 'кожні 6 годин'], [12, 'кожні 12 годин'], [24, 'щодня'], [72, 'кожні 3 дні'], [168, 'щотижня']];
+  var box = $('native');
+  box.innerHTML = '<div class="card"><h3>Файл Procraft за посиланням</h3>' +
+    '<div class="mut" style="margin-bottom:8px">Вставте пряме посилання на XML-файл (https://…). Двигун сам завантажуватиме його за розкладом: додасть нові товари з категоріями й артикулами та оновить ціни. Ваші товари, знижки та хіти не змінюються, а товари шукаються за артикулом, тому дублів не буде.</div>' +
+    '<label for="fUrl">Посилання на файл</label><input id="fUrl" type="url" placeholder="https://…/export.xml" value="' + esc(c.url) + '">' +
+    '<div class="two" style="margin-top:4px"><div><label for="fIv">Як часто оновлювати</label><select id="fIv">' + iv.map(function (x) { return '<option value="' + x[0] + '"' + (+c.intervalHours === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></div>' +
+    '<div><label for="fMk">Націнка до ціни Procraft, %</label><input id="fMk" type="number" step="0.1" value="' + esc(c.markup) + '"></div></div>' +
+    '<div class="two"><div><label for="fPh">Фото на товар (макс. 6)</label><input id="fPh" type="number" min="1" max="6" value="' + esc(c.maxPhotos) + '"></div><div><label for="fPr">Рядків характеристик в описі</label><input id="fPr" type="number" min="0" max="40" value="' + esc(c.maxParams) + '"></div></div>' +
+    '<label for="fDs">Макс. довжина опису, символів</label><input id="fDs" type="number" min="0" max="5000" value="' + esc(c.maxDesc) + '">' +
+    '<div style="margin-top:12px"><label style="font-weight:600;display:flex;gap:8px;align-items:center"><input type="checkbox" id="fEn" style="width:auto"' + (c.enabled ? ' checked' : '') + '> Оновлювати автоматично за розкладом</label>' +
+    '<label style="font-weight:600;display:flex;gap:8px;align-items:center"><input type="checkbox" id="fUp" style="width:auto"' + (c.updatePrices ? ' checked' : '') + '> Оновлювати ціни вже доданих товарів</label>' +
+    '<label style="font-weight:600;display:flex;gap:8px;align-items:center"><input type="checkbox" id="fUn" style="width:auto"' + (c.addUnavailable ? ' checked' : '') + '> Додавати також товари, яких немає в наявності</label></div>' +
+    '<div class="acts" style="margin-top:14px"><button class="btn" id="fSave">Зберегти налаштування</button><button class="btn dark" id="fRun">Оновити зараз</button></div><div class="mut" id="fMsg" style="margin-top:8px"></div></div>' +
+    '<div class="card"><h3>Остання синхронізація</h3><div id="fRes">' + feedResult(c.lastResult) + '</div></div>';
+  var body = function () { return { url: $('fUrl').value.trim(), enabled: $('fEn').checked, intervalHours: +$('fIv').value, markup: $('fMk').value, maxPhotos: $('fPh').value, maxParams: $('fPr').value, maxDesc: $('fDs').value, updatePrices: $('fUp').checked, addUnavailable: $('fUn').checked }; };
+  $('fSave').onclick = function () { $('fMsg').textContent = ''; api('PUT', '/api/admin/feed', body()).then(function () { toast('Налаштування збережено'); }).catch(function (e) { $('fMsg').textContent = e.message; }); };
+  $('fRun').onclick = function () {
+    var b = $('fRun'); b.disabled = true; b.textContent = 'Оновлюю… (може тривати до хвилини)'; $('fMsg').textContent = '';
+    api('PUT', '/api/admin/feed', body()).then(function () { return api('POST', '/api/admin/feed/run', {}); })
+      .then(function (r) { $('fRes').innerHTML = feedResult(r); toast('Готово: додано ' + r.added + ', цін оновлено ' + r.updated); })
+      .catch(function (e) { $('fMsg').textContent = e.message; })
+      .then(function () { b.disabled = false; b.textContent = 'Оновити зараз'; });
+  };
 }
 
 /* ---------- аналітика ---------- */
