@@ -1,118 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>InSort — адмінка</title>
-<style>
-/* сірий інтерфейс з білим текстом */
-:root{--bg:#3a3d3c;--card:#454948;--side:#2f3231;--ink:#fff;--mut:#d3d8d5;--line:rgba(255,255,255,.22);--g:#8fd17f;--g2:#b4e8a6;--dark:#262827;--red:#e0584c;--amber:#e8b100;--blue:#6aa6f0;--hover:rgba(255,255,255,.1);--sel:rgba(143,209,127,.3)}
-*{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-button,input,select,textarea{font:inherit;color:inherit}[hidden]{display:none!important}
-/* вхід */
-.login{min-height:100vh;display:grid;place-items:center;padding:16px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
-.brand{font-weight:900;font-size:24px;letter-spacing:-.5px}.brand b{color:var(--g)}
-h1{font-size:20px;margin:14px 0 4px}.sub{color:var(--mut);margin:0 0 18px}
-label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}
-input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#303332;color:#fff;outline:none}input::placeholder{color:#cdd4cf}input:focus,select:focus{border-color:var(--g)}
-.pw{position:relative}.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--mut);padding:8px;cursor:pointer;font-size:13px}
-.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--g2),var(--g));color:#14240f;text-decoration:none;display:inline-block}
-.btn.dark{background:var(--dark);color:#fff}.btn.line{background:none;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:7px 11px;border-radius:10px;font-size:13px}.btn.red{background:var(--red);color:#fff}.btn:disabled{opacity:.55;cursor:default}
-.full{width:100%;margin-top:18px}.err{color:var(--red);font-weight:700;margin-top:12px;min-height:20px}
-/* каркас */
-.app{display:grid;grid-template-columns:236px 1fr;height:100vh}
-.side{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
-.side .top{padding:16px 16px 10px}.side .top .mut{font-size:11px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
-.nav{flex:1;overflow:auto;padding:4px 8px 10px}
-.nav .grp{margin:0}
-.nav button.it{display:flex;width:100%;align-items:center;gap:8px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--ink);font-weight:600}
-.nav button.it:hover{background:var(--hover)}
-.nav button.it.on{background:var(--sel);color:var(--ink);font-weight:800}
-.nav .chev{margin-left:auto;transition:transform .15s;color:var(--mut);font-size:11px}
-.nav .grp.open>button.it .chev{transform:rotate(90deg)}
-.nav .sub{display:none;margin:1px 0 4px 14px;padding-left:8px;border-left:1px solid var(--line)}
-.nav .grp.open .sub{display:block}
-.nav .sub button.it{font-size:12.5px;font-weight:500;padding:6px 9px;color:var(--mut)}
-.nav .sub button.it.on{color:var(--ink);font-weight:800}
-.nav .sep{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);padding:12px 10px 4px}
-.side .foot{border-top:1px solid var(--line);padding:10px;display:flex;gap:6px;flex-wrap:wrap}
-.main{display:flex;flex-direction:column;min-width:0;min-height:0}
-.bar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--side)}
-.bar h2{margin:0;font-size:16px}.bar .sp{flex:1}.burger{display:none}
-.content{flex:1;overflow:auto;padding:18px;min-height:0;position:relative}
-iframe#tools{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
-.mut{color:var(--mut)}
-@media(max-width:860px){.app{grid-template-columns:1fr}.side{position:fixed;inset:0 auto 0 0;width:260px;z-index:30;transform:translateX(-100%);transition:transform .2s;box-shadow:6px 0 30px rgba(0,0,0,.25)}.side.open{transform:none}.burger{display:inline-block}.shade{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}}
-/* картки/таблиці */
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
-.card h3{margin:0 0 10px;font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px}.stat span{color:var(--mut);font-size:12px}.stat b{display:block;font-size:24px;margin-top:2px}.stat i{font-style:normal;font-size:12px;color:var(--mut)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:900px){.two{grid-template-columns:1fr}}
-table{width:100%;border-collapse:collapse}td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.03em}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}td.n{font-weight:700}
-.empty{color:var(--mut);text-align:center;padding:26px}
-.row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
-.period{display:flex;gap:6px}.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:12.5px;font-weight:700}.chip.on{border-color:var(--g);color:var(--g)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.st{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;color:#fff}.st.new{background:var(--amber)}.st.accepted{background:var(--blue)}.st.done{background:var(--g)}.st.cancelled{background:var(--red)}
-.items{margin:10px 0;padding:0;list-style:none;border-top:1px solid var(--line)}.items li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.msg{display:flex;gap:8px;margin-top:10px}.msg input{flex:1}
-.bars{display:flex;align-items:flex-end;gap:2px;height:150px;padding-top:8px}
-.bars .c{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative}
-.bars .c i{display:block;background:var(--g);border-radius:3px 3px 0 0;min-height:1px}.bars .c i.b{background:var(--blue);opacity:.85}
-.bars .c:hover::after{content:attr(data-t);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:3px 7px;border-radius:6px;font-size:11px;white-space:nowrap;z-index:2}
-.axis{display:flex;justify-content:space-between;color:var(--mut);font-size:11px;margin-top:4px}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:4px}.legend s{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--g);margin-right:5px;text-decoration:none}.legend s.b{background:var(--blue)}
-.hbar{display:grid;grid-template-columns:minmax(90px,170px) 1fr 70px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
-.hbar .t{height:12px;background:var(--hover);border-radius:6px;overflow:hidden}.hbar .t i{display:block;height:100%;background:var(--g);border-radius:6px}.hbar .t i.b{background:var(--blue)}.hbar .t i.a{background:var(--amber)}
-.hbar span:last-child{text-align:right;font-weight:700}.hbar span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fun{display:flex;flex-direction:column;gap:10px}.fun .step{background:var(--hover);border-radius:12px;padding:12px 16px;position:relative;overflow:hidden}.fun .step i{position:absolute;inset:0 auto 0 0;background:var(--sel);z-index:0}.fun .step div{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.fun .step b{font-size:20px}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:99}.toast.show{opacity:1}
-.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--mut);background:var(--bg);z-index:1}
-</style>
-</head>
-<body>
-
-<div class="login" id="loginView">
-  <form class="box" id="loginForm" autocomplete="on">
-    <div class="brand">In<b>Sort</b></div>
-    <h1>Вхід в адмінку</h1>
-    <p class="sub">Лише для власника магазину.</p>
-    <label for="em">Email</label>
-    <input id="em" type="email" autocomplete="username" placeholder="email@example.com" required>
-    <label for="pw">Пароль</label>
-    <div class="pw"><input id="pw" type="password" autocomplete="current-password" placeholder="Пароль" required><button type="button" id="eye">показати</button></div>
-    <button class="btn full" id="go" type="submit">Увійти</button>
-    <div class="err" id="loginErr" role="alert"></div>
-  </form>
-</div>
-
-<div class="app" id="appView" hidden>
-  <aside class="side" id="side">
-    <div class="top"><div class="brand">In<b>Sort</b></div><div class="mut">адмінка</div></div>
-    <nav class="nav" id="nav"></nav>
-    <div class="foot">
-      <a class="btn line sm" href="index.html">На сайт</a>
-            <button class="btn line sm" id="logout">Вийти</button>
-    </div>
-  </aside>
-  <div class="main">
-    <div class="bar"><button class="btn line sm burger" id="burger">☰</button><h2 id="title"></h2><div class="sp"></div><div id="barRight"></div></div>
-    <div class="content" id="content">
-      <div id="native"></div>
-      <iframe id="tools" title="Інструменти" hidden></iframe>
-      <div class="loading" id="toolsLoading" hidden>Завантаження інструменту…</div>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-
 <script>
-/* Адреса двигуна. '' = двигун на тій самій адресі, що й ця сторінка. */
-var ENGINE = 'https://insort-engine.onrender.com';
-var TK = 'insort_admin_token_v1';   // той самий ключ, що й на сайті
+/* показує помилку скрипта внизу сторінки (для діагностики) */
+(function(){var shown=0;function show(m){if(shown++>2)return;try{var d=document.createElement('div');d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483647;background:#7a1010;color:#fff;font:12px/1.35 monospace;padding:8px 10px;border-radius:10px;word-break:break-word';d.textContent='Помилка: '+m;d.onclick=function(){d.remove()};(document.body||document.documentElement).appendChild(d)}catch(e){}}
+window.addEventListener('error',function(e){if(e&&e.message&&!/ResizeObserver|Script error\.?$/.test(e.message))show(e.message+(e.lineno?' ('+e.lineno+')':''))});
+window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;show('promise: '+(r&&r.message||r))})})();
+</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>InSort | Інтернет-магазин електроінструментів Procraft в Україні</title>
+  <meta name="description" content="InSort (insort.kyiv.ua) — офіційний сайт інтернет-магазину електроінструментів Procraft в Україні. Каталог, ціни, знижки, доставка та відгуки." />
+  <link rel="canonical" href="https://insort.kyiv.ua/" />
+  <link rel="preconnect" href="https://wsrv.nl" crossorigin />
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+  <link rel="icon" type="image/png" href="https://insort.kyiv.ua/logo.png.jpg" />
+  <link rel="apple-touch-icon" href="https://insort.kyiv.ua/logo.png.jpg" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#3a463f" />
+  <script>(function(){var t=null;try{t=localStorage.getItem('insort_theme')}catch(e){}var d=t==='dark';document.documentElement.setAttribute('data-theme',d?'dark':'light');var m=document.querySelector('meta[name="theme-color"]');if(m&&d)m.setAttribute('content','#0d1210')}())</script>
+  <link rel="preconnect" href="https://insort-engine.onrender.com" crossorigin />
+  <script>
+/* ===== InSort: підключення сайту до двигуна (замість Firebase) =====
+   Єдине, що можна змінювати: адреса двигуна нижче.
+   '' (порожньо) = сайт і двигун на одній адресі. */
+window.INSORT_ENGINE_URL = 'https://insort-engine.onrender.com';
+(function () {
+  var ENGINE = String(window.INSORT_ENGINE_URL || '').replace(/\/$/, '');
+  var ADMIN_EMAIL = '09fushan90@gmail.com';
+  var TK = 'insort_admin_token_v1';
+  var BASE_URL = ENGINE;
+
+  /* ---------- допоміжне ---------- */
+  function abs(u) { return typeof u === 'string' && u.charAt(0) === '/' && u.indexOf('/uploads/') === 0 ? ENGINE + u : u; }
+  function rel(u) { // повна адреса нашого фото -> відносна (двигун так зберігає)
+    if (typeof u !== 'string') return u;
+    if (ENGINE && u.indexOf(ENGINE + '/uploads/') === 0) return u.slice(ENGINE.length);
+    return u;
+  } 'insort_admin_token_v1';   // той самий ключ, що й на сайті
 var $ = function (id) { return document.getElementById(id); };
 var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 var num = function (n) { return (Number(n) || 0).toLocaleString('uk-UA'); };
