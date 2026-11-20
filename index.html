@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+<script>
+/* показує помилку скрипта внизу сторінки (для діагностики) */
+(function(){var box=null,n=0;function show(m){if(n++>6)return;try{if(!box){box=document.createElement('div');box.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483647;background:#7a1010;color:#fff;font:12px/1.35 monospace;padding:8px 10px;border-radius:10px;word-break:break-word;max-height:45vh;overflow:auto';box.onclick=function(){box.remove();box=null;n=0};(document.body||document.documentElement).appendChild(box)}box.appendChild(document.createTextNode((n)+') '+m));box.appendChild(document.createElement('br'))}catch(e){}}
+window.addEventListener('error',function(e){if(e&&e.message&&!/ResizeObserver/.test(e.message))show(e.message+(e.lineno?' [рядок '+e.lineno+']':'')+(e.filename?' '+String(e.filename).split('/').pop():''))});
+window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;show('promise: '+(r&&r.message||r))})})();
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>InSort | Інтернет-магазин електроінструментів Procraft в Україні</title>
@@ -136,8 +143,8 @@ window.INSORT_ENGINE_URL = 'https://insort-engine.onrender.com';
   function kvPatch(name, sub, val) {
     return api('GET', '/api/admin/kv/' + name).then(function (cur) {
       if (cur == null || (Array.isArray(cur) && !cur.length)) cur = {};
-      if (Array.isArray(cur)) { var o = {}; cur.forEach(function (x, i) { if (x != null) o[i] = x; }); cur = o; }
-      if (val === null) delete cur[sub]; else cur[sub] = val;
+      if (Array.isArray(cur)) { var o = {}; cur.forEach(function (x, i) { if (x != null) o[(x && typeof x === 'object' && (x.id || x._dbKey)) ? String(x.id || x._dbKey) : i] = x; }); cur = o; }
+      if (val === null) { delete cur[sub]; Object.keys(cur).forEach(function (k) { var x = cur[k]; if (x && typeof x === 'object' && (String(x.id) === sub || String(x._dbKey) === sub)) delete cur[k]; }); } else cur[sub] = val;
       return api('PUT', '/api/admin/kv/' + name, { value: cur });
     });
   }
@@ -662,6 +669,17 @@ window.INSORT_ENGINE_URL = 'https://insort-engine.onrender.com';
 @media(max-width:620px){.reviews-modal .modal-card{min-height:88vh}.reviews-hero{padding:27px 22px 24px}.reviews-title-icon{width:50px;height:50px;border-radius:16px;font-size:25px}.reviews-head h2{font-size:27px}.reviews-body{padding:18px 16px 20px;min-height:470px}.reviews-list,.review-empty{min-height:370px;max-height:58vh}.review-form-modal .modal-card{padding:23px}.review-card{grid-template-columns:46px 1fr}.review-avatar{width:46px;height:46px}.review-write-btn{width:100%}}
 
 #userBadge,#registerMenuBtn,#loginMenuBtn,#authModal [onclick*="googleAuth"],#authModal [onclick*="openAuthBox('register')"]{display:none!important}
+.adpk-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 10px}.adpk-bar input{flex:1;min-width:220px}
+.adpk-count{font-weight:900;white-space:nowrap}.adpk-clear{border:1px solid var(--line);background:transparent;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer;color:inherit}
+.adpk-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px;max-height:560px;overflow:auto;padding:12px}
+.adpk{position:relative;border:2px solid var(--line);border-radius:18px;padding:8px 8px 10px;cursor:pointer;display:flex;flex-direction:column;gap:4px;background:rgba(255,255,255,.04);transition:border-color .12s,transform .12s}
+.adpk:hover{transform:translateY(-1px)}.adpk.on{border-color:#6fcf5a;box-shadow:0 0 0 2px rgba(111,207,90,.35)}
+.adpk-img{position:relative;aspect-ratio:1/1;background:#fff;border-radius:12px;overflow:hidden;display:grid;place-items:center}.adpk-img img{max-width:calc(100% - 14px);max-height:calc(100% - 14px);object-fit:contain}
+.adpk-tick{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:#6fcf5a;color:#10200c;font-weight:900;display:none;place-items:center;z-index:2}.adpk.on .adpk-tick{display:grid}
+.adpk-hit{position:absolute;top:6px;left:6px;background:#f4c430;color:#3b2d00;font-size:11px;font-weight:900;padding:2px 8px;border-radius:999px;z-index:2}
+.adpk-name{font-weight:800;font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3.75em}
+.adpk-meta{font-size:11.5px;opacity:.75}.adpk-price{font-weight:900;font-size:14px}.adpk-price s{opacity:.6;font-weight:600;font-size:12px}
+.adpk-more{grid-column:1/-1;text-align:center;opacity:.8;padding:8px;font-size:13px}
 /* режим вбудованих інструментів для адмінки: ?embed=<розділ> */
 html.embed-office body>:not(.modal):not(script):not(style):not(link):not(noscript){display:none!important}
 html.embed-office body{overflow:auto!important;background:transparent!important}
@@ -681,6 +699,7 @@ html.embed-office #officeModal select option{background:#303332;color:#fff}
 html.embed-office #officeModal :is(th,td,table){border-color:rgba(255,255,255,.2)!important;background:transparent!important}
 html.embed-office #officeModal .office-check-row input{accent-color:#8fd17f}
 html.embed-office #officeModal .empty,html.embed-office #officeModal [class*="empty"]{background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important;color:#fff!important}
+html.embed-office #officeModal .adpk{background:#3d4140!important;border-color:rgba(255,255,255,.18)!important;color:#fff}html.embed-office #officeModal .adpk.on{border-color:#6fcf5a!important}html.embed-office #officeModal .adpk-grid{background:#303332!important;border-radius:14px}html.embed-office #officeModal .adpk-clear{color:#fff!important;border-color:rgba(255,255,255,.3)!important}
 html.embed-office #officeModal :is(.office-ad-product-check,.office-ad-check,.office-cat-chip,.office-cat-subs,.office-preview-grid){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.22)!important}
 html.embed-office #officeModal [class*="office-ad"]:not(.office-ad-preview),html.embed-office #officeModal [class*="office-cat"]{border-color:rgba(255,255,255,.22)!important}
 html.embed-office #officeModal .office-category-manager{background:transparent!important;border-color:transparent!important}
@@ -1324,7 +1343,7 @@ function IC(n,c){return '<svg class="ic'+(c?' '+c:'')+'" aria-hidden="true"><use
 </div>
 </section>
 <section class="office-section" id="officeSectionAds">
-<h3>Рекламне поле</h3><div class="office-ad-box"><div class="office-grid"><input id="officeAdId" type="hidden"><div class="office-field"><label>Заголовок реклами</label><input id="officeAdTitle" placeholder="Наприклад: Акція тижня"></div><div class="office-field"><label>Короткий текст</label><input id="officeAdText" placeholder="Опис реклами або умови акції"></div><div class="office-field office-full"><label>Фото реклами — файл з комп’ютера</label><input id="officeAdFile" type="file" accept="image/*" onchange="handleAdFile(event)"><img id="officeAdPreview" class="office-ad-preview" alt="Попередній перегляд"></div><div class="office-field office-full"><label>Або посилання / data:image для фото реклами</label><input id="officeAdImage" placeholder="https://... або data:image"></div></div><h4>Усі реклами</h4><div class="office-ads-list" id="officeAdsList"></div><h4>Прикріпити товари до реклами</h4><div class="office-ad-products" id="officeAdProducts"></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeAd()">Зберегти рекламу</button><button class="big-btn secondary" style="background:var(--dark-btn);color:#fff" onclick="resetAdForm()">Очистити рекламу</button><button class="big-btn secondary danger-btn" onclick="deleteOfficeAd()">Видалити рекламу</button></div></div>
+<h3>Рекламне поле</h3><div class="office-ad-box"><div class="office-grid"><input id="officeAdId" type="hidden"><div class="office-field"><label>Заголовок реклами</label><input id="officeAdTitle" placeholder="Наприклад: Акція тижня"></div><div class="office-field"><label>Короткий текст</label><input id="officeAdText" placeholder="Опис реклами або умови акції"></div><div class="office-field office-full"><label>Фото реклами — файл з комп’ютера</label><input id="officeAdFile" type="file" accept="image/*" onchange="handleAdFile(event)"><img id="officeAdPreview" class="office-ad-preview" alt="Попередній перегляд"></div><div class="office-field office-full"><label>Або посилання / data:image для фото реклами</label><input id="officeAdImage" placeholder="https://... або data:image"></div></div><h4>Усі реклами</h4><div class="office-ads-list" id="officeAdsList"></div><h4>Прикріпити товари до реклами</h4><div class="adpk-bar"><input id="officeAdSearch" type="search" placeholder="Пошук товару: назва, артикул або категорія" oninput="renderOfficeAdProducts()" autocomplete="off"><span class="adpk-count" id="officeAdCount">Обрано: 0</span><button type="button" class="adpk-clear" onclick="adPickClear()">Зняти вибір</button></div><div class="office-ad-products adpk-grid" id="officeAdProducts"></div><div class="office-actions"><button class="big-btn primary" onclick="saveOfficeAd()">Зберегти рекламу</button><button class="big-btn secondary" style="background:var(--dark-btn);color:#fff" onclick="resetAdForm()">Очистити рекламу</button><button class="big-btn secondary danger-btn" onclick="deleteOfficeAd()">Видалити рекламу</button></div></div>
 </section>
 <section class="office-section" id="officeSectionCategories">
 <h3>Категорії та підкатегорії</h3><div class="office-category-manager"><div class="office-cat-card"><h4>Додати основну категорію</h4><div class="office-field"><label>Назва основної категорії</label><input id="officeNewMainCategory" placeholder="Наприклад: Акумуляторний інструмент"></div><div class="office-actions"><button class="big-btn primary" onclick="addOfficeMainCategory()">Додати категорію</button></div><h4>Додати підкатегорію</h4><div class="office-field"><label>До якої основної категорії</label><select id="officeSubParent"></select></div><div class="office-field"><label>Назва підкатегорії</label><input id="officeNewSubCategory" placeholder="Наприклад: Шуруповерти"></div><div class="office-actions"><button class="big-btn primary" onclick="addOfficeSubCategory()">Додати підкатегорію</button></div></div><div class="office-cat-card"><h4>Список категорій</h4><div class="office-cat-list" id="officeCategoriesList"></div></div></div>
@@ -1499,8 +1518,9 @@ async function removeAdEverywhere(ad,i){
     }
   }
 
+  const hasRealId=!!text(ad&&(ad.id||ad._dbKey||ad.key||ad.adId));
   let results=[];
-  if(key){
+  if(key&&hasRealId){
     results=await Promise.all([
       removePath('ads/'+key),
       removePath('catalog/ads/'+key)
@@ -2811,13 +2831,36 @@ function renderAdSide(ids){
 }
 function openAdModal(){const ad=currentAd();if(!ad){showInfo('Рекламне поле','Рекламу ще не додано. Зайди в Офіс і додай фото, текст та прикріплені товари.');return}const photo=pickUrl(ad.image||ad.photo||ad.img);$('adModalTitle').textContent=text(ad.title)||'Реклама';$('adModalText').textContent=text(ad.text||ad.description)||'';if(photo){$('adModalImg').style.display='block';$('adModalImg').src=photo}else{$('adModalImg').style.display='none'}const ids=Array.isArray(ad.productIds)?ad.productIds:[];const linked=ids.map(productByKey).filter(Boolean);$('adLinkedProducts').innerHTML=linked.length?linked.map(p=>{const i=products.indexOf(p),img=pImg(p);return '<div class="ad-linked-card" onclick="closeAdModal();openProduct('+i+')">'+(img?'<img src="'+esc(img)+'" alt="'+esc(pName(p))+'">':'<div class="product-img missing-photo" style="height:120px">'+noPhotoHtml()+'</div>')+'<b>'+esc(pName(p))+'</b><br><span style="color:#66736b">'+esc(money(pPrice(p)))+'</span></div>'}).join(''):'<div class="empty">До реклами ще не прикріплено товари</div>';$('adModal').classList.add('show');document.body.style.overflow='hidden'}
 function closeAdModal(){$('adModal').classList.remove('show');document.body.style.overflow=''}
-function selectedAdProductIds(){return Array.from(document.querySelectorAll('.office-ad-product-check:checked')).map(x=>x.value)}
+const adSel=new Set();
+function selectedAdProductIds(){return Array.from(adSel)}
+function adPickToggle(key,el){if(adSel.has(key))adSel.delete(key);else adSel.add(key);if(el)el.classList.toggle('on',adSel.has(key));const c=$('officeAdCount');if(c)c.textContent='Обрано: '+adSel.size}
+function adPickClear(){adSel.clear();renderOfficeAdProducts()}
 function renderOfficeAdsList(){
   const box=$('officeAdsList');if(!box)return;
   box.innerHTML=ads.length?ads.map((ad,i)=>{const img=pickUrl(ad.image||ad.photo||ad.img);const count=Array.isArray(ad.productIds)?ad.productIds.length:0;return '<div class="office-ad-row"><div>'+(img?'<img src="'+esc(img)+'" alt="">':'<div style="width:58px;height:58px;border-radius:12px;background:#eef6ef;display:grid;place-items:center;color:#8da095">'+IC('megaphone')+'</div>')+'</div><div><div class="office-ad-row-title">'+esc(text(ad.title)||'Рекламне поле')+'</div><div class="office-ad-row-meta">'+count+' товарів прикріплено</div></div><div class="office-ad-row-actions"><button type="button" onclick="editOfficeAd('+i+')">Редагувати</button><button type="button" class="danger-btn" onclick="deleteOfficeAdByIndex('+i+')">Видалити</button></div></div>'}).join(''):'<div class="empty">Поки що реклами немає. Заповни форму нижче і натисни “Зберегти рекламу”.</div>';
 }
-function renderOfficeAdProducts(){const box=$('officeAdProducts');if(!box)return;box.innerHTML=products.length?products.map((p,i)=>'<label class="office-ad-check"><input class="office-ad-product-check" type="checkbox" value="'+esc(productKey(p,i))+'"><span>'+esc(pName(p))+'<br><small style="color:#66736b">'+esc(money(pPrice(p)))+'</small></span></label>').join(''):'<div class="empty">Спочатку додай товари в базу</div>';renderOfficeAdsList()}
-function fillAdForm(ad){if(!$('officeAdTitle'))return;ad=ad||null;const ids=ad&&Array.isArray(ad.productIds)?ad.productIds.map(text):[];$('officeAdId').value=ad?text(ad.id||ad._dbKey||''):'';$('officeAdTitle').value=ad?text(ad.title):'';$('officeAdText').value=ad?text(ad.text||ad.description):'';$('officeAdImage').value=ad?pickUrl(ad.image||ad.photo||ad.img):'';if($('officeAdFile'))$('officeAdFile').value='';const prev=$('officeAdPreview');if(prev&&$('officeAdImage').value){prev.src=$('officeAdImage').value;prev.style.display='block'}else if(prev){prev.removeAttribute('src');prev.style.display='none'}document.querySelectorAll('.office-ad-product-check').forEach(ch=>{ch.checked=ids.includes(text(ch.value))})}
+function renderOfficeAdProducts(){
+  const box=$('officeAdProducts');if(!box)return;
+  if(!products.length){box.innerHTML='<div class="empty">Спочатку додай товари в базу</div>';renderOfficeAdsList();return}
+  const q=low(($('officeAdSearch')||{}).value||'');
+  const words=q.split(/\s+/).filter(Boolean);
+  const hit=(p)=>{if(!words.length)return true;const h=low(pName(p)+' '+pArticle(p)+' '+pCat(p)+' '+(p.mainCategory||p.main||''));return words.every(w=>h.includes(w))};
+  const all=products.map((p,i)=>({p,i,k:productKey(p,i)}));
+  const chosen=all.filter(x=>adSel.has(x.k)),rest=all.filter(x=>!adSel.has(x.k)&&hit(x.p));
+  const LIMIT=60,shown=chosen.concat(rest.slice(0,LIMIT));
+  const cardHtml=({p,i,k})=>{
+    const photo=hasPhoto(p),old=pOld(p),price=pPrice(p);
+    const img=photo?'<img loading="lazy" decoding="async" src="'+esc(thumb(pImg(p),240))+'" data-orig="'+esc(pImg(p))+'" alt="" onerror="imgFallback(this)">':noPhotoHtml();
+    return '<div class="adpk'+(adSel.has(k)?' on':'')+'" data-k="'+esc(k)+'" onclick="adPickToggle(this.dataset.k,this)">'
+      +'<div class="adpk-img">'+(pIsHit(p)?'<span class="adpk-hit">ХІТ</span>':'')+'<span class="adpk-tick">✓</span>'+img+'</div>'
+      +'<div class="adpk-name">'+esc(pName(p))+'</div>'
+      +'<div class="adpk-meta">'+(pArticle(p)?'Арт: '+esc(pArticle(p)):'')+'</div>'
+      +'<div class="adpk-price">'+(old?'<s>'+esc(money(old))+'</s> ':'')+esc(money(price))+'</div></div>'};
+  box.innerHTML=(shown.length?shown.map(cardHtml).join(''):'<div class="empty" style="grid-column:1/-1">Нічого не знайдено</div>')
+    +(rest.length>LIMIT?'<div class="adpk-more">Показано '+LIMIT+' з '+rest.length+'. Уточніть пошук, щоб побачити інші товари.</div>':'');
+  const c=$('officeAdCount');if(c)c.textContent='Обрано: '+adSel.size;
+  renderOfficeAdsList()}
+function fillAdForm(ad){if(!$('officeAdTitle'))return;ad=ad||null;const ids=ad&&Array.isArray(ad.productIds)?ad.productIds.map(text):[];$('officeAdId').value=ad?text(ad.id||ad._dbKey||''):'';$('officeAdTitle').value=ad?text(ad.title):'';$('officeAdText').value=ad?text(ad.text||ad.description):'';$('officeAdImage').value=ad?pickUrl(ad.image||ad.photo||ad.img):'';if($('officeAdFile'))$('officeAdFile').value='';const prev=$('officeAdPreview');if(prev&&$('officeAdImage').value){prev.src=$('officeAdImage').value;prev.style.display='block'}else if(prev){prev.removeAttribute('src');prev.style.display='none'}adSel.clear();ids.forEach(x=>adSel.add(text(x)));renderOfficeAdProducts()}
 function editOfficeAd(i){if(!ads[i])return;currentAdIndex=i;fillAdForm(ads[i]);renderAd();showToast('Реклама відкрита для редагування')}
 function resetAdForm(){fillAdForm(null)}
 function handleAdFile(e){const file=e.target.files&&e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){showInfo('Не фото','Обери файл зображення.');return}const reader=new FileReader();reader.onload=()=>{if($('officeAdImage'))$('officeAdImage').value=reader.result;if($('officeAdPreview')){$('officeAdPreview').src=reader.result;$('officeAdPreview').style.display='block'}};reader.readAsDataURL(file)}
