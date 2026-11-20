@@ -211,6 +211,110 @@ window.addEventListener('message', function (e) {
 
 
 /* Стилі для вікон інструментів (iframe того ж сайту): вставляємо самі, щоб вигляд був однаковий навіть зі старою версією index.html */
+var EMBED_CSS = "/* \u0440\u0435\u0436\u0438\u043c \u0432\u0431\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u0445 \u0456\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0456\u0432 \u0434\u043b\u044f \u0430\u0434\u043c\u0456\u043d\u043a\u0438: ?embed=<\u0440\u043e\u0437\u0434\u0456\u043b> */\nhtml.embed-office body>:not(.modal):not(script):not(style):not(link):not(noscript){display:none!important}\nhtml.embed-office body{overflow:auto!important;background:transparent!important}\nhtml.embed-office #officeModal{display:block!important;position:static!important;inset:auto!important;background:transparent!important;padding:0!important}\nhtml.embed-office #officeModal .modal-card{width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important;background:transparent!important;padding:16px 18px 70px!important;transform:none!important;border-radius:0!important}\nhtml.embed-office{--line:rgba(255,255,255,.22)!important;--muted:#dfe5e1!important}\nhtml.embed-office body{background:#3a3d3c!important}\nhtml.embed-office #officeModal :not(button):not(button *):not(svg *):not(option){color:#fff!important}\nhtml.embed-office #officeModal .office-item-meta,html.embed-office #officeModal .office-product-search-info,html.embed-office #officeModal .office-note{opacity:.88}\nhtml.embed-office #officeModal :is(.office-ad-box,.office-ad-products,.office-ads-list,.office-list,.office-product-search-box,.bulk-price-box,.office-cat-card,.office-hero-preview,.office-category-manager){background:#454948!important;border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal :is(.office-ad-row,.office-cat-row,.office-check-row,.office-note){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important}\nhtml.embed-office #officeModal .office-item{background:transparent!important;border-color:rgba(255,255,255,.18)!important}\nhtml.embed-office #officeModal .office-item.bulk-selected{background:rgba(143,209,127,.28)!important}\nhtml.embed-office #officeModal :is(input,select,textarea){background:#303332!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important}\nhtml.embed-office #officeModal ::placeholder{color:#cdd4cf!important;opacity:1}\nhtml.embed-office #officeModal select option{background:#303332;color:#fff}\nhtml.embed-office #officeModal :is(th,td,table){border-color:rgba(255,255,255,.2)!important;background:transparent!important}\nhtml.embed-office #officeModal .office-check-row input{accent-color:#8fd17f}\nhtml.embed-office #officeModal .empty,html.embed-office #officeModal [class*=\"empty\"]{background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important;color:#fff!important}\nhtml.embed-office #officeModal .adpk{background:#3d4140!important;border-color:rgba(255,255,255,.18)!important;color:#fff}html.embed-office #officeModal .adpk.on{border-color:#6fcf5a!important}html.embed-office #officeModal .adpk-grid{background:#303332!important;border-radius:14px}html.embed-office #officeModal .adpk-clear{color:#fff!important;border-color:rgba(255,255,255,.3)!important}\nhtml.embed-office #officeModal :is(.office-ad-product-check,.office-ad-check,.office-cat-chip,.office-cat-subs,.office-preview-grid){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal [class*=\"office-ad\"]:not(.office-ad-preview),html.embed-office #officeModal [class*=\"office-cat\"]{border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal .office-category-manager{background:transparent!important;border-color:transparent!important}\nhtml.embed-office #officeModal .modal-close,html.embed-office #officeModal h2,html.embed-office #officeModal .office-tabs,html.embed-office #officeNotice{display:none!important}\n";
+function skinTools() {
+  var f = $('tools'), d; try { d = f.contentDocument; } catch (e) { return; }
+  if (!d || !d.documentElement) return;
+  var root = d.documentElement; root.classList.add('embed-office');
+  if (!d.getElementById('adm-skin')) { var st = d.createElement('style'); st.id = 'adm-skin'; st.textConten 'insort_admin_token_v1';   // той самий ключ, що й на сайті
+var $ = function (id) { return document.getElementById(id); };
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+var num = function (n) { return (Number(n) || 0).toLocaleString('uk-UA'); };
+var money = function (n) { return num(Math.round(n)) + ' грн'; };
+var STATUS = { new: 'Нове', accepted: 'Прийнято', done: 'Виконано', cancelled: 'Скасовано' };
+
+function tok() { try { var o = JSON.parse(localStorage.getItem(TK) || 'null'); if (o && o.t && o.exp > Date.now()) return o.t; } catch (e) {} return ''; }
+function setTok(t) { try { if (t) localStorage.setItem(TK, JSON.stringify({ t: t, exp: Date.now() + 11.5 * 3600e3 })); else localStorage.removeItem(TK); } catch (e) {} }
+function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { t.classList.remove('show'); }, 2200); }
+
+function api(method, path, body) {
+  var h = {}; if (body !== undefined) h['Content-Type'] = 'application/json';
+  if (tok()) h.Authorization = 'Bearer ' + tok();
+  return fetch(ENGINE + path, { method: method, headers: h, body: body !== undefined ? JSON.stringify(body) : undefined }).then(function (r) {
+    return r.text().then(function (t) {
+      var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+      if (r.status === 401 && path.indexOf('/login') < 0) { setTok(''); showApp(false); throw new Error('Сеанс завершився. Увійдіть знову.'); }
+      if (!r.ok) { var er = new Error((j && j.error) || 'Помилка ' + r.status); er.status = r.status; throw er; }
+      return j;
+    });
+  });
+}
+
+/* ---------- структура меню ---------- */
+var TOOL = 'tool';
+var MENU = [
+  { id: 'orders', t: 'Замовлення', kind: 'orders' },
+  { sep: 'Інструменти' },
+  { id: 'g-products', t: 'Товари', sub: [
+    { id: 'products', t: 'Додавання та редагування', kind: TOOL, tab: 'products' },
+    { id: 'prices', t: 'Зміна цін', kind: TOOL, tab: 'prices' },
+    { id: 'procraft', t: 'Імпорт Procraft', kind: TOOL, tab: 'procraft' },
+    { id: 'feed', t: 'Автооновлення Procraft', kind: 'feed' },
+    { id: 'excel', t: 'Імпорт / експорт Excel', kind: TOOL, tab: 'excel' }
+  ] },
+  { id: 'hits', t: 'Хіти продажів', kind: TOOL, tab: 'officeHits' },
+  { id: 'ads', t: 'Реклама', kind: TOOL, tab: 'ads' },
+  { id: 'categories', t: 'Категорії', kind: TOOL, tab: 'categories' },
+  { id: 'hero', t: 'Головне поле', kind: TOOL, tab: 'hero' },
+  { sep: 'Статистика' },
+  { id: 'g-an', t: 'Аналітика сайту', sub: [
+    { id: 'an-sales', t: 'Продажі та замовлення', kind: 'an', view: 'sales' },
+    { id: 'an-products', t: 'Товари: перегляди й кошик', kind: 'an', view: 'products' },
+    { id: 'an-funnel', t: 'Воронка та динаміка', kind: 'an', view: 'funnel' },
+    { id: 'an-cats', t: 'Категорії', kind: 'an', view: 'cats' },
+    { id: 'an-time', t: 'Коли замовляють', kind: 'an', view: 'time' },
+    { id: 'an-dead', t: 'Товари без руху', kind: 'an', view: 'dead' }
+  ] }
+];
+var ITEMS = {};
+function buildNav() {
+  var h = '';
+  MENU.forEach(function (m) {
+    if (m.sep) { h += '<div class="sep">' + esc(m.sep) + '</div>'; return; }
+    if (m.sub) {
+      m.sub.forEach(function (s) { ITEMS[s.id] = s; s.parent = m.id; });
+      h += '<div class="grp" id="' + m.id + '"><button class="it" data-grp="' + m.id + '">' + esc(m.t) + '<span class="chev">▶</span></button><div class="sub">' +
+        m.sub.map(function (s) { return '<button class="it" data-go="' + s.id + '">' + esc(s.t) + '</button>'; }).join('') + '</div></div>';
+    } else { ITEMS[m.id] = m; h += '<button class="it" data-go="' + m.id + '">' + esc(m.t) + '</button>'; }
+  });
+  $('nav').innerHTML = h;
+  $('nav').querySelectorAll('[data-grp]').forEach(function (b) { b.onclick = function () { $(b.dataset.grp).classList.toggle('open'); }; });
+  $('nav').querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(b.dataset.go); $('side').classList.remove('open'); var sh = document.querySelector('.shade'); if (sh) sh.remove(); }; });
+}
+
+var cur = null, toolsReady = false, toolsTab = null, anDays = 30, ordersFilter = 'all', ORDERS = [];
+
+function go(id) {
+  var it = ITEMS[id]; if (!it) return; cur = id;
+  document.querySelectorAll('#nav .it').forEach(function (b) { b.classList.toggle('on', b.dataset.go === id); });
+  if (it.parent) $(it.parent).classList.add('open');
+  $('title').textContent = it.t; $('barRight').innerHTML = '';
+  try { location.hash = id; } catch (e) {}
+  if (it.kind === TOOL) { showTool(it.tab); return; }
+  $('tools').hidden = true; $('toolsLoading').hidden = true; $('native').hidden = false;
+  if (it.kind === 'orders') loadOrders(); else if (it.kind === 'an') loadAnalytics(it.view); else if (it.kind === 'feed') loadFeed();
+}
+
+function showTool(tab) {
+  $('native').hidden = true; $('tools').hidden = false;
+  var f = $('tools');
+  if (!toolsReady && !f.dataset.loading) {
+    f.dataset.loading = '1'; $('toolsLoading').hidden = false; toolsTab = tab;
+    f.src = 'index.html?embed=' + tab;
+  } else if (toolsReady) { f.contentWindow.postMessage({ insortTab: tab }, location.origin); }
+  else toolsTab = tab;
+}
+window.addEventListener('message', function (e) {
+  if (e.origin !== location.origin || !e.data) return;
+  if (e.data.insort === 'ready') {
+    skinTools(); toolsReady = true; $('toolsLoading').hidden = true;
+    var it = ITEMS[cur]; if (it && it.kind === TOOL) $('tools').contentWindow.postMessage({ insortTab: it.tab }, location.origin);
+  }
+  if (e.data.insort === 'noauth') { setTok(''); showApp(false); }
+});
+
+
+/* Стилі для вікон інструментів (iframe того ж сайту): вставляємо самі, щоб вигляд був однаковий навіть зі старою версією index.html */
 var EMBED_CSS = "/* \u0440\u0435\u0436\u0438\u043c \u0432\u0431\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u0445 \u0456\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0456\u0432 \u0434\u043b\u044f \u0430\u0434\u043c\u0456\u043d\u043a\u0438: ?embed=<\u0440\u043e\u0437\u0434\u0456\u043b> */\nhtml.embed-office body>:not(.modal):not(script):not(style):not(link):not(noscript){display:none!important}\nhtml.embed-office body{overflow:auto!important;background:transparent!important}\nhtml.embed-office #officeModal{display:block!important;position:static!important;inset:auto!important;background:transparent!important;padding:0!important}\nhtml.embed-office #officeModal .modal-card{width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important;background:transparent!important;padding:16px 18px 70px!important;transform:none!important;border-radius:0!important}\nhtml.embed-office{--line:rgba(255,255,255,.22)!important;--muted:#dfe5e1!important}\nhtml.embed-office body{background:#3a3d3c!important}\nhtml.embed-office #officeModal :not(button):not(button *):not(svg *):not(option){color:#fff!important}\nhtml.embed-office #officeModal .office-item-meta,html.embed-office #officeModal .office-product-search-info,html.embed-office #officeModal .office-note{opacity:.88}\nhtml.embed-office #officeModal :is(.office-ad-box,.office-ad-products,.office-ads-list,.office-list,.office-product-search-box,.bulk-price-box,.office-cat-card,.office-hero-preview,.office-category-manager){background:#454948!important;border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal :is(.office-ad-row,.office-cat-row,.office-check-row,.office-note){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important}\nhtml.embed-office #officeModal .office-item{background:transparent!important;border-color:rgba(255,255,255,.18)!important}\nhtml.embed-office #officeModal .office-item.bulk-selected{background:rgba(143,209,127,.28)!important}\nhtml.embed-office #officeModal :is(input,select,textarea){background:#303332!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important}\nhtml.embed-office #officeModal ::placeholder{color:#cdd4cf!important;opacity:1}\nhtml.embed-office #officeModal select option{background:#303332;color:#fff}\nhtml.embed-office #officeModal :is(th,td,table){border-color:rgba(255,255,255,.2)!important;background:transparent!important}\nhtml.embed-office #officeModal .office-check-row input{accent-color:#8fd17f}\nhtml.embed-office #officeModal .empty,html.embed-office #officeModal [class*=\"empty\"]{background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.2)!important;color:#fff!important}\nhtml.embed-office #officeModal :is(.office-ad-product-check,.office-ad-check,.office-cat-chip,.office-cat-subs,.office-preview-grid){background:rgba(0,0,0,.14)!important;border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal [class*=\"office-ad\"]:not(.office-ad-preview),html.embed-office #officeModal [class*=\"office-cat\"]{border-color:rgba(255,255,255,.22)!important}\nhtml.embed-office #officeModal .office-category-manager{background:transparent!important;border-color:transparent!important}\nhtml.embed-office #officeModal .modal-close,html.embed-office #officeModal h2,html.embed-office #officeModal .office-tabs,html.embed-office #officeNotice{display:none!important}\n";
 function skinTools() {
   var f = $('tools'), d; try { d = f.contentDocument; } catch (e) { return; }
