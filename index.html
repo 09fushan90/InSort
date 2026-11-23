@@ -1037,21 +1037,79 @@ html.embed-office #officeModal .modal-close,html.embed-office #officeModal h2,ht
 
   /* ===== телефон/планшет: кошик замість меню, Каталог справа ===== */
   .side-menu,.menu-overlay,.menu-theme-row,.theme-toggle,.menu-theme-btn{display:none!important}
-  .mob-cart-btn{position:fixed;top:15px;left:5px;width:46px;height:46px;border-radius:50%;background:#1b1b1b;color:#a9d99e;border:1px solid #2f5f2f;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:9999;box-shadow:0 12px 28px rgba(0,0,0,.22);padding:0}
+  .mob-cart-btn{position:fixed;top:15px;left:calc(50% - 134px);width:46px;height:46px;border-radius:50%;background:#1b1b1b;color:#a9d99e;border:1px solid #2f5f2f;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:9999;box-shadow:0 12px 28px rgba(0,0,0,.22);padding:0}
   .mob-cart-btn .ic{width:24px;height:24px}
   .mob-cart-count{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:#6fcf5a;color:#10200c;font-size:12px;font-weight:900;display:grid;place-items:center;padding:0 5px}
   @media(max-width:1000px){
     .top-links{display:flex!important;margin-right:0}
     .top-links .top-link:not(:first-child){display:none}
-    .top-links .top-link{background:var(--green,#5aaa4b);color:#fff!important;padding:10px 18px;border-radius:999px;font-size:15px}
+    .top-links{align-items:center;gap:4px;margin-right:6px}
+    .top-links .top-link{background:none;border:0;padding:8px 12px;border-radius:12px;font-weight:800;font-size:14px;color:var(--dark);text-decoration:none;cursor:pointer;font-family:inherit}
   }
   .theme-sw{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:10px 14px;border:1px solid var(--line);border-radius:14px}
   .theme-sw-label{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px}.theme-sw-label svg{width:18px;height:18px}
   .theme-sw-mob{display:none}
   @media(max-width:1000px){.theme-sw-desk{display:none}.theme-sw-mob{display:flex}}
-  .cart-tabs{display:flex;gap:8px;margin:0 44px 16px 0;flex-wrap:wrap}
-  .cart-tab{border:1px solid var(--line);background:transparent;color:inherit;border-radius:999px;padding:9px 16px;font:inherit;font-weight:800;cursor:pointer}
-  .cart-tab.active{background:var(--dark-btn,#1b1b1b);color:#fff;border-color:transparent}
+  .cart-card{width:min(600px,100%)!important;padding:26px 26px 24px!important;border-radius:28px!important}
+  .cart-head{display:flex;align-items:center;gap:12px;margin:0 46px 14px 0}
+  .cart-head h2{margin:0;font-size:28px;letter-spacing:-.5px}
+  .cart-head-count{background:rgba(111,207,90,.18);color:var(--green);font-weight:900;font-size:13px;padding:5px 11px;border-radius:999px}.cart-head-count:empty{display:none}
+  .cart-tabs{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(127,140,132,.14);margin:0 0 18px;width:max-content;max-width:100%}
+  .cart-tab{border:0;background:transparent;color:inherit;border-radius:999px;padding:9px 18px;font:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:background .25s,color .25s,box-shadow .25s;opacity:.75}
+  .cart-tab.active{background:#fff;color:#10200c;opacity:1;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  html[data-theme="dark"] .cart-tab.active{background:#5aaa4b;color:#0c1a0d}
+  .cart-list{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto;padding:2px}
+  .cart-item{display:grid;grid-template-columns:76px 1fr auto;gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:18px;background:rgba(127,140,132,.07)}
+  .cart-item-img{width:76px;height:76px;border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}.cart-item-img img{width:100%;height:100%;object-fit:contain}.cart-item-img .ic{width:30px;height:30px;color:#9aa59e}
+  .cart-item-name{font-weight:800;font-size:14.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cart-item-price{font-size:13px;opacity:.7;margin:3px 0 8px;font-weight:700}
+  .cart-qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .cart-qty button{width:32px;height:30px;border:0;background:transparent;color:inherit;font-size:18px;font-weight:800;cursor:pointer}.cart-qty button:hover{background:rgba(111,207,90,.18)}
+  .cart-qty span{min-width:30px;text-align:center;font-weight:900;font-size:14px}
+  .cart-item-side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;gap:8px}.cart-item-side b{font-size:15px;white-space:nowrap}
+  .cart-item-del{width:28px;height:28px;border-radius:50%;border:0;background:rgba(255,59,48,.12);color:#e0392d;font-size:18px;line-height:1;cursor:pointer}.cart-item-del:hover{background:rgba(255,59,48,.24)}
+  .cart-summary{margin-top:16px;padding:16px 18px;border-radius:20px;border:1px solid var(--line);background:rgba(111,207,90,.07)}
+  .cart-sum-row{display:flex;justify-content:space-between;align-items:center;font-weight:700;opacity:.85;margin-bottom:6px}
+  .cart-sum-row.total{opacity:1;font-size:20px;font-weight:900;margin:6px 0 14px}.cart-sum-row.total b{color:var(--green)}
+  .cart-checkout{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:16px;padding:16px 20px;font:inherit;font-weight:900;font-size:17px;cursor:pointer;color:#0c1a0d;background:linear-gradient(135deg,#8fdc7c,#5aaa4b);box-shadow:0 10px 24px rgba(90,170,75,.35);transition:transform .15s,box-shadow .15s}
+  .cart-checkout:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(90,170,75,.45)}.cart-checkout svg{width:20px;height:20px}
+  .cart-clear{display:block;margin:12px auto 0;border:0;background:transparent;color:inherit;opacity:.6;font:inherit;font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline}.cart-clear:hover{opacity:1}
+
+  /* кошик: нове оформлення кнопок */
+  .cart-summary{display:flex!important;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;position:sticky;bottom:0;padding:14px 16px!important}
+  .cart-sum-info{display:flex;flex-direction:column;line-height:1.15}
+  .cart-sum-label{font-size:12px;font-weight:700;opacity:.65}
+  .cart-sum-big{font-size:24px;font-weight:900;color:var(--green)}
+  .cart-sum-small{font-size:12px;font-weight:700;opacity:.6}
+  .cart-sum-actions{display:flex;align-items:center;gap:10px;flex:1 1 220px;justify-content:flex-end}
+  .cart-trash{width:50px;height:50px;border-radius:16px;border:1.5px solid var(--line);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s;flex:0 0 50px}
+  .cart-trash svg{width:22px;height:22px}.cart-trash:hover{background:rgba(255,59,48,.12);color:#e0392d;border-color:rgba(255,59,48,.45)}
+  .cart-checkout{width:auto!important;flex:1 1 150px;max-width:240px;height:50px;border-radius:16px!important;padding:0 22px!important;font-size:16px!important;background:#101512!important;color:#fff!important;box-shadow:none!important;border:1.5px solid #5aaa4b!important;transition:background .2s,color .2s,transform .15s}
+  .cart-checkout:hover{background:#5aaa4b!important;color:#0c1a0d!important;transform:none!important;box-shadow:none!important}
+  html[data-theme="dark"] .cart-checkout{background:#5aaa4b!important;color:#0c1a0d!important}
+  html[data-theme="dark"] .cart-checkout:hover{background:#8fdc7c!important}
+  .cart-qty{border:0!important;gap:8px;overflow:visible!important}
+  .cart-qty button{width:30px!important;height:30px!important;border-radius:50%!important;border:1.5px solid var(--line)!important;font-size:17px!important;line-height:1}
+  .cart-qty span{min-width:22px!important}
+  .cart-item-del{background:transparent!important;border:1.5px solid rgba(255,59,48,.35)!important}
+  @media(max-width:520px){.cart-sum-actions{flex:1 1 100%}.cart-checkout{max-width:none}}
+
+  /* кошик: темна панель + кнопка як «дві рівні кнопки» */
+  .cart-summary{display:block!important;position:static!important;background:transparent!important;border:0!important;padding:0!important;margin-top:16px}
+  .cart-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#101512;color:#fff;border-radius:20px;padding:12px 12px 12px 18px}
+  .cart-bar .cart-sum-info{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+  .cart-bar .cart-sum-label{font-size:12px;font-weight:700;opacity:.65;color:#fff}
+  .cart-bar .cart-sum-big{font-size:22px;font-weight:900;color:#8fdc7c;white-space:nowrap}
+  .cart-bar .cart-checkout{width:auto!important;max-width:none!important;flex:0 1 auto!important;height:auto!important;padding:15px 22px!important;border-radius:14px!important;background:#5aaa4b!important;color:#fff!important;border:0!important;border-bottom:4px solid #3f8a35!important;font-weight:900!important;font-size:15px!important;line-height:1.15;text-align:center;box-shadow:none!important;transition:filter .15s,transform .1s}
+  .cart-bar .cart-checkout:hover{background:#5aaa4b!important;color:#fff!important;filter:brightness(1.08);transform:none!important}
+  .cart-bar .cart-checkout:active{transform:translateY(2px)!important;border-bottom-width:2px!important}
+  html[data-theme="dark"] .cart-bar .cart-checkout{background:#5aaa4b!important;color:#fff!important}
+  @media(max-width:420px){.cart-bar{padding:10px 10px 10px 14px}.cart-bar .cart-checkout{padding:13px 14px!important;font-size:14px!important}.cart-bar .cart-sum-big{font-size:19px}}
+  .cart-empty{text-align:center;padding:30px 10px 16px}
+  .cart-empty-ico{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;color:var(--green);background:rgba(111,207,90,.14);border:1px dashed rgba(111,207,90,.45)}.cart-empty-ico svg{width:42px;height:42px}
+  .cart-empty-title{font-size:20px;font-weight:900;margin-bottom:6px}.cart-empty-sub{opacity:.65;font-weight:600;font-size:14px;max-width:290px;margin:0 auto 18px;line-height:1.4}
+  .cart-empty-btn{border:0;border-radius:14px;padding:13px 26px;font:inherit;font-weight:900;cursor:pointer;color:#0c1a0d;background:linear-gradient(135deg,#8fdc7c,#5aaa4b)}
+  @media(max-width:520px){.cart-card{padding:22px 16px 18px!important}.cart-item{grid-template-columns:64px 1fr auto;gap:10px;padding:10px}.cart-item-img{width:64px;height:64px}}
   .support-theme{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}
   .switch{position:relative;width:56px;height:30px;border-radius:999px;border:0;background:#c9d1cc;cursor:pointer;transition:background .3s ease;padding:0;flex:0 0 56px}
   .switch::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.4,.1,.2,1)}
@@ -1277,7 +1335,7 @@ function IC(n,c){return '<svg class="ic'+(c?' '+c:'')+'" aria-hidden="true"><use
     </div>
   </div>
 </div></div>
-<div class="modal" id="cartModal"><div class="modal-card" style="width:min(620px,100%);padding:30px"><button class="modal-close" onclick="closeCart()">×</button><div class="cart-tabs"><button type="button" class="cart-tab active" id="cartTabCart" onclick="cartTab('cart')">Кошик</button><button type="button" class="cart-tab" id="cartTabHist" onclick="cartTab('hist')">Історія замовлень</button></div><div id="cartPane"><div id="cartItems"></div><div class="view-price" id="cartTotal"></div><div class="checkout-buttons"><button class="big-btn primary" onclick="openCheckoutModal(cart, 'cart')">Оформити замовлення</button><button class="big-btn secondary" style="background:var(--dark-btn);color:#fff" onclick="clearCart()">Очистити кошик</button></div></div><div id="cartHistPane" hidden></div></div></div>
+<div class="modal" id="cartModal"><div class="modal-card cart-card"><button class="modal-close" onclick="closeCart()">×</button><div class="cart-head"><h2>Кошик</h2><span class="cart-head-count" id="cartHeadCount"></span></div><div class="cart-tabs"><button type="button" class="cart-tab active" id="cartTabCart" onclick="cartTab('cart')">Товари</button><button type="button" class="cart-tab" id="cartTabHist" onclick="cartTab('hist')">Історія замовлень</button></div><div id="cartPane"><div class="cart-list" id="cartItems"></div><div class="cart-summary" id="cartSummary"><div class="cart-bar"><div class="cart-sum-info"><span class="cart-sum-label">Разом · <span id="cartSumCount">0</span> шт.</span><b class="cart-sum-big" id="cartSumTotal">0 грн</b></div><button type="button" class="cart-checkout" onclick="openCheckoutModal(cart, 'cart')">Оформити замовлення</button></div><button type="button" class="cart-clear" onclick="clearCart()">Очистити кошик</button></div><div class="view-price" id="cartTotal" style="display:none"></div></div><div id="cartHistPane" hidden></div></div></div>
 
 <div class="modal form-modal" id="checkoutModal"><div class="modal-card"><button class="modal-close" onclick="closeCheckoutModal()">×</button><h2>Оформлення замовлення</h2><p>Заповніть чек на сайті. Після натискання “Оформити замовлення” ви побачите підтвердження з номером замовлення — звідти вже надішлете його продавцю в Telegram.</p><div class="form-field"><label>Ваше ім’я</label><input id="checkoutName" autocomplete="name" placeholder="Наприклад: Іван Петренко"></div><div class="form-field"><label>Номер телефону</label><input id="checkoutPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Наприклад: 0991234567"></div><div class="form-field"><label>Доставка</label><select id="checkoutDelivery" onchange="toggleCheckoutDeliveryDetails()"><option value="">Оберіть доставку</option><option value="Нова пошта">Нова пошта</option><option value="Самовивіз">Самовивіз</option></select></div><div class="checkout-np" id="checkoutNpWrap" style="display:none"><div class="form-field"><label>Місто</label><input id="checkoutCity" autocomplete="address-level2" placeholder="Наприклад: Київ"></div><div class="form-field"><label>Номер відділення Нової пошти</label><input id="checkoutDeliveryDetails" inputmode="numeric" placeholder="Наприклад: 45"></div></div><div class="checkout-summary" id="checkoutItemsPreview"></div><div class="view-price" id="checkoutTotalPreview"></div><div class="form-error" id="checkoutError"></div><button class="big-btn primary" onclick="submitCheckoutOrder()">Оформити замовлення</button></div></div>
 <div class="modal receipt-modal" id="orderReceiptModal"><div class="modal-card" style="max-width:520px;padding:0;overflow:hidden"><button class="modal-close" onclick="closeOrderReceiptModal()" style="background:rgba(255,255,255,.14);color:#fff">×</button>
@@ -2588,9 +2646,23 @@ function updateCart(){updateSelectedUI()}
 function getCartTotals(){return cart.reduce((a,x)=>{const price=parseFloat(String(x.price).replace(/[^0-9.,]/g,'').replace(',','.'))||0;const qty=Number(x.qty)||0;a.count+=qty;a.total+=price*qty;return a},{count:0,total:0})}
 function renderCartModal(){
   const box=$('cartItems'); if(!box)return;
-  if(!cart.length){box.innerHTML='<div class="empty">Кошик порожній</div>'; if($('cartTotal'))$('cartTotal').textContent=''; return;}
-  box.innerHTML=cart.map(x=>'<div style="display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #e2e8e4;padding:12px 0"><div style="width:70px;height:70px;background:#f7faf7;border-radius:14px;display:grid;place-items:center;overflow:hidden">'+(x.img?'<img src="'+esc(x.img)+'" style="width:70px;height:70px;object-fit:contain">':IC('wrench'))+'</div><div><b>'+esc(x.name)+'</b><br><span style="color:#66736b">'+esc(money(x.price))+' × '+(Number(x.qty)||1)+'</span><div style="display:flex;gap:6px;margin-top:8px"><button class="cart-btn" onclick="changeCartQuantity(\''+esc(x.id)+'\',-1)">−</button><button class="cart-btn" onclick="changeCartQuantity(\''+esc(x.id)+'\',1)">+</button></div></div><button class="cart-btn" onclick="removeFromCart(\''+esc(x.id)+'\',true)">×</button></div>').join('');
-  const t=getCartTotals(); if($('cartTotal'))$('cartTotal').textContent='Товарів: '+t.count+' • Сума: '+money(t.total);
+  const t=getCartTotals();
+  const sum=$('cartSummary'),hc=$('cartHeadCount');
+  if(hc)hc.textContent=cart.length?t.count+' шт.':'';
+  if($('cartTotal'))$('cartTotal').textContent=cart.length?'Товарів: '+t.count+' • Сума: '+money(t.total):'';
+  if(!cart.length){
+    if(sum)sum.style.display='none';
+    box.innerHTML='<div class="cart-empty"><div class="cart-empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h3l2.4 11.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2l1.5-6.8H6.4"/></svg></div><div class="cart-empty-title">Кошик порожній</div><div class="cart-empty-sub">Додайте товари з каталогу, і вони з’являться тут</div><button type="button" class="cart-empty-btn" onclick="closeCart();showCatalog()">Перейти до каталогу</button></div>';
+    return;
+  }
+  if(sum)sum.style.display='';
+  box.innerHTML=cart.map(x=>{const q=Number(x.qty)||1,id=esc(x.id);
+    return '<div class="cart-item"><div class="cart-item-img">'+(x.img?'<img src="'+esc(x.img)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':IC('wrench'))+'</div>'
+    +'<div class="cart-item-info"><div class="cart-item-name">'+esc(x.name)+'</div><div class="cart-item-price">'+esc(money(x.price))+'</div>'
+    +'<div class="cart-qty"><button type="button" onclick="changeCartQuantity(\''+id+'\',-1)" aria-label="Менше">−</button><span>'+q+'</span><button type="button" onclick="changeCartQuantity(\''+id+'\',1)" aria-label="Більше">+</button></div></div>'
+    +'<div class="cart-item-side"><button type="button" class="cart-item-del" onclick="removeFromCart(\''+id+'\',true)" aria-label="Видалити">×</button><b>'+esc(money((Number(x.price)||0)*q))+'</b></div></div>'}).join('');
+  if($('cartSumCount'))$('cartSumCount').textContent=t.count;
+  if($('cartSumTotal'))$('cartSumTotal').textContent=money(t.total);
 }
 function cartTab(t){const hist=t==='hist';const a=$('cartPane'),b=$('cartHistPane');if(a)a.hidden=hist;if(b)b.hidden=!hist;$('cartTabCart').classList.toggle('active',!hist);$('cartTabHist').classList.toggle('active',hist);if(hist){let saved=[];try{saved=JSON.parse(localStorage.getItem('insort_orders_v4')||'[]')}catch(e){}b.innerHTML=saved.length?saved.slice().reverse().map((o,i)=>'<div class="profile-line"><b>Замовлення '+(o.orderNumber?'№'+esc(o.orderNumber):'#'+(saved.length-i))+'</b><br>'+esc(o.date)+'<br>Товарів: '+o.count+(o.confirmCode?'<br>Код підтвердження: <b>'+esc(o.confirmCode)+'</b>':'')+'</div>').join(''):'<div class="empty">Історія поки порожня. Після оформлення замовлення воно збережеться тут.</div>'}}
 function openCart(){cartTab('cart');renderCartModal();$('cartModal').classList.add('show');document.body.style.overflow='hidden'}
